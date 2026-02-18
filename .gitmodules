@@ -1,0 +1,4 @@
+[submodule "the-fatebound"]
+	path = the-fatebound
+	url = https://github.com/AlexWorland/the-fatebound.git
+	branch = main
