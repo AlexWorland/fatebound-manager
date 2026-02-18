@@ -109,8 +109,8 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     className: "Druid",
     flavorText: "The primal world flows through you. Today you may be leaf; tomorrow, fang.",
     hitDie: 8,
-    armorProficiencies: ["light", "medium", "shields"],
-    weaponProficiencies: ["simple"],
+    armorProficiencies: ["light", "medium (nonmetal)", "shields (nonmetal)"],
+    weaponProficiencies: ["simple", "scimitars"],
     savingThrows: ["INT", "WIS"],
     dailySkillOptions: ["Nature", "Animal Handling"],
     baseFeatures: [
@@ -120,7 +120,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Wild Shape",
-        description: "Transform into a beast you have seen. CR limit = Fatebound level \u00f7 4 (minimum 1/4). Duration = Fatebound level \u00f7 2 hours.",
+        description: "Transform into a beast you have seen. CR limit = Fatebound level \u00f7 4 (minimum 1/4). Duration = Fatebound level \u00f7 2 hours. Beasts with a swimming speed available immediately; flying speed restricted until Fatebound level 8.",
         resourceKey: "wild_shape",
         maxUses: "2 uses/rest",
       },
@@ -186,7 +186,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Martial Arts",
-        description: "Use DEX for unarmed/monk weapon attacks. Unarmed damage = d6. Bonus action unarmed strike after Attack action.",
+        description: "Use DEX for unarmed/monk weapon attacks. Unarmed damage = d6 (d8 at level 11, d10 at level 17). Bonus action unarmed strike after Attack action.",
       },
       {
         name: "Ki",
@@ -201,8 +201,6 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       {
         name: "Stunning Strike",
         description: "On hit, spend 1 Ki. Target makes CON save (DC = 8 + prof + WIS mod) or is stunned until the end of your next turn.",
-        resourceKey: "stunning_strike",
-        maxUses: "proficiency bonus/long rest",
       },
       {
         name: "Unarmored Movement",
@@ -338,7 +336,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Sorcery Points",
-        description: "Can convert spell slots to points (slot level = points gained) or points to slots.",
+        description: "Can convert spell slots to points (slot level = points gained) or points to slots (2 SP \u2192 1st, 3 SP \u2192 2nd, 5 SP \u2192 3rd, 6 SP \u2192 4th, 7 SP \u2192 5th).",
         resourceKey: "sorcery_points",
         maxUses: "prof bonus + CHA mod",
       },
@@ -349,6 +347,10 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       {
         name: "Font of Magic",
         description: "Flexible slot/point conversion.",
+      },
+      {
+        name: "Cantrips Known",
+        description: "4 (from Sorcerer list).",
       },
     ],
     hasSpellcasting: true,
@@ -369,7 +371,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     baseFeatures: [
       {
         name: "Pact Magic (Half-Caster variant)",
-        description: "CHA-based. Spell slots per the half-caster table, but they recharge on a short rest instead of a long rest. Warlock spell list.",
+        description: "CHA-based. Spell slots per the half-caster table, but they recharge on a short rest instead of a long rest. Recovered slots cannot exceed your highest available slot level on the half-caster table. Warlock spell list.",
       },
       {
         name: "Eldritch Blast",
@@ -402,7 +404,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     baseFeatures: [
       {
         name: "Half-Caster (Wizard Spell List, INT-based)",
-        description: "You maintain a mental \"grimoire\" \u2014 spells known = prof bonus + INT mod. Prepared caster (prepare prof bonus + INT mod each day).",
+        description: "You maintain a mental \"grimoire\" \u2014 spells known (grimoire) = 4 + Fatebound level. Prepared caster (prepare INT mod + half Fatebound level, rounded down, each day).",
       },
       {
         name: "Arcane Recovery",

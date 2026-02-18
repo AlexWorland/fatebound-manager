@@ -24,7 +24,7 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     name: "Spellcasting (Divine)",
     className: "Cleric",
     description:
-      "Cleric spell list. Slots = half-caster table. WIS-based. Prepared caster (prof bonus + WIS mod spells).",
+      "Cleric spell list. Slots = half-caster table. WIS-based. Prepared caster (prof bonus + WIS mod spells). Cantrips known = proficiency bonus. Channel Divinity (1 use/short or long rest): Roll on the Random Cleric Domain Table to determine your domain and Channel Divinity option for the day.",
     hasSpellcasting: true,
     spellList: "Cleric",
     castingAbility: "WIS",
@@ -61,7 +61,7 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     name: "Divine Smite + Lay on Hands",
     className: "Paladin",
     description:
-      "On hit, expend a spell slot for +2d8 radiant (+1d8 per slot above 1st). Lay on Hands pool = Fatebound level \u00d7 3. Requires half-caster slots from a spellcasting feature (e.g., Table B results 3, 4, or 12 via Residual Memory or Dual Nature).",
+      "On hit, expend a spell slot for +2d8 radiant (+1d8 per slot above 1st). Damage capped at 5d8. +1d8 against undead or fiend. Lay on Hands pool = Fatebound level \u00d7 3. If you have no spellcasting source from another feature, you gain 2 first-level spell slots usable only for Divine Smite.",
     hasSpellcasting: false,
     resourcePool: "lay_on_hands",
   },
@@ -87,7 +87,7 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     name: "Sorcery Points + Metamagic",
     className: "Sorcerer",
     description:
-      "Points = prof bonus + CHA mod. Know 2 Metamagic options (randomly select 2 from the Metamagic Options table). Can convert spell slots \u2194 points. Requires half-caster slots from a spellcasting feature (e.g., Table B results 3, 4, or 12 via Residual Memory or Dual Nature).",
+      "Points = prof bonus + CHA mod. Know 2 Metamagic options (randomly select 2 from the Metamagic Options table). Can convert spell slots \u2194 points. If you have no spellcasting source from another feature, you gain 2 first-level spell slots.",
     hasSpellcasting: false,
     resourcePool: "sorcery_points",
   },
