@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import type { Character, DailyState, DDBSyncSettings } from "@/types/character";
 import { generateFullSync } from "@/integrations/ddb-sync";
-import type { SyncPayload } from "@/integrations/ddb-sync";
+import type { SyncResult } from "@/integrations/ddb-sync";
 import Card from "@/components/ui/Card";
 
 const DEFAULT_SYNC_SETTINGS: DDBSyncSettings = {
@@ -18,13 +18,13 @@ const DEFAULT_SYNC_SETTINGS: DDBSyncSettings = {
   lastSyncedAt: null,
 };
 
-const SYNC_TOGGLE_LABELS: { key: keyof DDBSyncSettings; label: string }[] = [
-  { key: "syncAbilityScores", label: "Sync Ability Scores" },
-  { key: "syncHP", label: "Sync HP" },
-  { key: "syncSpellSlots", label: "Sync Spell Slots" },
-  { key: "syncConditions", label: "Sync Conditions" },
-  { key: "syncInventory", label: "Sync Inventory" },
-  { key: "syncCurrency", label: "Sync Currency" },
+const SYNC_TOGGLE_LABELS: { key: keyof DDBSyncSettings; label: string; description: string }[] = [
+  { key: "syncAbilityScores", label: "Ability Scores", description: "Base scores with daily ability swap applied" },
+  { key: "syncHP", label: "Hit Points", description: "Current HP and temporary HP" },
+  { key: "syncSpellSlots", label: "Spell Slots", description: "Used and maximum slots per level" },
+  { key: "syncConditions", label: "Conditions", description: "Exhaustion and other active conditions" },
+  { key: "syncInventory", label: "Inventory", description: "All items with equipped status" },
+  { key: "syncCurrency", label: "Currency", description: "CP, SP, EP, GP, and PP" },
 ];
 
 export default function SettingsPage() {
@@ -42,7 +42,7 @@ export default function SettingsPage() {
   const [syncSettings, setSyncSettings] =
     useState<DDBSyncSettings>(DEFAULT_SYNC_SETTINGS);
 
-  const [syncPayloads, setSyncPayloads] = useState<SyncPayload[] | null>(null);
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
 
   useEffect(() => {
     fetch(`/api/characters/${id}`)
@@ -69,14 +69,15 @@ export default function SettingsPage() {
   );
 
   const handleGenerateSync = useCallback(() => {
-    if (!character || !dailyState) return;
-    const characterWithId: Character = {
+    if (!character) return;
+    const characterWithSettings: Character = {
       ...character,
       ddbCharacterId: ddbCharacterId.trim() || null,
+      ddbSyncSettings: syncSettings,
     };
-    const payloads = generateFullSync(characterWithId, dailyState);
-    setSyncPayloads(payloads);
-  }, [character, dailyState, ddbCharacterId]);
+    const result = generateFullSync(characterWithSettings, dailyState);
+    setSyncResult(result);
+  }, [character, dailyState, ddbCharacterId, syncSettings]);
 
   const handleSave = useCallback(async () => {
     if (!character) return;
@@ -105,7 +106,7 @@ export default function SettingsPage() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch {
-      setSaveError("Network error — please try again");
+      setSaveError("Network error -- please try again");
     } finally {
       setSaving(false);
     }
@@ -132,11 +133,11 @@ export default function SettingsPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="font-heading text-2xl text-text-primary">
-            Settings — {character.name}
+          <h1 className="font-heading text-2xl text-text-highlight">
+            Settings
           </h1>
           <p className="text-text-secondary font-body text-sm mt-1">
-            Configure D&D Beyond sync settings for this character.
+            {character.name} — D&D Beyond integration settings
           </p>
         </div>
 
@@ -149,7 +150,7 @@ export default function SettingsPage() {
             htmlFor="ddbCharacterId"
             className="block text-sm text-text-secondary font-body mb-1"
           >
-            Enter your D&D Beyond character ID (found in the character URL).
+            Found in the character sheet URL on D&D Beyond.
           </label>
           <input
             id="ddbCharacterId"
@@ -163,24 +164,45 @@ export default function SettingsPage() {
 
         {/* Sync Toggles */}
         <Card>
-          <h2 className="font-heading text-lg text-text-primary mb-3">
-            Sync Options
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-heading text-lg text-text-primary">
+              Sync Options
+            </h2>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={syncSettings.enabled}
+                onChange={() => handleToggle("enabled")}
+                className="w-4 h-4 accent-accent cursor-pointer"
+              />
+              <span className="font-body text-xs text-text-secondary uppercase tracking-wide">
+                Enabled
+              </span>
+            </label>
+          </div>
           <div className="space-y-3">
-            {SYNC_TOGGLE_LABELS.map(({ key, label }) => (
+            {SYNC_TOGGLE_LABELS.map(({ key, label, description }) => (
               <label
                 key={key}
-                className="flex items-center gap-3 cursor-pointer group"
+                className={`flex items-start gap-3 cursor-pointer group ${
+                  !syncSettings.enabled ? "opacity-40 pointer-events-none" : ""
+                }`}
               >
                 <input
                   type="checkbox"
                   checked={!!syncSettings[key]}
                   onChange={() => handleToggle(key)}
-                  className="w-4 h-4 accent-accent cursor-pointer"
+                  disabled={!syncSettings.enabled}
+                  className="w-4 h-4 mt-0.5 accent-accent cursor-pointer"
                 />
-                <span className="font-body text-sm text-text-primary group-hover:text-accent transition-colors">
-                  {label}
-                </span>
+                <div>
+                  <span className="font-body text-sm text-text-primary group-hover:text-accent transition-colors">
+                    {label}
+                  </span>
+                  <p className="font-body text-xs text-text-secondary">
+                    {description}
+                  </p>
+                </div>
               </label>
             ))}
           </div>
@@ -201,37 +223,59 @@ export default function SettingsPage() {
         {/* Generate Sync Commands */}
         <Card>
           <h2 className="font-heading text-lg text-text-primary mb-3">
-            Generate Sync Commands
+            Sync Preview
           </h2>
           <p className="text-text-secondary font-body text-sm mb-4">
-            Generates MCP tool payloads based on the current character state.
-            Copy the output and run it via Claude Code with the D&D Beyond MCP
+            Generates MCP tool payloads for the current character state.
+            Copy the output and run via Claude Code with the D&D Beyond MCP
             tools.
           </p>
           <button
             onClick={handleGenerateSync}
-            disabled={!dailyState}
+            disabled={!syncSettings.enabled || !ddbCharacterId.trim()}
             className="bg-accent text-bg-deep font-heading text-sm px-4 py-2 rounded-md hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Generate Sync Commands
           </button>
-          {!dailyState && (
+          {!ddbCharacterId.trim() && (
             <p className="text-text-secondary font-body text-xs mt-2">
-              No daily state found — complete a Dawn Roll to generate sync
-              commands.
+              Enter a DDB Character ID above to generate sync commands.
             </p>
           )}
-          {syncPayloads !== null && (
-            <div className="mt-4">
-              <p className="text-text-secondary font-body text-xs mb-2">
-                {syncPayloads.length === 0
-                  ? "No payloads generated — set a DDB Character ID above."
-                  : `${syncPayloads.length} command(s) generated:`}
-              </p>
-              {syncPayloads.length > 0 && (
-                <pre className="bg-bg-elevated border border-border-subtle rounded-md p-3 text-xs font-mono text-text-primary overflow-x-auto whitespace-pre-wrap">
-                  {JSON.stringify(syncPayloads, null, 2)}
-                </pre>
+          {syncResult !== null && (
+            <div className="mt-4 space-y-3">
+              {/* Errors */}
+              {syncResult.errors.length > 0 && (
+                <div className="bg-bg-elevated border border-red-500/30 rounded-md p-3">
+                  <p className="text-red-400 font-body text-xs font-semibold mb-1">Errors:</p>
+                  <ul className="list-disc list-inside text-red-400/80 font-body text-xs space-y-0.5">
+                    {syncResult.errors.map((err, i) => (
+                      <li key={i}>{err}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {/* Skipped */}
+              {syncResult.skipped.length > 0 && (
+                <p className="text-text-secondary font-body text-xs">
+                  Skipped: {syncResult.skipped.join(", ")}
+                </p>
+              )}
+              {/* Payloads */}
+              {syncResult.calls.length > 0 && (
+                <>
+                  <p className="text-text-secondary font-body text-xs">
+                    {syncResult.calls.length} command(s) generated:
+                  </p>
+                  <pre className="bg-bg-elevated border border-border-subtle rounded-md p-3 text-xs font-mono text-text-primary overflow-x-auto whitespace-pre-wrap max-h-96 overflow-y-auto">
+                    {JSON.stringify(syncResult.calls, null, 2)}
+                  </pre>
+                </>
+              )}
+              {syncResult.calls.length === 0 && syncResult.errors.length === 0 && (
+                <p className="text-text-secondary font-body text-xs">
+                  No commands generated. Check that sync is enabled and fields are toggled on.
+                </p>
               )}
             </div>
           )}
