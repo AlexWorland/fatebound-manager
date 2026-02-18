@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Session Startup
+
+At the start of every session, update the Fatebound source docs submodule:
+
+```bash
+git submodule update --remote the-fatebound
+```
+
 ## Project Overview
 
 Fatebound Manager is a character management web app for "The Fatebound," a homebrew D&D 5e class where characters transform daily based on a Dawn Roll (d20). Built with Next.js 16 (App Router), React 19, TypeScript, SQLite (better-sqlite3), and Tailwind CSS v4.
