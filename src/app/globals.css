@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+@theme inline {
+  --color-bg-deep: #0B0B0D;
+  --color-bg-surface: #1A1B1E;
+  --color-bg-elevated: #242528;
+  --color-bg-hover: #2C2D31;
+
+  --color-accent: #C53131;
+  --color-accent-hover: #E03E3E;
+  --color-accent-muted: #8B2020;
+
+  --color-fate: #7C3AED;
+  --color-fate-glow: #A78BFA;
+
+  --color-text-primary: #E8E6E3;
+  --color-text-secondary: #9B9B9B;
+  --color-text-highlight: #FFFFFF;
+
+  --color-border-subtle: #333538;
+  --color-border-accent: #C53131;
+
+  --color-hp-green: #22C55E;
+  --color-hp-yellow: #EAB308;
+  --color-hp-red: #EF4444;
+
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Roboto', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-deep);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+  }
+}
