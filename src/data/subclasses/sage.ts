@@ -154,7 +154,7 @@ export const SAGE_SUBCLASSES: SubclassEntry[] = [
     },
     level13Feature: {
       name: "Song of Defense + Extra Attack",
-      description: "While Bladesinging, when you take damage, you can expend a spell slot as a reaction to reduce the damage by 5 \u00d7 the slot level. Additionally, you gain Extra Attack (you can attack twice when you take the Attack action), and you can replace one of those attacks with a cantrip.",
+      description: "While Bladesinging, when you take damage, you can expend a spell slot as a reaction to reduce the damage by 5 \u00d7 the slot level. Additionally, you gain Extra Attack (you can attack twice when you take the Attack action), and you can replace one of those attacks with a cantrip. This Extra Attack replaces (does not stack with) any other Extra Attack feature you have.",
     },
     level17Feature: {
       name: "Song of Victory",

@@ -182,7 +182,7 @@ export const MENDER_SUBCLASSES: SubclassEntry[] = [
     name: "Twilight",
     level9Feature: {
       name: "Eyes of Night + Vigilant Blessing + CD: Twilight Sanctuary",
-      description: "You gain darkvision out to 300 ft, and as an action can extend darkvision 300 ft to any number of creatures within 10 ft for 1 hour (1/long rest). Vigilant Blessing: When initiative is rolled, grant one creature you can see advantage on that roll. CD: Twilight Sanctuary: Create a 30-ft radius sphere of dim light centered on you for 1 minute (concentration). Each turn a creature inside can gain temp HP equal to 1d6 + your Fatebound level, or end one charmed or frightened effect on itself.",
+      description: "You gain darkvision out to 300 ft, and as an action can extend darkvision 300 ft to any number of creatures within 10 ft for 1 hour (1/long rest). Vigilant Blessing: When initiative is rolled, grant one creature you can see advantage on that roll. CD: Twilight Sanctuary: Create a 30-ft radius sphere of dim light centered on you for 1 minute. Each turn a creature inside can gain temp HP equal to 1d6 + your Fatebound level, or end one charmed or frightened effect on itself.",
     },
     level13Feature: {
       name: "Steps of Night",

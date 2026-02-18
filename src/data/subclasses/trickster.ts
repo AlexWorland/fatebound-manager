@@ -122,7 +122,7 @@ export const TRICKSTER_SUBCLASSES: SubclassEntry[] = [
     },
     level13Feature: {
       name: "Spiritual Focus Improvement + Spirit Session",
-      description: "Your spiritual focus now adds +1d6 to the healing or damage dealt by your spells. Spirit Session: During a 1-hour ritual with a number of willing participants, you temporarily learn one spell from any class list based on the number of participants.",
+      description: "Your spiritual focus now adds +1d6 to the healing or damage dealt by your spells. Spirit Session: During a 1-hour ritual with a number of willing participants, you temporarily learn one spell from any class list based on the number of participants. Max spell level = participants / 2, rounded up.",
     },
     level17Feature: {
       name: "Mystical Connection",
