@@ -1,34 +1,31 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import Database from "better-sqlite3";
 import os from "os";
 import path from "path";
 import fs from "fs";
 
-// Create a fresh in-memory-style temp DB per module load
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "fatebound-test-"));
 const tmpDbPath = path.join(tmpDir, "test.db");
 
-// Mock db module to use temp file
-import { vi } from "vitest";
-vi.mock("../db", () => {
-  let _db: InstanceType<typeof Database> | null = null;
-  return {
-    getDb: () => {
-      if (!_db) {
-        _db = new Database(tmpDbPath);
-        _db.pragma("journal_mode = WAL");
-        _db.pragma("foreign_keys = ON");
-      }
-      return _db;
-    },
-    closeDb: () => {
-      _db?.close();
-      _db = null;
-    },
-  };
-});
+let _db: InstanceType<typeof Database> | null = null;
 
-import { getDb } from "../db";
+function getTestDb() {
+  if (!_db) {
+    _db = new Database(tmpDbPath);
+    _db.pragma("journal_mode = WAL");
+    _db.pragma("foreign_keys = ON");
+  }
+  return _db;
+}
+
+vi.mock("../db", () => ({
+  getDb: () => getTestDb(),
+  closeDb: () => {
+    _db?.close();
+    _db = null;
+  },
+}));
+
 import { initSchema } from "../schema";
 import {
   getAllCharacters,
@@ -63,7 +60,7 @@ const DEFAULT_CHARACTER: Omit<Character, "id" | "createdAt" | "updatedAt"> = {
 };
 
 const DEFAULT_DAILY_STATE: Omit<DailyState, "id"> = {
-  characterId: "", // filled per test
+  characterId: "",
   date: "2026-02-18",
   dawnRoll: { die1: 15, chosen: 15 },
   dawnRollOutcome: "GUIDED",
@@ -83,9 +80,10 @@ const DEFAULT_DAILY_STATE: Omit<DailyState, "id"> = {
 };
 
 beforeEach(() => {
+  const db = getTestDb();
+  // Ensure schema exists
   initSchema();
-  // Wipe all rows before each test
-  const db = getDb();
+  // Wipe between tests
   db.prepare("DELETE FROM session_notes").run();
   db.prepare("DELETE FROM form_history").run();
   db.prepare("DELETE FROM daily_states").run();
