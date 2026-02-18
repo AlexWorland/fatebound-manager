@@ -35,7 +35,6 @@ beforeEach(() => {
 
 describe("isTableCIncompatible", () => {
   it("returns true for Brute (chassis 1) + Unarmored Defense CON (defensive 1)", () => {
-    // Brute has heavy armor, Unarmored Defense CON is incompatible
     expect(isTableCIncompatible(1, 1, 1)).toBe(true);
     expect(isTableCIncompatible(1, 5, 1)).toBe(true); // any Table B
   });
@@ -77,34 +76,37 @@ describe("isTableCIncompatible", () => {
 });
 
 describe("getTableDRollCount", () => {
-  it("returns 0 for levels 1-4", () => {
+  // Source: The Fatebound.md Table D Rolls table
+  // 1-3: 0, 4-7: 1, 8-11: 2, 12-15: 3, 16-18: 4, 19+: 5
+  it("returns 0 for levels 1-3", () => {
     expect(getTableDRollCount(1)).toBe(0);
     expect(getTableDRollCount(2)).toBe(0);
     expect(getTableDRollCount(3)).toBe(0);
-    expect(getTableDRollCount(4)).toBe(0);
   });
 
-  it("returns 1 for levels 5-8", () => {
+  it("returns 1 for levels 4-7", () => {
+    expect(getTableDRollCount(4)).toBe(1);
     expect(getTableDRollCount(5)).toBe(1);
-    expect(getTableDRollCount(8)).toBe(1);
+    expect(getTableDRollCount(7)).toBe(1);
   });
 
-  it("returns 2 for levels 9-12", () => {
-    expect(getTableDRollCount(9)).toBe(2);
-    expect(getTableDRollCount(12)).toBe(2);
+  it("returns 2 for levels 8-11", () => {
+    expect(getTableDRollCount(8)).toBe(2);
+    expect(getTableDRollCount(11)).toBe(2);
   });
 
-  it("returns 3 for levels 13-16", () => {
-    expect(getTableDRollCount(13)).toBe(3);
-    expect(getTableDRollCount(16)).toBe(3);
+  it("returns 3 for levels 12-15", () => {
+    expect(getTableDRollCount(12)).toBe(3);
+    expect(getTableDRollCount(15)).toBe(3);
   });
 
-  it("returns 4 for levels 17-19", () => {
-    expect(getTableDRollCount(17)).toBe(4);
-    expect(getTableDRollCount(19)).toBe(4);
+  it("returns 4 for levels 16-18", () => {
+    expect(getTableDRollCount(16)).toBe(4);
+    expect(getTableDRollCount(18)).toBe(4);
   });
 
-  it("returns 5 for level 20", () => {
+  it("returns 5 for levels 19-20", () => {
+    expect(getTableDRollCount(19)).toBe(5);
     expect(getTableDRollCount(20)).toBe(5);
   });
 });
@@ -125,7 +127,7 @@ describe("rollTableDFeats", () => {
   });
 
   it("rerolls duplicates for non-repeatable feats", () => {
-    // First roll = 1, second roll = 1 (duplicate, reroll), then 2
+    // First roll = 1, second roll = 1 (duplicate, reroll), then 3
     mockRollFatesSelection
       .mockReturnValueOnce(1)  // first feat: Aberrant Dragonmark
       .mockReturnValueOnce(1)  // duplicate — reroll
@@ -170,9 +172,10 @@ describe("assembleChaosForm", () => {
     expect(result.feats).toEqual([]); // level 1 = 0 feat rolls
     expect(result.tableCRerolled).toBe(false);
     expect(result.fatesMercyApplied).toBe(false);
+    expect(result.level).toBe(1);
   });
 
-  it("rerolls Table C when incompatible (Brute + Unarmored CON)", () => {
+  it("rerolls Table C exactly once when incompatible (Brute + Unarmored CON)", () => {
     // Force Table C incompatibility: Brute (1) + Unarmored CON (1)
     // After reroll, use rollFatesSelection to pick defensive 3 (Shield Spell)
     mockRollFatesSelection.mockReturnValueOnce(3); // reroll result for Table C
@@ -184,6 +187,22 @@ describe("assembleChaosForm", () => {
     expect(result.tableCRerolled).toBe(true);
     expect(result.defensiveFeature.id).toBe(3); // Shield Spell from reroll
     expect(result.chassis.id).toBe(1); // Brute unchanged
+    expect(result.tableCRerollInfo).not.toBeNull();
+    expect(result.tableCRerollInfo!.originalId).toBe(1);
+    expect(result.tableCRerollInfo!.reason).toContain("Brute");
+  });
+
+  it("keeps second Table C result even if also incompatible (reroll once rule)", () => {
+    // Brute + Unarmored CON => reroll => Unarmored WIS (still incompatible, but kept)
+    mockRollFatesSelection.mockReturnValueOnce(2); // reroll: Unarmored WIS
+    const result = assembleChaosForm(1, {
+      tableA: 1,  // Brute
+      tableB: 1,  // Rage
+      tableC: 1,  // Unarmored CON — incompatible
+    });
+    // Second result stands regardless per rules
+    expect(result.tableCRerolled).toBe(true);
+    expect(result.defensiveFeature.id).toBe(2); // Unarmored WIS, still incompatible but kept
   });
 
   it("rerolls Table C when non-caster + requiresSpellcasting defensive", () => {
@@ -196,6 +215,18 @@ describe("assembleChaosForm", () => {
     });
     expect(result.tableCRerolled).toBe(true);
     expect(result.defensiveFeature.id).toBe(4);
+    expect(result.tableCRerollInfo!.reason).toContain("Metamagic");
+  });
+
+  it("does not reroll Table C when spellcasting + Metamagic", () => {
+    const result = assembleChaosForm(1, {
+      tableA: 3,  // Duelist
+      tableB: 3,  // Spellcasting Divine (has spellcasting)
+      tableC: 6,  // Metamagic — compatible
+    });
+    expect(result.tableCRerolled).toBe(false);
+    expect(result.defensiveFeature.id).toBe(6);
+    expect(result.tableCRerollInfo).toBeNull();
   });
 
   it("rolls randomly when no rolls provided", () => {
@@ -209,10 +240,10 @@ describe("assembleChaosForm", () => {
     expect(result.defensiveFeature.id).toBe(8);
   });
 
-  it("includes feats at appropriate levels", () => {
-    // Level 5 = 1 feat roll
+  it("includes feats at level 4 (first ASI level)", () => {
+    // Level 4 = 1 feat roll per source doc
     mockRollFatesSelection.mockReturnValueOnce(10); // Table D: Chef
-    const result = assembleChaosForm(5, {
+    const result = assembleChaosForm(4, {
       tableA: 3,
       tableB: 5,
       tableC: 4,
@@ -222,7 +253,7 @@ describe("assembleChaosForm", () => {
   });
 
   it("uses provided Table D rolls", () => {
-    const result = assembleChaosForm(5, {
+    const result = assembleChaosForm(4, {
       tableA: 3,
       tableB: 5,
       tableC: 4,
@@ -233,17 +264,36 @@ describe("assembleChaosForm", () => {
     expect(result.feats[0].name).toBe("Lucky");
   });
 
-  it("applies Fate's Mercy when no combat capability", () => {
-    // Arcanist (7): only daggers/quarterstaffs/light_crossbows, no martial
-    // Bardic Inspiration (Table B 2): hasSpellcasting false, no attacks
-    // Lay on Hands (Table C 5): defensive only
-    // Level 1, no feats
+  it("applies Fate's Mercy when chassis is Arcanist", () => {
+    // Arcanist (7): d6, no armor, specific weapons only
     const result = assembleChaosForm(1, {
-      tableA: 7,  // Arcanist — weakest weapon proficiencies
-      tableB: 2,  // Bardic Inspiration — no spellcasting, no attacks
+      tableA: 7,  // Arcanist
+      tableB: 2,  // Bardic Inspiration — no spellcasting, no direct attacks
       tableC: 5,  // Lay on Hands — purely defensive
     });
     expect(result.fatesMercyApplied).toBe(true);
+    // Hit die upgraded from d6 to d8
+    expect(result.fatesMercy.hitDieUpgraded).toBe(true);
+    expect(result.chassis.hitDie).toBe(8);
+    // Light armor added
+    expect(result.fatesMercy.armorAdded).toBe(true);
+    expect(result.chassis.armorProficiencies).toContain("light");
+    // Simple weapon added
+    expect(result.fatesMercy.weaponAdded).toBe(true);
+    expect(result.chassis.weaponProficiencies).toContain("simple");
+    // AC floor always true
+    expect(result.fatesMercy.acFloor).toBe(true);
+  });
+
+  it("does not upgrade hit die when chassis is >= d8", () => {
+    // Brute (1): d12
+    const result = assembleChaosForm(1, {
+      tableA: 1,
+      tableB: 2,
+      tableC: 8,
+    });
+    expect(result.chassis.hitDie).toBe(12);
+    expect(result.fatesMercy.hitDieUpgraded).toBe(false);
   });
 
   it("does not apply Fate's Mercy when chassis has martial weapons", () => {
@@ -254,6 +304,10 @@ describe("assembleChaosForm", () => {
       tableC: 8,  // Danger Sense
     });
     expect(result.fatesMercyApplied).toBe(false);
+    expect(result.fatesMercy.hitDieUpgraded).toBe(false);
+    expect(result.fatesMercy.armorAdded).toBe(false);
+    expect(result.fatesMercy.weaponAdded).toBe(false);
+    expect(result.fatesMercy.grantsFateStrike).toBe(false);
   });
 
   it("does not apply Fate's Mercy when primary feature has spellcasting", () => {
@@ -263,16 +317,57 @@ describe("assembleChaosForm", () => {
       tableB: 3,  // Spellcasting Divine — offensive spellcasting
       tableC: 8,
     });
-    expect(result.fatesMercyApplied).toBe(false);
+    // Hit die and armor still get corrected (Arcanist is d6, no armor)
+    expect(result.fatesMercy.hitDieUpgraded).toBe(true);
+    expect(result.fatesMercy.armorAdded).toBe(true);
+    // But no Fate Strike needed since spellcasting provides combat
+    expect(result.fatesMercy.grantsFateStrike).toBe(false);
   });
 
-  it("does not apply Fate's Mercy when primary grants attack feature", () => {
+  it("does not grant Fate Strike when primary grants attack feature", () => {
     // Arcanist (7) + Eldritch Invocations (11) — grants Eldritch Blast
     const result = assembleChaosForm(1, {
       tableA: 7,
       tableB: 11, // Eldritch Invocations — grants Eldritch Blast cantrip
       tableC: 8,
     });
-    expect(result.fatesMercyApplied).toBe(false);
+    expect(result.fatesMercy.grantsFateStrike).toBe(false);
+  });
+
+  it("grants bonus Unarmored Defense for Arcanist + Rage", () => {
+    const result = assembleChaosForm(1, {
+      tableA: 7, // Arcanist
+      tableB: 1, // Rage
+      tableC: 8, // Danger Sense
+    });
+    expect(result.fatesMercy.bonusUnarmoredDefense).toBe(true);
+  });
+
+  it("does not grant bonus Unarmored Defense for non-Arcanist + Rage", () => {
+    const result = assembleChaosForm(1, {
+      tableA: 1, // Brute (not Arcanist)
+      tableB: 1, // Rage
+      tableC: 4, // Cunning Action
+    });
+    expect(result.fatesMercy.bonusUnarmoredDefense).toBe(false);
+  });
+
+  it("level 1 produces 0 Table D feats", () => {
+    const result = assembleChaosForm(1, {
+      tableA: 3,
+      tableB: 9,
+      tableC: 4,
+    });
+    expect(result.feats).toHaveLength(0);
+  });
+
+  it("level 19 gets 5 Table D feats", () => {
+    const result = assembleChaosForm(19, {
+      tableA: 3,
+      tableB: 9,
+      tableC: 4,
+      tableD: [4, 10, 20, 30, 50],
+    });
+    expect(result.feats).toHaveLength(5);
   });
 });

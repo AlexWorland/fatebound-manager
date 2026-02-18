@@ -3,16 +3,39 @@ import { TABLE_B_PRIMARY } from "@/data/tables/table-b-primary";
 import { TABLE_C_DEFENSIVE } from "@/data/tables/table-c-defensive";
 import { TABLE_D_FEATS } from "@/data/tables/table-d-feats";
 import { rollFatesSelection } from "@/lib/dice";
-import type { Chassis, PrimaryFeature, DefensiveFeature } from "@/types/forms";
+import type {
+  Chassis,
+  PrimaryFeature,
+  DefensiveFeature,
+  HitDie,
+} from "@/types/forms";
 import type { Feat } from "@/types/features";
 
+export interface FatesMercyDetails {
+  hitDieUpgraded: boolean;
+  armorAdded: boolean;
+  weaponAdded: boolean;
+  acFloor: boolean;
+  grantsFateStrike: boolean;
+  bonusUnarmoredDefense: boolean;
+}
+
+export interface TableCReroll {
+  originalId: number;
+  originalName: string;
+  reason: string;
+}
+
 export interface ChaosFormResult {
+  level: number;
   chassis: Chassis;
   primaryFeature: PrimaryFeature;
   defensiveFeature: DefensiveFeature;
   feats: Feat[];
   tableCRerolled: boolean;
+  tableCRerollInfo: TableCReroll | null;
   fatesMercyApplied: boolean;
+  fatesMercy: FatesMercyDetails;
 }
 
 /**
@@ -51,13 +74,21 @@ export function isTableCIncompatible(
 
 /**
  * Returns the number of Table D feat rolls granted at the given level.
+ *
+ * Source: The Fatebound.md, Table D Rolls table
+ * - Levels 1-3: 0
+ * - Levels 4-7: 1
+ * - Levels 8-11: 2
+ * - Levels 12-15: 3
+ * - Levels 16-18: 4
+ * - Levels 19+: 5
  */
 export function getTableDRollCount(level: number): number {
-  if (level >= 20) return 5;
-  if (level >= 17) return 4;
-  if (level >= 13) return 3;
-  if (level >= 9) return 2;
-  if (level >= 5) return 1;
+  if (level >= 19) return 5;
+  if (level >= 16) return 4;
+  if (level >= 12) return 3;
+  if (level >= 8) return 2;
+  if (level >= 4) return 1;
   return 0;
 }
 
@@ -131,14 +162,104 @@ function needsFatesMercy(
 }
 
 /**
+ * Build the incompatibility reason string for a Table C reroll.
+ */
+function getIncompatibilityReason(
+  chassis: Chassis,
+  primary: PrimaryFeature,
+  defensive: DefensiveFeature
+): string {
+  if (defensive.incompatibleChassis?.includes(chassis.id)) {
+    return `Incompatible: ${chassis.name} + ${defensive.name}`;
+  }
+  if (defensive.requiresSpellcasting && !primary.hasSpellcasting) {
+    return `Incompatible: ${defensive.name} requires spellcasting but ${primary.name} does not grant it`;
+  }
+  return "Incompatible combination";
+}
+
+/**
+ * Apply Fate's Mercy corrections to a Chaos Form chassis.
+ *
+ * Per the rules (The Fatebound.md lines 79-82):
+ * - Minimum d8 hit die (upgrade d6 to d8)
+ * - Light armor proficiency (if chassis grants none)
+ * - Simple weapon proficiency (if chassis lacks simple/martial)
+ * - AC floor of 12 + DEX modifier (always noted)
+ * - Fate Strike cantrip if no combat option from any table
+ * - Arcanist + Rage = bonus Unarmored Defense (CON)
+ *
+ * Returns a deep copy of the chassis with corrections applied, plus detail flags.
+ */
+function applyFatesMercyCorrections(
+  chassis: Chassis,
+  primary: PrimaryFeature,
+  defensive: DefensiveFeature,
+  feats: Feat[]
+): { chassis: Chassis; mercy: FatesMercyDetails } {
+  const corrected: Chassis = {
+    ...chassis,
+    armorProficiencies: [...chassis.armorProficiencies],
+    weaponProficiencies: [...chassis.weaponProficiencies],
+  };
+
+  const mercy: FatesMercyDetails = {
+    hitDieUpgraded: false,
+    armorAdded: false,
+    weaponAdded: false,
+    acFloor: true, // AC floor of 12+DEX always applies as a minimum
+    grantsFateStrike: false,
+    bonusUnarmoredDefense: false,
+  };
+
+  // Upgrade d6 hit die to d8
+  if (corrected.hitDie < 8) {
+    corrected.hitDie = 8 as HitDie;
+    mercy.hitDieUpgraded = true;
+  }
+
+  // Add light armor if chassis grants none (i.e., only has "none")
+  const hasArmor = corrected.armorProficiencies.some((a) => a !== "none");
+  if (!hasArmor) {
+    corrected.armorProficiencies = corrected.armorProficiencies.filter(
+      (a) => a !== "none"
+    );
+    corrected.armorProficiencies.push("light");
+    mercy.armorAdded = true;
+  }
+
+  // Add simple weapon proficiency if chassis lacks simple/martial
+  const hasBasicWeapons = corrected.weaponProficiencies.some(
+    (w) => w === "simple" || w === "martial"
+  );
+  if (!hasBasicWeapons) {
+    corrected.weaponProficiencies.push("simple");
+    mercy.weaponAdded = true;
+  }
+
+  // Grant Fate Strike cantrip if no combat option exists
+  if (needsFatesMercy(corrected, primary)) {
+    mercy.grantsFateStrike = true;
+  }
+
+  // Arcanist chassis (id 7) + Rage (Table B id 1) = bonus Unarmored Defense (CON)
+  if (chassis.id === 7 && primary.id === 1) {
+    mercy.bonusUnarmoredDefense = true;
+  }
+
+  return { chassis: corrected, mercy };
+}
+
+/**
  * Assemble a complete Chaos Form.
  *
  * If `rolls` are provided, those values are used (for testing or DM override).
  * Otherwise, each table is rolled randomly via Fate's Selection.
  *
- * Table C is rerolled if the initial result is incompatible with the chassis
- * and primary feature. Fate's Mercy is applied as a floor if the resulting
- * combination has no combat capability.
+ * Table C is rerolled ONCE if the initial result is incompatible with the
+ * chassis and primary feature. The second result stands regardless (per rules).
+ *
+ * Fate's Mercy corrections are always applied to ensure minimum viability.
  */
 export function assembleChaosForm(
   level: number,
@@ -150,22 +271,40 @@ export function assembleChaosForm(
   }
 ): ChaosFormResult {
   // Roll or use provided Table A
-  const chassisRoll = rolls?.tableA ?? rollFatesSelection(TABLE_A_CHASSIS.length);
-  const chassis = TABLE_A_CHASSIS[chassisRoll - 1];
+  const chassisRoll =
+    rolls?.tableA ?? rollFatesSelection(TABLE_A_CHASSIS.length);
+  const originalChassis = TABLE_A_CHASSIS[chassisRoll - 1];
 
   // Roll or use provided Table B
-  const primaryRoll = rolls?.tableB ?? rollFatesSelection(TABLE_B_PRIMARY.length);
+  const primaryRoll =
+    rolls?.tableB ?? rollFatesSelection(TABLE_B_PRIMARY.length);
   const primaryFeature = TABLE_B_PRIMARY[primaryRoll - 1];
 
-  // Roll or use provided Table C, with incompatibility reroll
-  let defensiveRoll = rolls?.tableC ?? rollFatesSelection(TABLE_C_DEFENSIVE.length);
+  // Roll or use provided Table C, with ONE incompatibility reroll
+  let defensiveRoll =
+    rolls?.tableC ?? rollFatesSelection(TABLE_C_DEFENSIVE.length);
   let tableCRerolled = false;
+  let tableCRerollInfo: TableCReroll | null = null;
 
-  if (isTableCIncompatible(chassis.id, primaryFeature.id, defensiveRoll)) {
+  if (
+    isTableCIncompatible(originalChassis.id, primaryFeature.id, defensiveRoll)
+  ) {
+    const originalDefensive = TABLE_C_DEFENSIVE[defensiveRoll - 1];
+    const reason = getIncompatibilityReason(
+      originalChassis,
+      primaryFeature,
+      originalDefensive
+    );
+
     tableCRerolled = true;
-    do {
-      defensiveRoll = rollFatesSelection(TABLE_C_DEFENSIVE.length);
-    } while (isTableCIncompatible(chassis.id, primaryFeature.id, defensiveRoll));
+    tableCRerollInfo = {
+      originalId: defensiveRoll,
+      originalName: originalDefensive.name,
+      reason,
+    };
+
+    // Reroll exactly once — the second result stands regardless
+    defensiveRoll = rollFatesSelection(TABLE_C_DEFENSIVE.length);
   }
 
   const defensiveFeature = TABLE_C_DEFENSIVE[defensiveRoll - 1];
@@ -183,15 +322,30 @@ export function assembleChaosForm(
     feats = rollTableDFeats(featCount);
   }
 
-  // Fate's Mercy floor check
-  const fatesMercyApplied = needsFatesMercy(chassis, primaryFeature);
+  // Apply Fate's Mercy corrections
+  const { chassis, mercy } = applyFatesMercyCorrections(
+    originalChassis,
+    primaryFeature,
+    defensiveFeature,
+    feats
+  );
+
+  const fatesMercyApplied =
+    mercy.hitDieUpgraded ||
+    mercy.armorAdded ||
+    mercy.weaponAdded ||
+    mercy.grantsFateStrike ||
+    mercy.bonusUnarmoredDefense;
 
   return {
+    level,
     chassis,
     primaryFeature,
     defensiveFeature,
     feats,
     tableCRerolled,
+    tableCRerollInfo,
     fatesMercyApplied,
+    fatesMercy: mercy,
   };
 }
