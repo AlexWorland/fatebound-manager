@@ -54,7 +54,7 @@ export const BLADE_SUBCLASSES: SubclassEntry[] = [
     name: "Arcane Archer",
     level9Feature: {
       name: "Arcane Shot",
-      description: "Randomly select 2 Arcane Shot options from: 1-Banishing, 2-Beguiling, 3-Bursting, 4-Enfeebling, 5-Grasping, 6-Piercing, 7-Seeking, 8-Shadow. Gain 2 uses per short rest; shots deal +2d6 of their type. All arrows you fire count as magical.",
+      description: "Randomly select 2 Arcane Shot options from: 1-Banishing, 2-Beguiling, 3-Bursting, 4-Enfeebling, 5-Grasping, 6-Piercing, 7-Seeking, 8-Shadow. Gain 2 uses per short rest; shots deal +2d6 of their type. All arrows you fire count as magical. Save DC = 8 + proficiency bonus + Intelligence modifier.",
     },
     level13Feature: {
       name: "Curving Shot",
@@ -118,7 +118,7 @@ export const BLADE_SUBCLASSES: SubclassEntry[] = [
     name: "Psi Warrior",
     level9Feature: {
       name: "Psionic Power",
-      description: "Gain psionic energy dice equal to twice your proficiency bonus (d6 each, recharge on long rest; spend 1 to recharge one die on a short rest). Use them for: Protective Field (reaction: reduce damage to yourself or an ally within 30 ft by the die roll), Psionic Strike (bonus force damage on a hit equal to the die), or Telekinetic Movement (move one Large-or-smaller creature or object up to 30 ft with an action).",
+      description: "Gain psionic energy dice equal to your proficiency bonus (d6 each, recharge on long rest; spend 1 to recharge one die on a short rest). Use them for: Protective Field (reaction: reduce damage to yourself or an ally within 30 ft by the die roll), Psionic Strike (bonus force damage on a hit equal to the die), or Telekinetic Movement (move one Large-or-smaller creature or object up to 30 ft with an action).",
     },
     level13Feature: {
       name: "Telekinetic Adept",
@@ -134,7 +134,7 @@ export const BLADE_SUBCLASSES: SubclassEntry[] = [
     name: "Rune Knight",
     level9Feature: {
       name: "Rune Carving + Giant's Might",
-      description: "Learn 2 runes (roll 2d6: 1-Cloud, 2-Fire, 3-Frost, 4-Hill, 5-Stone, 6-Storm); each grants an active and a passive benefit (e.g., Fire Rune: +2\u00d7 prof bonus to tool checks, and use reaction to restrain a creature on a hit in a flaming cage). Giant's Might (bonus action, prof bonus/long rest): grow to Large size, deal +1d6 damage once per turn, and gain advantage on STR checks and saves for 1 minute.",
+      description: "Learn 2 runes (roll 2d6: 1-Cloud, 2-Fire, 3-Frost, 4-Hill, 5-Stone, 6-Storm; if you roll the same rune twice, reroll the second die); each grants an active and a passive benefit (e.g., Fire Rune: +2\u00d7 prof bonus to tool checks, and use reaction to restrain a creature on a hit in a flaming cage). Giant's Might (bonus action, prof bonus/long rest): grow to Large size, deal +1d6 damage once per turn, and gain advantage on STR checks and saves for 1 minute.",
     },
     level13Feature: {
       name: "Runic Shield + 3rd Rune",

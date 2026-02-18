@@ -38,7 +38,7 @@ export const FERAL_SUBCLASSES: SubclassEntry[] = [
     name: "Way of the Four Elements",
     level9Feature: {
       name: "Elemental Disciplines",
-      description: "Learn 2 Elemental Disciplines (choose or randomly select 2: 1-Fangs of the Fire Snake, 2-Fist of Unbroken Air, 3-Rush of the Gale Spirits, 4-Shape the Flowing River, 5-Sweeping Cinder Strike, 6-Water Whip, 7-Wave of Rolling Earth, 8-Clench of the North Wind). Each discipline lets you spend Ki to produce magical effects; disciplines that replicate spells use your WIS modifier.",
+      description: "Learn 2 Elemental Disciplines (randomly select 2: 1-Fangs of the Fire Snake, 2-Fist of Unbroken Air, 3-Rush of the Gale Spirits, 4-Shape the Flowing River, 5-Sweeping Cinder Strike, 6-Water Whip, 7-Wave of Rolling Earth, 8-Clench of the North Wind). Each discipline lets you spend Ki to produce magical effects; disciplines that replicate spells use your WIS modifier.",
     },
     level13Feature: {
       name: "Additional Discipline + Reduced Cost",

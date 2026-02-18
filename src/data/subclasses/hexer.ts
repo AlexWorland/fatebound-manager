@@ -125,8 +125,8 @@ export const HEXER_SUBCLASSES: SubclassEntry[] = [
       description: "You gain resistance to your genie's damage type (bludgeoning for Dao, thunder for Djinni, fire for Efreeti, cold for Marid). As a bonus action, you can gain a fly speed of 30 ft for up to 10 minutes (proficiency bonus uses per long rest).",
     },
     level17Feature: {
-      name: "Wish",
-      description: "Once per long rest, you can cast wish (PHB) \u2014 with the following restriction: you may not use the 1-in-10 chance of losing the ability to cast it again variant.",
+      name: "Limited Wish",
+      description: "Once per long rest, choose one spell of 6th level or lower from any spell list. That spell is cast as part of this action, requiring no components or spell slots. You don't need to meet any requirements of the spell, including level requirements.",
     },
   },
   {
@@ -143,22 +143,6 @@ export const HEXER_SUBCLASSES: SubclassEntry[] = [
     level17Feature: {
       name: "Indestructible Life",
       description: "When you make a death saving throw and roll a 20, you regain 1 HP as normal \u2014 and additionally regain HP equal to your Fatebound level. You have advantage on death saving throws. When you stabilize, you regain consciousness (1 HP) at the start of your next turn rather than after 1d4 hours.",
-    },
-  },
-  {
-    id: "hexer-kraken",
-    name: "The Kraken",
-    level9Feature: {
-      name: "Kraken's Grasp + Oceanic Soul",
-      description: "When you cast Eldritch Blast, you can have one beam carry a grasping tendril \u2014 the target must make a STR save or be restrained until the start of your next turn. Gain resistance to lightning damage and the ability to breathe underwater. Once per turn, deal bonus lightning damage on a hit = prof bonus.",
-    },
-    level13Feature: {
-      name: "Kraken's Reach",
-      description: "Your Eldritch Blast beams can originate from any point within 30 ft of you that you can see, rather than only from yourself. Creatures restrained by your Kraken's Grasp take 1d8 lightning damage at the start of each of their turns.",
-    },
-    level17Feature: {
-      name: "Kraken's Wrath",
-      description: "Action (1/long rest): each creature of your choice within 60 ft must make a STR save. On a failure, they take 10d6 lightning damage and are restrained by spectral tentacles for 1 minute (STR save at end of each turn to escape); on a success, half damage and no restraint. While any creature is restrained this way, you have advantage on attack rolls against it.",
     },
   },
 ];

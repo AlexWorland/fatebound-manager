@@ -38,7 +38,7 @@ export const TEMPEST_SUBCLASSES: SubclassEntry[] = [
     name: "Ancestral Guardian",
     level9Feature: {
       name: "Spirit Shield",
-      description: "While raging, the first creature you hit each turn has disadvantage on attacks against anyone other than you, and allies have resistance to that creature's damage, until your next turn.",
+      description: "While raging, the first creature you hit each turn has disadvantage on attacks against anyone other than you, and you can use your reaction to reduce that damage by 2d6 (increases to 3d6 at level 13, 4d6 at level 17), until your next turn.",
     },
     level13Feature: {
       name: "Consult the Spirits",
@@ -54,7 +54,7 @@ export const TEMPEST_SUBCLASSES: SubclassEntry[] = [
     name: "Storm Herald",
     level9Feature: {
       name: "Storm Aura",
-      description: "While raging, emit a 10-ft aura. Choose when you rage: Desert (deal 1d4 + proficiency bonus fire damage to one chosen creature/turn), Sea (one creature makes DEX save or takes 2d6 lightning, half on save), or Tundra (chosen creatures gain CON mod temp HP/turn).",
+      description: "While raging, emit a 10-ft aura. Randomly select (see Fate's Selection): Desert (deal 1d4 + proficiency bonus fire damage to one chosen creature/turn), Sea (one creature makes DEX save or takes 2d6 lightning, half on save), or Tundra (chosen creatures gain CON mod temp HP/turn).",
     },
     level13Feature: {
       name: "Storm Soul",
@@ -86,7 +86,7 @@ export const TEMPEST_SUBCLASSES: SubclassEntry[] = [
     name: "Beast",
     level9Feature: {
       name: "Form of the Beast",
-      description: "On the Attack action while raging, your body sprouts a natural weapon. Choose one: Bite (1d8 piercing; on hit, regain HP = proficiency bonus, once per turn), Claws (two attacks each dealing 1d6 slashing), or Tail (reach, 1d8 piercing; reaction when hit to add 1d8 to AC for that attack).",
+      description: "On the Attack action while raging, your body sprouts a natural weapon. Randomly select (see Fate's Selection): Bite (1d8 piercing; on hit, regain HP = proficiency bonus, once per turn), Claws (two attacks each dealing 1d6 slashing), or Tail (reach, 1d8 piercing; reaction when hit to add 1d8 to AC for that attack).",
     },
     level13Feature: {
       name: "Infectious Fury",
@@ -102,7 +102,7 @@ export const TEMPEST_SUBCLASSES: SubclassEntry[] = [
     name: "Wild Magic",
     level9Feature: {
       name: "Wild Surge",
-      description: "While raging, you emanate wild magic. At the start of each of your turns while raging, the DM can have you randomly select from the Wild Magic Surge table (PHB) \u2014 on an 8, you cast detect magic for free. Additionally, once per rage you can randomly select from the table voluntarily.",
+      description: "While raging, you emanate wild magic. At the start of each of your turns while raging, the DM can have you randomly select from the Wild Magic Surge table (Tasha's Cauldron of Everything) \u2014 on an 8, you cast detect magic for free. Additionally, once per rage you can randomly select from the table voluntarily.",
     },
     level13Feature: {
       name: "Unstable Backlash",
@@ -118,7 +118,7 @@ export const TEMPEST_SUBCLASSES: SubclassEntry[] = [
     name: "Battlerager",
     level9Feature: {
       name: "Spiked Armor",
-      description: "While raging in spiked armor, make a bonus action attack (1d4 piercing) against a creature you've grappled. Grappling a creature deals 3 piercing at the start of your turns. When you use Reckless Attack, gain temp HP = proficiency bonus.",
+      description: "Your current armor magically transforms into spiked armor for the duration of your form. It reverts when your form changes. While raging in spiked armor, make a bonus action attack (1d4 piercing) against a creature you've grappled. Grappling a creature deals 3 piercing at the start of your turns. When you use Reckless Attack, gain temp HP = proficiency bonus.",
     },
     level13Feature: {
       name: "Battlerager Charge",
