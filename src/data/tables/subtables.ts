@@ -35,66 +35,73 @@ export const WILDCARD_MARTIAL_WEAPONS: WildcardWeapon[] = [
   { id: 12, name: "Whip", damage: "1d4 slashing", properties: "Finesse, Reach" },
 ];
 
+export type PactBoon = "blade" | "chain" | "tome";
+
 export interface EldritchInvocation {
   id: number;
   name: string;
+  effect: string;
+  pactRequired?: PactBoon;
+  requiresEldritchBlast?: boolean;
+  requiresHexOrCurse?: boolean;
 }
 
-/** Placeholder for the full 50-entry invocation table from the supplementary document.
- *  The invocation table uses Fate's Selection (d100; on 51-100, reroll).
+/** Full 50-entry invocation table from the supplementary document.
+ *  Fate's Selection (d100; on 51-100, reroll). Duplicates rerolled.
  *  Pact Boon prerequisites apply — reroll pact-dependent invocations you can't use.
- *  Level prerequisites are waived. */
+ *  Level prerequisites are waived.
+ *  Pact of the Talisman invocations are excluded. */
 export const ELDRITCH_INVOCATIONS: EldritchInvocation[] = [
-  { id: 1, name: "Agonizing Blast" },
-  { id: 2, name: "Armor of Shadows" },
-  { id: 3, name: "Ascendant Step" },
-  { id: 4, name: "Beast Speech" },
-  { id: 5, name: "Beguiling Influence" },
-  { id: 6, name: "Bewitching Whispers" },
-  { id: 7, name: "Bond of the Talisman" },
-  { id: 8, name: "Book of Ancient Secrets" },
-  { id: 9, name: "Chains of Carceri" },
-  { id: 10, name: "Cloak of Flies" },
-  { id: 11, name: "Devil's Sight" },
-  { id: 12, name: "Dreadful Word" },
-  { id: 13, name: "Eldritch Mind" },
-  { id: 14, name: "Eldritch Sight" },
-  { id: 15, name: "Eldritch Smite" },
-  { id: 16, name: "Eyes of the Rune Keeper" },
-  { id: 17, name: "Far Scribe" },
-  { id: 18, name: "Fiendish Vigor" },
-  { id: 19, name: "Gaze of Two Minds" },
-  { id: 20, name: "Ghostly Gaze" },
-  { id: 21, name: "Gift of the Depths" },
-  { id: 22, name: "Gift of the Ever-Living Ones" },
-  { id: 23, name: "Gift of the Protectors" },
-  { id: 24, name: "Grasp of Hadar" },
-  { id: 25, name: "Improved Pact Weapon" },
-  { id: 26, name: "Investment of the Chain Master" },
-  { id: 27, name: "Lance of Lethargy" },
-  { id: 28, name: "Lifedrinker" },
-  { id: 29, name: "Mask of Many Faces" },
-  { id: 30, name: "Master of Myriad Forms" },
-  { id: 31, name: "Minions of Chaos" },
-  { id: 32, name: "Mire the Mind" },
-  { id: 33, name: "Misty Visions" },
-  { id: 34, name: "One with Shadows" },
-  { id: 35, name: "Otherworldly Leap" },
-  { id: 36, name: "Protection of the Talisman" },
-  { id: 37, name: "Rebuke of the Talisman" },
-  { id: 38, name: "Relentless Hex" },
-  { id: 39, name: "Repelling Blast" },
-  { id: 40, name: "Sculptor of Flesh" },
-  { id: 41, name: "Shroud of Shadow" },
-  { id: 42, name: "Sign of Ill Omen" },
-  { id: 43, name: "Thief of Five Fates" },
-  { id: 44, name: "Thirsting Blade" },
-  { id: 45, name: "Tomb of Levistus" },
-  { id: 46, name: "Trickster's Escape" },
-  { id: 47, name: "Undying Servitude" },
-  { id: 48, name: "Visions of Distant Realms" },
-  { id: 49, name: "Whispers of the Grave" },
-  { id: 50, name: "Witch Sight" },
+  { id: 1, name: "Agonizing Blast", effect: "Add CHA mod to eldritch blast damage (each beam).", requiresEldritchBlast: true },
+  { id: 2, name: "Armor of Shadows", effect: "Cast mage armor on self at will, without a spell slot." },
+  { id: 3, name: "Ascendant Step", effect: "Cast levitate on self at will, without a spell slot." },
+  { id: 4, name: "Aspect of the Moon", effect: "You no longer need sleep; you remain conscious during a 4-hour trance that replaces sleep.", pactRequired: "tome" },
+  { id: 5, name: "Beast Speech", effect: "Cast speak with animals at will, without a spell slot." },
+  { id: 6, name: "Beguiling Influence", effect: "Proficiency in Deception and Persuasion." },
+  { id: 7, name: "Bewitching Whispers", effect: "Cast compulsion once using a warlock spell slot (1/long rest)." },
+  { id: 8, name: "Book of Ancient Secrets", effect: "Record ritual spells in your Book of Shadows from any class's spell list; cast any recorded ritual.", pactRequired: "tome" },
+  { id: 9, name: "Chains of Carceri", effect: "Cast hold monster at will — targeting celestials, fiends, or elementals only — without a spell slot.", pactRequired: "chain" },
+  { id: 10, name: "Cloak of Flies", effect: "Bonus action: surround yourself with a 5-ft aura of flies. Creatures starting their turn in the aura take CHA mod poison damage. Advantage on Intimidation, disadvantage on other CHA checks. Lasts until dismissed or incapacitated (1/short rest)." },
+  { id: 11, name: "Devil's Sight", effect: "See normally in magical and nonmagical darkness to 120 ft." },
+  { id: 12, name: "Dreadful Word", effect: "Cast confusion once using a warlock spell slot (1/long rest)." },
+  { id: 13, name: "Eldritch Mind", effect: "Advantage on CON saves to maintain concentration on a spell." },
+  { id: 14, name: "Eldritch Sight", effect: "Cast detect magic at will, without a spell slot." },
+  { id: 15, name: "Eldritch Smite", effect: "On hit with your Pact weapon, expend a spell slot: +1d8 force damage per slot level (minimum 2d8), and knock the target prone if Huge or smaller.", pactRequired: "blade" },
+  { id: 16, name: "Eldritch Spear", effect: "Eldritch blast range increases to 300 ft.", requiresEldritchBlast: true },
+  { id: 17, name: "Eyes of the Rune Keeper", effect: "Read all writing." },
+  { id: 18, name: "Far Scribe", effect: "A new page appears in your Book of Shadows. Creatures who write their name on it can be contacted via sending (uses = prof bonus/long rest).", pactRequired: "tome" },
+  { id: 19, name: "Fiendish Vigor", effect: "Cast false life on self at will, without a spell slot." },
+  { id: 20, name: "Gaze of Two Minds", effect: "Touch a willing humanoid and perceive through its senses (use your action each turn to maintain)." },
+  { id: 21, name: "Ghostly Gaze", effect: "As an action, gain the ability to see through solid objects to 30 ft for 1 minute (1/short rest)." },
+  { id: 22, name: "Gift of the Depths", effect: "Breathe underwater and gain a swim speed equal to your walking speed. Cast water breathing once without a spell slot (1/long rest)." },
+  { id: 23, name: "Gift of the Protectors", effect: "A page in your Book of Shadows allows creatures (up to prof bonus) who inscribe their name to drop to 1 HP instead of 0 HP, once per long rest each.", pactRequired: "tome" },
+  { id: 24, name: "Grasp of Hadar", effect: "Once per turn, when you hit with eldritch blast, pull the target 10 ft closer to you.", requiresEldritchBlast: true },
+  { id: 25, name: "Improved Pact Weapon", effect: "Your Pact weapon gains +1 to attack and damage rolls, can serve as a spellcasting focus, and can take the form of a shortbow, longbow, light crossbow, or heavy crossbow.", pactRequired: "blade" },
+  { id: 26, name: "Investment of the Chain Master", effect: "Your familiar's attacks use your spell attack bonus and deal extra damage = prof bonus. As a reaction when your familiar takes damage, grant it resistance to that damage.", pactRequired: "chain" },
+  { id: 27, name: "Lance of Lethargy", effect: "Once per turn, when you hit with eldritch blast, reduce the target's speed by 10 ft until the end of your next turn.", requiresEldritchBlast: true },
+  { id: 28, name: "Lifedrinker", effect: "When you hit with your Pact weapon, deal extra necrotic damage = CHA mod (minimum 1).", pactRequired: "blade" },
+  { id: 29, name: "Maddening Hex", effect: "Bonus action: deal CHA mod psychic damage to your cursed target and each creature of your choice within 5 ft of it.", requiresHexOrCurse: true },
+  { id: 30, name: "Mask of Many Faces", effect: "Cast disguise self at will, without a spell slot." },
+  { id: 31, name: "Master of Myriad Forms", effect: "Cast alter self at will, without a spell slot." },
+  { id: 32, name: "Minions of Chaos", effect: "Cast conjure elemental once using a warlock spell slot (1/long rest)." },
+  { id: 33, name: "Mire the Mind", effect: "Cast slow once using a warlock spell slot (1/long rest)." },
+  { id: 34, name: "Misty Visions", effect: "Cast silent image at will, without a spell slot." },
+  { id: 35, name: "One with Shadows", effect: "In dim light or darkness, become invisible as an action (until you move, attack, or cast a spell)." },
+  { id: 36, name: "Otherworldly Leap", effect: "Cast jump on self at will, without a spell slot." },
+  { id: 37, name: "Relentless Hex", effect: "Bonus action: teleport up to 30 ft to an unoccupied space within 5 ft of your cursed target.", requiresHexOrCurse: true },
+  { id: 38, name: "Repelling Blast", effect: "When you hit with eldritch blast, push the target up to 10 ft away from you.", requiresEldritchBlast: true },
+  { id: 39, name: "Sculptor of Flesh", effect: "Cast polymorph once using a warlock spell slot (1/long rest)." },
+  { id: 40, name: "Shroud of Shadow", effect: "Cast invisibility at will, without a spell slot." },
+  { id: 41, name: "Sign of Ill Omen", effect: "Cast bestow curse once using a warlock spell slot (1/long rest)." },
+  { id: 42, name: "Thief of Five Fates", effect: "Cast bane once using a warlock spell slot (1/long rest)." },
+  { id: 43, name: "Thirsting Blade", effect: "Attack twice when you take the Attack action with your Pact weapon.", pactRequired: "blade" },
+  { id: 44, name: "Tomb of Levistus", effect: "Reaction when you take damage: entomb yourself in ice and gain 10 temp HP per Fatebound level. You are incapacitated and have vulnerability to fire until end of your next turn (1/short rest)." },
+  { id: 45, name: "Trickster's Escape", effect: "Cast freedom of movement on self once without a spell slot (1/long rest)." },
+  { id: 46, name: "Undying Servitude", effect: "Cast animate dead once without a spell slot (1/long rest)." },
+  { id: 47, name: "Visions of Distant Realms", effect: "Cast arcane eye at will, without a spell slot." },
+  { id: 48, name: "Voice of the Chain Master", effect: "Communicate telepathically with your familiar and perceive through its senses while on the same plane.", pactRequired: "chain" },
+  { id: 49, name: "Whispers of the Grave", effect: "Cast speak with dead at will, without a spell slot." },
+  { id: 50, name: "Witch Sight", effect: "See the true form of any shapechanger or creature concealed by illusion or transmutation magic within 30 ft." },
 ];
 
 export interface BattleMasterManeuver {
