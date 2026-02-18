@@ -41,3 +41,13 @@ export function getMysticArcanumLevel(level: number): number | null {
   if (level >= 13) return 6;
   return null;
 }
+
+/** Arcane Recovery / Natural Recovery: combined spell slot levels recoverable
+ *  on a short rest (1/day). Used by Sage (Wizard) and Shepherd Circle of the Land.
+ *  Returns ceil(fateboundLevel / 2).
+ *
+ *  Source: "recover spell slots with a combined level equal to half your
+ *  Fatebound level (rounded up)" */
+export function getArcaneRecoveryBudget(level: number): number {
+  return Math.ceil(level / 2);
+}
