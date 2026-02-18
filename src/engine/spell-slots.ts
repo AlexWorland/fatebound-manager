@@ -15,10 +15,15 @@ export function getSpellSlots(level: number): Record<number, number> {
 }
 
 /** Hexer (Stabilized Form) short rest slot recovery.
- *  Returns the spell slot level recovered: floor(characterLevel / 3), minimum 1, capped at 5. */
+ *  Returns the highest available spell slot level from the half-caster table. */
 export function getShortRestRecoverySlot(level: number): number {
-  const slotLevel = Math.floor(level / 3);
-  return Math.min(Math.max(slotLevel, 1), 5);
+  const row = SPELL_SLOT_TABLE.find((r) => r.level === level);
+  if (!row) return 1;
+  // Find the highest spell level (index+1) with > 0 slots
+  for (let i = row.slots.length - 1; i >= 0; i--) {
+    if (row.slots[i] > 0) return i + 1;
+  }
+  return 1; // minimum 1st-level slot
 }
 
 /** Mystic Arcanum availability for caster Stabilized Forms (level 13+).

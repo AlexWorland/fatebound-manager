@@ -193,3 +193,93 @@ describe("validateMemoryAllocation", () => {
     expect(result.valid).toBe(false);
   });
 });
+
+describe("anti-daisy-chaining validation (M7)", () => {
+  it("rejects a feature that was retained the previous day", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "extra-attack", category: 1 }],
+        useDualNature: false,
+      },
+      6,
+      ["extra-attack"]
+    );
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes("anti-daisy-chaining"))).toBe(true);
+  });
+
+  it("allows a feature that was NOT retained the previous day", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "extra-attack", category: 1 }],
+        useDualNature: false,
+      },
+      6,
+      ["rage"]
+    );
+    expect(result.valid).toBe(true);
+  });
+
+  it("allows any feature when no previous day data is provided", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "extra-attack", category: 1 }],
+        useDualNature: false,
+      },
+      6
+    );
+    expect(result.valid).toBe(true);
+  });
+});
+
+describe("variable cost support (M8)", () => {
+  it("Action Surge costs 2 Fate Pool points", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "action-surge", category: 1 }],
+        useDualNature: false,
+      },
+      11
+    );
+    expect(result.valid).toBe(true);
+    expect(result.pointsUsed).toBe(2);
+    expect(result.pointsRemaining).toBe(1);
+  });
+
+  it("Action Surge + Dual Nature = 4 points, exceeds level 11 pool of 3", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "action-surge", category: 1 }],
+        useDualNature: true,
+      },
+      11
+    );
+    expect(result.valid).toBe(false);
+    expect(result.pointsUsed).toBe(4);
+  });
+
+  it("Action Surge + Dual Nature fits at level 15 (4-point pool)", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "action-surge", category: 1 }],
+        useDualNature: true,
+      },
+      15
+    );
+    expect(result.valid).toBe(true);
+    expect(result.pointsUsed).toBe(4);
+    expect(result.pointsRemaining).toBe(0);
+  });
+
+  it("regular features still cost 1 point each", () => {
+    const result = validateMemoryAllocation(
+      {
+        retainedFeatures: [{ featureId: "rage", category: 2 }],
+        useDualNature: false,
+      },
+      11
+    );
+    expect(result.valid).toBe(true);
+    expect(result.pointsUsed).toBe(1);
+  });
+});

@@ -195,11 +195,11 @@ describe("Spell Slot + Caster Integration", () => {
   });
 
   it("Hexer short rest recovery scales with level", () => {
-    expect(getShortRestRecoverySlot(3)).toBe(1); // floor(3/3) = 1
-    expect(getShortRestRecoverySlot(6)).toBe(2); // floor(6/3) = 2
-    expect(getShortRestRecoverySlot(9)).toBe(3);
-    expect(getShortRestRecoverySlot(15)).toBe(5); // capped at 5
-    expect(getShortRestRecoverySlot(20)).toBe(5);
+    expect(getShortRestRecoverySlot(3)).toBe(1); // highest slot at level 3: 1st
+    expect(getShortRestRecoverySlot(6)).toBe(2); // highest slot at level 6: 2nd
+    expect(getShortRestRecoverySlot(9)).toBe(3); // highest slot at level 9: 3rd
+    expect(getShortRestRecoverySlot(15)).toBe(4); // highest slot at level 15: 4th
+    expect(getShortRestRecoverySlot(20)).toBe(5); // highest slot at level 20: 5th
   });
 
   it("Mystic Arcanum availability matches level thresholds", () => {

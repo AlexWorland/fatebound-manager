@@ -3,8 +3,10 @@ export type AbilityScore = "STR" | "DEX" | "CON" | "INT" | "WIS" | "CHA";
 export type ArmorProficiency =
   | "heavy"
   | "medium"
+  | "medium (nonmetal)"
   | "light"
   | "shields"
+  | "shields (nonmetal)"
   | "none";
 
 export type WeaponProficiency =
@@ -15,6 +17,7 @@ export type WeaponProficiency =
   | "rapiers"
   | "shortswords"
   | "longswords"
+  | "scimitars"
   | "daggers"
   | "quarterstaffs"
   | "light_crossbows"

@@ -75,9 +75,13 @@ describe("getShortRestRecoverySlot (Hexer)", () => {
     expect(getShortRestRecoverySlot(6)).toBe(2);
   });
 
-  it("level 20 recovers a 6th-level slot (capped at max spell level 5)", () => {
-    // 20 ÷ 3 = 6.6 → floor = 6, but max slot is 5
+  it("level 20 recovers a 5th-level slot (highest with >0 slots)", () => {
     expect(getShortRestRecoverySlot(20)).toBe(5);
+  });
+
+  it("level 5 recovers a 2nd-level slot (highest slot level with slots)", () => {
+    // Level 5 has slots [4, 2, 0, 0, 0] — highest with >0 is 2nd
+    expect(getShortRestRecoverySlot(5)).toBe(2);
   });
 });
 
@@ -142,14 +146,14 @@ describe("getSpellSlots edge cases", () => {
 });
 
 describe("getShortRestRecoverySlot edge cases", () => {
-  it("level 15 recovers a 5th-level slot (max)", () => {
-    // 15 ÷ 3 = 5 (exact cap)
-    expect(getShortRestRecoverySlot(15)).toBe(5);
+  it("level 15 recovers a 4th-level slot (highest with >0 slots)", () => {
+    // Level 15 has slots [4, 3, 3, 2, 0] — highest with >0 is 4th
+    expect(getShortRestRecoverySlot(15)).toBe(4);
   });
 
-  it("level 12 recovers a 4th-level slot", () => {
-    // 12 ÷ 3 = 4
-    expect(getShortRestRecoverySlot(12)).toBe(4);
+  it("level 12 recovers a 3rd-level slot", () => {
+    // Level 12 has slots [4, 3, 3, 0, 0] — highest with >0 is 3rd
+    expect(getShortRestRecoverySlot(12)).toBe(3);
   });
 
   it("level 2 recovers a 1st-level slot (minimum floor)", () => {
