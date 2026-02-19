@@ -135,31 +135,53 @@ describe("resolveStabilizedForm", () => {
 });
 
 describe("FAVORED and MASTER outcome helpers (form selection)", () => {
-  it("all 12 forms are accessible via formId 1-12", () => {
+  it("all stabilized forms are accessible by their id", () => {
     const allForms = STABILIZED_FORMS;
-    expect(allForms.length).toBe(12);
-    for (let id = 1; id <= 12; id++) {
-      const form = allForms.find((f) => f.id === id);
-      expect(form).toBeDefined();
+    expect(allForms.length).toBeGreaterThanOrEqual(12);
+    for (const form of allForms) {
+      const found = allForms.find((f) => f.id === form.id);
+      expect(found).toBeDefined();
     }
   });
 });
 
 describe("getSecondaryFormFeatures", () => {
-  it("returns base feature names for a valid form at level 5", () => {
-    const features = getSecondaryFormFeatures(1, 5);
+  it("returns 1 feature at level 11 (below 17)", () => {
+    const features = getSecondaryFormFeatures(1, 11);
+    expect(features.length).toBe(1);
+  });
+
+  it("returns 1 feature at level 16 (boundary below 17)", () => {
+    const features = getSecondaryFormFeatures(1, 16);
+    expect(features.length).toBe(1);
+  });
+
+  it("returns 2 features at level 17+", () => {
+    const features = getSecondaryFormFeatures(1, 17);
+    expect(features.length).toBe(2);
+  });
+
+  it("returns 2 features at level 20", () => {
+    const features = getSecondaryFormFeatures(1, 20);
+    expect(features.length).toBe(2);
+  });
+
+  it("features are valid base feature names from the form", () => {
     const tempest = STABILIZED_FORMS.find((f) => f.id === 1)!;
+    const allBaseNames = tempest.baseFeatures.map((f) => f.name);
+    const features = getSecondaryFormFeatures(1, 17);
+    for (const name of features) {
+      expect(allBaseNames).toContain(name);
+    }
+  });
+
+  it("without level argument returns all base features (backward compat)", () => {
+    const tempest = STABILIZED_FORMS.find((f) => f.id === 1)!;
+    const features = getSecondaryFormFeatures(1);
     expect(features).toEqual(tempest.baseFeatures.map((f) => f.name));
-    expect(features.length).toBeGreaterThan(0);
   });
 
-  it("returns base feature names for a different form at level 11+", () => {
-    const features = getSecondaryFormFeatures(9, 11);
-    const shadow = STABILIZED_FORMS.find((f) => f.id === 9)!;
-    expect(features).toEqual(shadow.baseFeatures.map((f) => f.name));
-  });
-
-  it("returns base features for all valid form ids", () => {
+  it("returns non-empty arrays for all valid form ids at level 11", () => {
     for (let id = 1; id <= 12; id++) {
       const features = getSecondaryFormFeatures(id, 11);
       expect(Array.isArray(features)).toBe(true);

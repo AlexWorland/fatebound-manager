@@ -84,14 +84,25 @@ export function resolveStabilizedForm(
  * Get secondary form features for Dual Nature (level 11+).
  * Returns base feature names the player can pick from for a given form.
  * The secondary form only grants base features, not subclass tiers.
+ *
+ * Feature limit (UI selection slots):
+ * - Level 17+: 2 features
+ * - Below 17:  1 feature
+ *
+ * When `level` is omitted (for backward compatibility), all base features are returned.
  */
+export function getSecondaryFormFeatures(formId: number): string[];
+export function getSecondaryFormFeatures(formId: number, level: number): string[];
 export function getSecondaryFormFeatures(
   formId: number,
-  _level: number
+  level?: number
 ): string[] {
   const form = STABILIZED_FORMS.find((f) => f.id === formId);
   if (!form) {
     throw new Error(`No stabilized form found with id ${formId}`);
   }
-  return form.baseFeatures.map((f) => f.name);
+  const all = form.baseFeatures.map((f) => f.name);
+  if (level === undefined) return all;
+  const limit = level >= 17 ? 2 : 1;
+  return all.slice(0, limit);
 }

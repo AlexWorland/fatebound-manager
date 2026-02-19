@@ -53,7 +53,7 @@ export interface DefensiveFeature {
   incompatibleChassis?: number[];
 }
 
-export type StabilizedFormId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type StabilizedFormId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 
 export interface StabilizedForm {
   id: StabilizedFormId;

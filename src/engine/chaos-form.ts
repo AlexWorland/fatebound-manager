@@ -2,12 +2,15 @@ import { TABLE_A_CHASSIS } from "@/data/tables/table-a-chassis";
 import { TABLE_B_PRIMARY } from "@/data/tables/table-b-primary";
 import { TABLE_C_DEFENSIVE } from "@/data/tables/table-c-defensive";
 import { TABLE_D_FEATS } from "@/data/tables/table-d-feats";
+import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
+import { getSubclassesForForm } from "@/data/subclasses/index";
 import { rollFatesSelection } from "@/lib/dice";
 import type {
   Chassis,
   PrimaryFeature,
   DefensiveFeature,
   HitDie,
+  StabilizedFormId,
 } from "@/types/forms";
 import type { Feat } from "@/types/features";
 
@@ -26,6 +29,20 @@ export interface TableCReroll {
   reason: string;
 }
 
+export interface ChaosResonanceResult {
+  /** The randomly selected stabilized form id */
+  formId: StabilizedFormId;
+  /** The name of the selected stabilized form */
+  formName: string;
+  /** The id of the randomly selected subclass */
+  subclassId: string;
+  /** The name of the selected subclass */
+  subclassName: string;
+  /** The level 9 subclass feature granted by Chaos Resonance */
+  featureName: string;
+  featureDescription: string;
+}
+
 export interface ChaosFormResult {
   level: number;
   chassis: Chassis;
@@ -36,6 +53,8 @@ export interface ChaosFormResult {
   tableCRerollInfo: TableCReroll | null;
   fatesMercyApplied: boolean;
   fatesMercy: FatesMercyDetails;
+  /** Chaos Resonance bonus subclass feature (level 15+, Chaos Form only) */
+  chaosResonance: ChaosResonanceResult | null;
 }
 
 /**
@@ -251,6 +270,37 @@ function applyFatesMercyCorrections(
 }
 
 /**
+ * Resolve the Chaos Resonance bonus for a level 15+ character receiving a Chaos Form.
+ *
+ * Source: "randomly select from the Stabilized Form table. Then randomly select from
+ * that form's subclass table using Fate's Selection. You gain that subclass's
+ * Subclass Feature (Level 9) alongside your Chaos Form results."
+ *
+ * If a specific formRoll/subclassRoll are provided they override random selection
+ * (useful for testing).
+ */
+export function assembleChaosResonance(rolls?: {
+  formRoll?: number;
+  subclassRoll?: number;
+}): ChaosResonanceResult {
+  const formRoll = rolls?.formRoll ?? rollFatesSelection(STABILIZED_FORMS.length);
+  const form = STABILIZED_FORMS[formRoll - 1];
+
+  const subclasses = getSubclassesForForm(form.id as StabilizedFormId);
+  const subclassRoll = rolls?.subclassRoll ?? rollFatesSelection(Math.max(subclasses.length, 1));
+  const subclass = subclasses[subclassRoll - 1];
+
+  return {
+    formId: form.id,
+    formName: form.name,
+    subclassId: subclass.id,
+    subclassName: subclass.name,
+    featureName: subclass.level9Feature.name,
+    featureDescription: subclass.level9Feature.description,
+  };
+}
+
+/**
  * Assemble a complete Chaos Form.
  *
  * If `rolls` are provided, those values are used (for testing or DM override).
@@ -260,6 +310,8 @@ function applyFatesMercyCorrections(
  * chassis and primary feature. The second result stands regardless (per rules).
  *
  * Fate's Mercy corrections are always applied to ensure minimum viability.
+ *
+ * At level 15+, Chaos Resonance is applied automatically.
  */
 export function assembleChaosForm(
   level: number,
@@ -268,6 +320,8 @@ export function assembleChaosForm(
     tableB?: number;
     tableC?: number;
     tableD?: number[];
+    /** Override rolls for Chaos Resonance (level 15+) */
+    chaosResonance?: { formRoll?: number; subclassRoll?: number };
   }
 ): ChaosFormResult {
   // Roll or use provided Table A
@@ -337,6 +391,10 @@ export function assembleChaosForm(
     mercy.grantsFateStrike ||
     mercy.bonusUnarmoredDefense;
 
+  // Chaos Resonance (level 15+): bonus subclass level-9 feature from a random stabilized form
+  const chaosResonance: ChaosResonanceResult | null =
+    level >= 15 ? assembleChaosResonance(rolls?.chaosResonance) : null;
+
   return {
     level,
     chassis,
@@ -347,5 +405,6 @@ export function assembleChaosForm(
     tableCRerollInfo,
     fatesMercyApplied,
     fatesMercy: mercy,
+    chaosResonance,
   };
 }

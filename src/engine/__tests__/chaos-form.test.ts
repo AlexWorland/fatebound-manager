@@ -4,6 +4,7 @@ import {
   getTableDRollCount,
   rollTableDFeats,
   assembleChaosForm,
+  assembleChaosResonance,
 } from "../chaos-form";
 import { TABLE_A_CHASSIS } from "@/data/tables/table-a-chassis";
 import { TABLE_B_PRIMARY } from "@/data/tables/table-b-primary";
@@ -367,7 +368,75 @@ describe("assembleChaosForm", () => {
       tableB: 9,
       tableC: 4,
       tableD: [4, 10, 20, 30, 50],
+      chaosResonance: { formRoll: 1, subclassRoll: 1 },
     });
     expect(result.feats).toHaveLength(5);
+  });
+
+  it("chaosResonance is null below level 15", () => {
+    const result = assembleChaosForm(14, {
+      tableA: 3,
+      tableB: 5,
+      tableC: 4,
+      tableD: [1, 5, 10],
+    });
+    expect(result.chaosResonance).toBeNull();
+  });
+
+  it("chaosResonance is populated at level 15", () => {
+    // Use provided rolls so the test is deterministic
+    const result = assembleChaosForm(15, {
+      tableA: 3,
+      tableB: 5,
+      tableC: 4,
+      tableD: [1, 5, 10],
+      chaosResonance: { formRoll: 1, subclassRoll: 1 },
+    });
+    expect(result.chaosResonance).not.toBeNull();
+    expect(result.chaosResonance!.formId).toBe(1);
+    expect(typeof result.chaosResonance!.formName).toBe("string");
+    expect(typeof result.chaosResonance!.subclassId).toBe("string");
+    expect(typeof result.chaosResonance!.featureName).toBe("string");
+    expect(typeof result.chaosResonance!.featureDescription).toBe("string");
+  });
+
+  it("chaosResonance is populated at level 20", () => {
+    const result = assembleChaosForm(20, {
+      tableA: 3,
+      tableB: 5,
+      tableC: 4,
+      tableD: [1, 2, 3, 4, 5],
+      chaosResonance: { formRoll: 2, subclassRoll: 1 },
+    });
+    expect(result.chaosResonance).not.toBeNull();
+    expect(result.chaosResonance!.formId).toBe(2);
+  });
+});
+
+describe("assembleChaosResonance", () => {
+  it("returns a valid form and subclass with provided rolls", () => {
+    const resonance = assembleChaosResonance({ formRoll: 1, subclassRoll: 1 });
+    expect(resonance.formId).toBe(1);
+    expect(typeof resonance.formName).toBe("string");
+    expect(resonance.formName.length).toBeGreaterThan(0);
+    expect(typeof resonance.subclassId).toBe("string");
+    expect(resonance.subclassId.length).toBeGreaterThan(0);
+    expect(typeof resonance.subclassName).toBe("string");
+    expect(typeof resonance.featureName).toBe("string");
+    expect(resonance.featureName.length).toBeGreaterThan(0);
+    expect(typeof resonance.featureDescription).toBe("string");
+  });
+
+  it("returns a different form for a different formRoll", () => {
+    const r1 = assembleChaosResonance({ formRoll: 1, subclassRoll: 1 });
+    const r2 = assembleChaosResonance({ formRoll: 2, subclassRoll: 1 });
+    expect(r1.formId).not.toBe(r2.formId);
+    expect(r1.formName).not.toBe(r2.formName);
+  });
+
+  it("uses random rolls when none provided (smoke test)", () => {
+    mockRollFatesSelection.mockReturnValueOnce(3).mockReturnValueOnce(1);
+    const resonance = assembleChaosResonance();
+    expect(resonance.formId).toBe(3);
   });
 });
