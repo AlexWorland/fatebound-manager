@@ -34,7 +34,7 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     name: "Spellcasting (Primal)",
     className: "Druid",
     description:
-      "Druid spell list. Slots = half-caster table. WIS-based.",
+      "Druid spell list. Slots = half-caster table. WIS-based. Cantrips known = prof bonus. Prepared caster (prof bonus + WIS mod spells).",
     hasSpellcasting: true,
     spellList: "Druid",
     castingAbility: "WIS",
@@ -61,7 +61,7 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     name: "Divine Smite + Lay on Hands",
     className: "Paladin",
     description:
-      "On hit, expend a spell slot for +2d8 radiant (+1d8 per slot above 1st). Damage capped at 5d8. +1d8 against undead or fiend. Lay on Hands pool = Fatebound level \u00d7 3. If you have no spellcasting source from another feature, you gain 2 first-level spell slots usable only for Divine Smite.",
+      "On hit, expend a spell slot for +2d8 radiant (+1d8 per slot above 1st). Damage capped at 5d8. +1d8 against undead or fiend. Lay on Hands pool = Fatebound level \u00d7 5. If you have no spellcasting source from another feature, you gain 2 first-level spell slots usable only for Divine Smite.",
     hasSpellcasting: false,
     resourcePool: "lay_on_hands",
   },
@@ -108,5 +108,23 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     hasSpellcasting: true,
     spellList: "Wizard",
     castingAbility: "INT",
+  },
+  {
+    id: 13,
+    name: "Infusions + Magical Tinkering",
+    className: "Artificer",
+    description:
+      "Randomly select 2 infusions from the Infusion Table (using Fate's Selection). Apply to items you carry only (no party distribution in Chaos Form context). Dissolve at dawn. Additionally, touch up to INT mod Tiny nonmagical objects to give each one minor property (light, sound, odor, or static visual). INT-based.",
+    hasSpellcasting: false,
+    resourcePool: "infusions",
+  },
+  {
+    id: 14,
+    name: "Crimson Rite + Blood Maledict",
+    className: "Blood Hunter",
+    description:
+      "Activate Crimson Rite on a weapon (bonus action; take hemocraft die [d4] irreducible necrotic, max HP reduced by same; weapon deals extra d4 of chosen type per hit until rest). Primal Rites: fire, cold, or lightning. Blood Maledict (1 use/short rest): Randomly select 1 blood curse from the Blood Curse Table. Hemocraft save DC = 8 + prof + INT mod.",
+    hasSpellcasting: false,
+    resourcePool: "blood_maledict",
   },
 ];

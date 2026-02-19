@@ -35,7 +35,7 @@ export const WILDCARD_MARTIAL_WEAPONS: WildcardWeapon[] = [
   { id: 12, name: "Whip", damage: "1d4 slashing", properties: "Finesse, Reach" },
 ];
 
-export type PactBoon = "blade" | "chain" | "tome";
+export type PactBoon = "blade" | "chain" | "tome" | "talisman";
 
 export interface EldritchInvocation {
   id: number;
@@ -46,11 +46,10 @@ export interface EldritchInvocation {
   requiresHexOrCurse?: boolean;
 }
 
-/** Full 50-entry invocation table from the supplementary document.
- *  Fate's Selection (d100; on 51-100, reroll). Duplicates rerolled.
+/** Full 53-entry invocation table from the supplementary document.
+ *  Fate's Selection (d100; on 54-100, reroll). Duplicates rerolled.
  *  Pact Boon prerequisites apply — reroll pact-dependent invocations you can't use.
- *  Level prerequisites are waived.
- *  Pact of the Talisman invocations are excluded. */
+ *  Level prerequisites are waived. */
 export const ELDRITCH_INVOCATIONS: EldritchInvocation[] = [
   { id: 1, name: "Agonizing Blast", effect: "Add CHA mod to eldritch blast damage (each beam).", requiresEldritchBlast: true },
   { id: 2, name: "Armor of Shadows", effect: "Cast mage armor on self at will, without a spell slot." },
@@ -102,6 +101,9 @@ export const ELDRITCH_INVOCATIONS: EldritchInvocation[] = [
   { id: 48, name: "Voice of the Chain Master", effect: "Communicate telepathically with your familiar and perceive through its senses while on the same plane.", pactRequired: "chain" },
   { id: 49, name: "Whispers of the Grave", effect: "Cast speak with dead at will, without a spell slot." },
   { id: 50, name: "Witch Sight", effect: "See the true form of any shapechanger or creature concealed by illusion or transmutation magic within 30 ft." },
+  { id: 51, name: "Bond of the Talisman", effect: "While someone else is wearing your talisman, you can use your action to teleport to the talisman's location (within 10 ft, same plane). The wearer can also teleport to you. Prof bonus uses/long rest total (shared).", pactRequired: "talisman" },
+  { id: 52, name: "Protection of the Talisman", effect: "When the wearer of your talisman fails a saving throw, they can add a d4 to the roll (prof bonus uses/long rest).", pactRequired: "talisman" },
+  { id: 53, name: "Rebuke of the Talisman", effect: "When the wearer of your talisman is hit by an attacker, deal psychic damage to the attacker equal to your prof bonus and push it 10 ft away.", pactRequired: "talisman" },
 ];
 
 export interface BattleMasterManeuver {
