@@ -38,11 +38,11 @@ export const CONDUIT_SUBCLASSES: SubclassEntry[] = [
     name: "Clockwork Soul",
     level9Feature: {
       name: "Restore Balance + Bastion of Law",
-      description: "Restore Balance: Reaction (prof bonus/long rest): when a creature you can see within 60 ft rolls with advantage or disadvantage, cancel it, making it a straight roll. Bastion of Law: Spend 1\u20135 sorcery points; a creature you touch gains a ward with that many d8s. When the warded creature takes damage, spend dice from the ward to reduce it.",
+      description: "Restore Balance: Reaction (prof bonus/long rest): when a creature you can see within 60 ft rolls with advantage or disadvantage, cancel it, making it a straight roll. Bastion of Law: Spend 1\u20135 sorcery points; a creature you touch gains a ward with that many d8s. When the warded creature takes damage, spend dice from the ward to reduce it. Bonus Spells (always prepared, don't count against spells known): alarm, protection from evil and good (1st level); aid, lesser restoration (2nd level); dispel magic, protection from energy (3rd level).",
     },
     level13Feature: {
       name: "Trance of Order",
-      description: "As a bonus action, spend 5 SP to enter a state of perfect precision for 1 minute. While active, your attack rolls and saving throws treat any d20 roll of 9 or lower as a 10.",
+      description: "As a bonus action, enter a state of perfect precision for 1 minute. While active, your attack rolls and saving throws treat any d20 roll of 9 or lower as a 10. You can use this feature a number of times equal to your proficiency bonus per long rest. Additionally, you gain higher-level clockwork spells (always prepared, don't count against spells known): freedom of movement, summon construct (4th level); greater restoration, wall of force (5th level).",
     },
     level17Feature: {
       name: "Clockwork Cavalcade",
@@ -90,7 +90,7 @@ export const CONDUIT_SUBCLASSES: SubclassEntry[] = [
     },
     level13Feature: {
       name: "Psychic Defenses",
-      description: "You gain resistance to psychic damage and advantage on saving throws against being charmed or frightened.",
+      description: "You gain resistance to psychic damage and advantage on saving throws against being charmed or frightened. Additionally, you gain access to 2 additional psionic spells (up to 3rd level): hunger of Hadar, sending.",
     },
     level17Feature: {
       name: "Warping Implosion",

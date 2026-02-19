@@ -57,8 +57,8 @@ export const TRICKSTER_SUBCLASSES: SubclassEntry[] = [
       description: "You gain proficiency with medium armor and scimitars. When you take the Attack action, your speed increases by 10 ft until the end of the turn. Once per turn on a hit, you can expend a Bardic Inspiration die to choose: Defensive (add roll to your AC until your next turn), Slashing (adjacent creature takes die roll in slashing damage), or Mobile (push target 5 ft + die roll, add roll to AC until next turn).",
     },
     level13Feature: {
-      name: "Extra Attack + Flourish Improvement",
-      description: "You can attack twice when you take the Attack action. Your Blade Flourish Bardic Inspiration die increases to a d8.",
+      name: "Extra Attack",
+      description: "You can attack twice when you take the Attack action (if you don't already have Extra Attack from another source).",
     },
     level17Feature: {
       name: "Master's Flourish",

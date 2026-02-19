@@ -6,7 +6,7 @@ export const STALKER_SUBCLASSES: SubclassEntry[] = [
     name: "Hunter",
     level9Feature: {
       name: "Hunter's Prey",
-      description: "Choose (or randomly select): Colossus Slayer \u2014 once per turn, deal +1d8 damage to a creature that is below its hit point maximum; Giant Killer \u2014 when a Large or larger creature within 5 ft misses you, use your reaction to make one melee weapon attack against it; Horde Breaker \u2014 once per turn, make one additional attack against a different creature within 5 ft of the first target of your attack.",
+      description: "Randomly select (see Fate's Selection): Colossus Slayer \u2014 once per turn, deal +1d8 damage to a creature that is below its hit point maximum; Giant Killer \u2014 when a Large or larger creature within 5 ft misses you, use your reaction to make one melee weapon attack against it; Horde Breaker \u2014 once per turn, make one additional attack against a different creature within 5 ft of the first target of your attack.",
     },
     level13Feature: {
       name: "Multiattack Defense + Steel Will",
@@ -86,7 +86,7 @@ export const STALKER_SUBCLASSES: SubclassEntry[] = [
     name: "Fey Wanderer",
     level9Feature: {
       name: "Dreadful Strikes + Otherworldly Glamour",
-      description: "When you hit a creature with a weapon attack, it takes +1d4 psychic damage (once per turn per creature). Add your WIS modifier to all Charisma checks. You also learn charm person, misty step, and phantasmal force as Ranger spells; they count as prepared and use your WIS modifier.",
+      description: "When you hit a creature with a weapon attack, it takes +1d4 psychic damage (once per turn per creature). Add your WIS modifier to all Charisma checks. Bonus Spells (always prepared, count as Ranger spells): charm person (1st), misty step (2nd), dispel magic (3rd); at level 13+: dimension door (4th); at level 17+: mislead (5th).",
     },
     level13Feature: {
       name: "Beguiling Twist",
@@ -106,7 +106,7 @@ export const STALKER_SUBCLASSES: SubclassEntry[] = [
     },
     level13Feature: {
       name: "Writhing Tide + Mighty Swarm",
-      description: "Writhing Tide: As a bonus action, use the swarm to fly up to 10 ft without provoking opportunity attacks. Mighty Swarm: Your Gathered Swarm effects improve: the push also knocks the target prone on a failed STR save, and the movement option grants you half cover until the start of your next turn.",
+      description: "Writhing Tide: As a bonus action, use the swarm to fly up to 10 ft without provoking opportunity attacks. Mighty Swarm: Your Gathered Swarm effects improve: the push also knocks the target prone on a failed STR save, and the movement option grants you half cover until the start of your next turn. The swarm's damage increases to 1d8 piercing.",
     },
     level17Feature: {
       name: "Swarming Dispersal",
@@ -118,11 +118,11 @@ export const STALKER_SUBCLASSES: SubclassEntry[] = [
     name: "Drakewarden",
     level9Feature: {
       name: "Drake Companion",
-      description: "You attract a drake companion of a damage type you choose (acid, cold, fire, lightning, or poison). It is Small, has AC 14 + PB, HP = 5 \u00d7 Fatebound level, Speed 40 ft, and makes a Bite attack (1d6 + PB of your chosen type). As a reaction when you hit a creature within 30 ft of the drake, the drake exhales a breath weapon: one creature of your choice within 15 ft makes a DEX save (DC 8 + prof + WIS mod) or takes 1d6 \u00d7 prof bonus damage of its type (half on save). 1/long rest.",
+      description: "You attract a drake companion of a damage type you choose (acid, cold, fire, lightning, or poison). It is Small, has AC 14 + PB, HP = 5 \u00d7 Fatebound level, Speed 40 ft, and makes a Bite attack (1d6 + PB of your chosen type). As a reaction when you hit a creature within 30 ft of the drake, the drake exhales a breath weapon: one creature of your choice within 15 ft makes a DEX save (DC 8 + prof + drake's CON mod) or takes 1d6 \u00d7 prof bonus damage of its type (half on save). Prof bonus uses/long rest.",
     },
     level13Feature: {
       name: "Bond of Fang and Scale",
-      description: "Your drake grows to Large size and can serve as a mount for you. You gain resistance to the damage type associated with your drake. Your drake's breath weapon becomes a 30-ft cone dealing 8d6 damage (DEX save for half, 1/long rest).",
+      description: "Your drake grows to Large size and can serve as a mount for you. You gain resistance to the damage type associated with your drake. Your drake's breath weapon becomes a 30-ft cone dealing 8d6 damage (DEX save for half, prof bonus uses/long rest).",
     },
     level17Feature: {
       name: "Perfected Bond",

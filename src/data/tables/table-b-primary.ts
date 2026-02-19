@@ -115,7 +115,9 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
     className: "Artificer",
     description:
       "Randomly select 2 infusions from the Infusion Table (using Fate's Selection). Apply to items you carry only (no party distribution in Chaos Form context). Dissolve at dawn. Additionally, touch up to INT mod Tiny nonmagical objects to give each one minor property (light, sound, odor, or static visual). INT-based.",
-    hasSpellcasting: false,
+    hasSpellcasting: true,
+    spellList: "Artificer",
+    castingAbility: "INT",
     resourcePool: "infusions",
   },
   {

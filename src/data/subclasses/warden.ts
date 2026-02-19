@@ -42,7 +42,7 @@ export const WARDEN_SUBCLASSES: SubclassEntry[] = [
     },
     level13Feature: {
       name: "Relentless Avenger",
-      description: "When you hit a creature with an opportunity attack, you can move up to half your speed as part of that reaction, and this movement does not provoke opportunity attacks.",
+      description: "When you hit a creature with an opportunity attack, you can move up to half your speed as part of that reaction, and this movement does not provoke opportunity attacks. Soul of Vengeance: When a creature under the effect of your Vow of Enmity hits you with an attack, you can use your reaction to make a melee weapon attack against that creature.",
     },
     level17Feature: {
       name: "Avenging Angel",
@@ -90,7 +90,7 @@ export const WARDEN_SUBCLASSES: SubclassEntry[] = [
     },
     level13Feature: {
       name: "Aura of Alacrity",
-      description: "Your walking speed increases by 10 ft. Allies who start their turn within 5 ft of you also gain a +10 ft bonus to their walking speed until the start of their next turn.",
+      description: "Your walking speed increases by 10 ft. Allies who start their turn within 10 ft of you also gain a +10 ft bonus to their walking speed until the start of their next turn.",
     },
     level17Feature: {
       name: "Living Legend",
