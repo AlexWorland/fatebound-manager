@@ -27,7 +27,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Danger Sense",
-        description: "Advantage on DEX saves vs. effects you can see.",
+        description: "Advantage on DEX saves vs. effects you can see, provided you aren't blinded, deafened, or incapacitated.",
       },
       {
         name: "Extra Attack",
@@ -36,6 +36,10 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       {
         name: "Fast Movement",
         description: "Your speed increases by 10 feet while you are not wearing heavy armor.",
+      },
+      {
+        name: "Mindless Rage",
+        description: "Level 6+: While raging, you can't be charmed or frightened. If you are charmed or frightened when you enter your rage, the effect is suspended for the duration of the rage.",
       },
       {
         name: "Feral Instinct",
@@ -75,16 +79,12 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
         description: "Double proficiency bonus in 2 skills of your choice.",
       },
       {
-        name: "Font of Inspiration",
-        description: "Your Bardic Inspiration dice recharge on a short or long rest (not just a long rest).",
-      },
-      {
         name: "Countercharm",
-        description: "Level 6+: As an action, you can start a performance that lasts until the end of your next turn. During that time, you and any friendly creatures within 30 feet of you have advantage on saving throws against being frightened or charmed. The performance ends early if you are incapacitated or silenced, or if you voluntarily end it (no action required).",
+        description: "Level 6+: As an action, you can start a performance that lasts until the end of your next turn. During that time, you and any friendly creatures within 30 feet of you have advantage on saving throws against being frightened or charmed. A creature must be able to hear you to gain this benefit. The performance ends early if you are incapacitated, silenced, or if you voluntarily end it (no action required).",
       },
       {
         name: "Cantrips Known",
-        description: "2 (from the Bard spell list). Your cantrips scale with your total character level, not your Fatebound level.",
+        description: "3 (from the Bard spell list). Your cantrips scale with your total character level, not your Fatebound level.",
       },
     ],
     hasSpellcasting: true,
@@ -119,7 +119,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Cantrips Known",
-        description: "3 (from the Cleric spell list). Your cantrips scale with your total character level, not your Fatebound level.",
+        description: "4 (from the Cleric spell list). Your cantrips scale with your total character level, not your Fatebound level.",
       },
       {
         name: "Channel Divinity (2nd Use)",
@@ -142,7 +142,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     flavorText: "The primal world flows through you. Today you may be leaf; tomorrow, fang.",
     hitDie: 8,
     armorProficiencies: ["light", "medium (nonmetal)", "shields (nonmetal)"],
-    weaponProficiencies: ["simple", "scimitars"],
+    weaponProficiencies: ["clubs", "daggers", "darts", "javelins", "maces", "quarterstaffs", "scimitars", "sickles", "slings", "spears"],
     savingThrows: ["INT", "WIS"],
     dailySkillOptions: ["Nature", "Animal Handling"],
     baseFeatures: [
@@ -199,7 +199,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Indomitable",
-        description: "Level 9+: You can reroll a saving throw that you fail. If you do so, you must use the new roll. You can use this feature once per long rest (increases to 2 uses at level 13).",
+        description: "Level 9+: You can reroll a saving throw that you fail. If you do so, you must use the new roll. You can use this feature once per long rest (increases to 2 uses at level 13; see Signature Ability).",
         resourceKey: "indomitable",
         maxUses: "1/long rest",
       },
@@ -242,11 +242,19 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Stunning Strike",
-        description: "On hit, spend 1 Ki. Target makes CON save (DC = 8 + prof + WIS mod) or is stunned until the end of your next turn.",
+        description: "On hit, spend 1 Ki. Target makes CON save (DC = 8 + prof + WIS mod) or is stunned until the end of your next turn. You can attempt Stunning Strike a number of times equal to your prof bonus per long rest. Ki points are still spent as normal; only the number of stun attempts is limited.",
+      },
+      {
+        name: "Deflect Missiles",
+        description: "When you are hit by a ranged weapon attack, you can use your reaction to reduce the damage by 1d10 + your DEX modifier + your Fatebound level. If you reduce the damage to 0, you can spend 1 Ki to make a ranged attack (range 20/60) with the caught missile as part of the same reaction. The missile counts as a monk weapon for the attack.",
       },
       {
         name: "Unarmored Movement",
-        description: "Your speed increases by 10 ft while you are not wearing armor or wielding a shield. This increases to +15 ft at level 9, +20 ft at level 13, and +30 ft at level 17.",
+        description: "Your speed increases by 10 ft while you are not wearing armor or wielding a shield. This increases to +15 ft at level 9, +20 ft at level 13, and +30 ft at level 17. At level 9, you also gain the ability to move along vertical surfaces and across liquids on your turn without falling during the move.",
+      },
+      {
+        name: "Slow Fall",
+        description: "You can use your reaction when you fall to reduce any falling damage you take by an amount equal to five times your Fatebound level.",
       },
       {
         name: "Ki-Empowered Strikes",
