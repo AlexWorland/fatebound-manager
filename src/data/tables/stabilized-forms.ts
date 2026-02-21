@@ -142,7 +142,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     flavorText: "The primal world flows through you. Today you may be leaf; tomorrow, fang.",
     hitDie: 8,
     armorProficiencies: ["light", "medium (nonmetal)", "shields (nonmetal)"],
-    weaponProficiencies: ["clubs", "daggers", "darts", "javelins", "maces", "quarterstaffs", "scimitars", "sickles", "slings", "spears"],
+    weaponProficiencies: ["daggers", "darts", "slings", "quarterstaffs", "scimitars"],
     savingThrows: ["INT", "WIS"],
     dailySkillOptions: ["Nature", "Animal Handling"],
     baseFeatures: [
@@ -289,7 +289,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Divine Smite",
-        description: "On hit, expend a spell slot to deal +2d8 radiant damage (+1d8 per slot level above 1st, max 5d8). +1d8 vs undead/fiends.",
+        description: "On hit, expend a spell slot to deal +2d8 radiant damage (+1d8 per slot level above 1st, max 5d8). +1d8 vs undead/fiends applies on top of the 5d8 cap (true maximum 6d8 vs undead/fiends).",
       },
       {
         name: "Lay on Hands",
@@ -346,13 +346,13 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Favored Foe",
-        description: "When you hit a creature with an attack, you can mark it (prof bonus times/day, concentration). First hit each turn deals +1d6 damage to the marked target.",
+        description: "When you hit a creature with an attack, you can mark it (prof bonus times/day, concentration). First hit each turn deals +1d4 damage to the marked target. This increases to 1d6 at level 9 and 1d8 at level 13.",
         resourceKey: "favored_foe",
         maxUses: "proficiency bonus/day",
       },
       {
         name: "Deft Explorer",
-        description: "You gain Expertise in one skill, and your walking speed increases by 5 ft.",
+        description: "You gain Expertise in one skill, your walking speed increases by 5 ft, and you learn two additional languages of your choice.",
       },
       {
         name: "Deft Explorer \u2014 Roaming",
@@ -360,7 +360,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Deft Explorer \u2014 Tireless",
-        description: "Level 10+: As an action, you can give yourself a number of temporary hit points equal to 1d8 + your WIS modifier (minimum of 1 temporary hit point). You can use this action a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest. In addition, whenever you finish a long rest, your exhaustion level, if any, decreases by 1.",
+        description: "Level 10+: As an action, you can give yourself a number of temporary hit points equal to 1d8 + your WIS modifier (minimum of 1 temporary hit point). You can use this action a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest. In addition, whenever you finish a short or long rest, your exhaustion level, if any, decreases by 1.",
         resourceKey: "tireless",
         maxUses: "proficiency bonus/long rest",
       },
@@ -391,7 +391,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Expertise",
-        description: "Double proficiency in 2 skills.",
+        description: "Double proficiency in 2 skills. At level 6+, double proficiency in 2 additional skills (4 total Expertise).",
       },
       {
         name: "Uncanny Dodge",
@@ -425,7 +425,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
         description: "Spells known = prof bonus + CHA mod.",
       },
       {
-        name: "Sorcery Points",
+        name: "Sorcery Points (= prof bonus + CHA mod)",
         description: "Can convert spell slots to points (slot level = points gained) or points to slots (2 SP \u2192 1st, 3 SP \u2192 2nd, 5 SP \u2192 3rd, 6 SP \u2192 4th, 7 SP \u2192 5th).",
         resourceKey: "sorcery_points",
         maxUses: "prof bonus + CHA mod",
@@ -436,11 +436,11 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Font of Magic",
-        description: "Flexible slot/point conversion.",
+        description: "You can convert spell slots to sorcery points (slot level = points gained) or points to spell slots (2 SP \u2192 1st, 3 SP \u2192 2nd, 5 SP \u2192 3rd, 6 SP \u2192 4th, 7 SP \u2192 5th). Spell slot conversion is limited to slots no higher than 5th level.",
       },
       {
         name: "Cantrips Known",
-        description: "4 (from Sorcerer list).",
+        description: "5 (from Sorcerer list). Your cantrips scale with your total character level, not your Fatebound level.",
       },
     ],
     hasSpellcasting: true,
@@ -461,11 +461,15 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     baseFeatures: [
       {
         name: "Pact Magic (Warlock-style)",
-        description: "CHA-based. You have a small number of spell slots that recharge on a short rest. Warlock spell list. Slots: 2 at 3rd level (L5\u20138), 2 at 4th level (L9\u201312), 3 at 5th level (L13\u201320).",
+        description: "CHA-based. You have a small number of spell slots that recharge on a short rest. Warlock spell list. Your slot count and level follow this table: 5-8: 2 slots at 3rd level; 9-12: 2 slots at 4th level; 13-16: 3 slots at 5th level; 17-20: 3 slots at 5th level.",
+      },
+      {
+        name: "Eldritch Blast",
+        description: "You know Eldritch Blast cantrip (scales with Fatebound level).",
       },
       {
         name: "Cantrips Known",
-        description: "You know Eldritch Blast plus 2 additional Warlock cantrips. At level 10+, you learn a 4th Warlock cantrip. Your cantrips scale with your total character level, not your Fatebound level.",
+        description: "You know Eldritch Blast plus 1 additional Warlock cantrip (2 total). At level 10+, you learn a 3rd Warlock cantrip. Your cantrips scale with your total character level, not your Fatebound level.",
       },
       {
         name: "Eldritch Invocations",
@@ -473,7 +477,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Pact Boon",
-        description: "Randomly select \u2014 1: Pact of the Chain (familiar), 2: Pact of the Blade (conjure weapon), 3: Pact of the Tome (3 cantrips from any list), 4: Pact of the Talisman (when the wearer fails an ability check, add a d4 to the roll, uses = prof bonus/long rest).",
+        description: "Randomly select \u2014 1: Pact of the Chain (familiar), 2: Pact of the Blade (conjure weapon), 3: Pact of the Tome (3 cantrips from any list), 4: Pact of the Talisman (when the wearer fails an ability check, add a d4 to the roll, uses = prof bonus/long rest). Your Pact Boon is determined once when you assume the Hexer form and remains fixed for the day, even if your subclass changes. Invocations that depend on a specific Pact Boon only function if they match your current Pact Boon.",
       },
     ],
     hasSpellcasting: true,
