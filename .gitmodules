@@ -2,3 +2,6 @@
 	path = the-fatebound
 	url = https://github.com/AlexWorland/the-fatebound.git
 	branch = main
+[submodule "Reference/5e-srd-mirror"]
+	path = Reference/5e-srd-mirror
+	url = https://github.com/AlexWorland/5e-srd-mirror.git
