@@ -5,11 +5,13 @@ export const TABLE_C_DEFENSIVE: DefensiveFeature[] = [
     id: 1,
     name: "Unarmored Defense (CON)",
     description: "Unarmored Defense (CON-based, as Barbarian)",
+    incompatibleChassis: [1, 2, 9], // Brute, Skirmisher, Heavy Armored grant medium/heavy armor
   },
   {
     id: 2,
     name: "Unarmored Defense (WIS)",
     description: "Unarmored Defense (WIS-based, as Monk)",
+    incompatibleChassis: [1, 2, 9], // Brute, Skirmisher, Heavy Armored grant medium/heavy armor
   },
   {
     id: 3,
