@@ -532,6 +532,10 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     dailySkillOptions: ["Arcana", "Investigation"],
     baseFeatures: [
       {
+        name: "Tool Proficiencies",
+        description: "Thieves' tools, Tinker's tools, one type of artisan's tools of your choice.",
+      },
+      {
         name: "Half-Caster (Artificer Spell List, INT-based)",
         description: "Prepared caster (prof bonus + INT mod spells). Ritual casting: you can cast any Artificer spell you have prepared as a ritual if it has the ritual tag.",
       },
@@ -592,7 +596,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Fighting Style",
-        description: "Randomly select \u2014 1: Archery, 2: Dueling, 3: Great Weapon Fighting, 4: Two-Weapon Fighting.",
+        description: "Randomly select \u2014 1: Archery, 2: Blind Fighting, 3: Defense, 4: Dueling, 5: Great Weapon Fighting, 6: Two-Weapon Fighting.",
       },
       {
         name: "Crimson Rite",
@@ -610,9 +614,11 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Brand of Castigation",
-        description: "Level 6+: After hitting a creature with a Crimson Rite weapon (1/short rest), sear an arcane brand into it. You always know the branded creature's direction. Whenever the branded creature damages you or an ally within 5 ft of you, it takes psychic damage equal to your INT modifier (min 1). Lasts until dismissed or a new brand is applied. Dispellable (spell level = half Fatebound level, max 9).",
-        resourceKey: "brand_of_castigation",
-        maxUses: "1/short rest",
+        description: "Level 6+: After hitting a creature with a Crimson Rite weapon, you can sear an arcane brand into it (no action required). You always know the branded creature's direction. Whenever the branded creature deals damage to you or to a creature you can see within 5 feet of you, it takes psychic damage equal to your INT modifier (min 1). Only one brand can be active at a time; applying a new brand replaces the previous one. Dispellable (spell level = half Fatebound level, max 9).",
+      },
+      {
+        name: "Esoteric Rites (Level 7+)",
+        description: "You learn three additional rite damage types: Rite of the Oracle (psychic), Rite of the Roar (thunder), and Rite of the Dead (necrotic). These are in addition to your Primal Rites.",
       },
       {
         name: "Dark Augmentation",

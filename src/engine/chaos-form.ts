@@ -29,6 +29,20 @@ export interface TableCReroll {
   reason: string;
 }
 
+export interface EmergentPathResult {
+  /** The stabilized form matched to this Table B result */
+  formId: StabilizedFormId;
+  /** The name of the matched form */
+  formName: string;
+  /** The id of the randomly selected subclass */
+  subclassId: string;
+  /** The name of the selected subclass */
+  subclassName: string;
+  /** The level 9 subclass feature granted by Emergent Path */
+  featureName: string;
+  featureDescription: string;
+}
+
 export interface ChaosResonanceResult {
   /** The randomly selected stabilized form id */
   formId: StabilizedFormId;
@@ -53,6 +67,8 @@ export interface ChaosFormResult {
   tableCRerollInfo: TableCReroll | null;
   fatesMercyApplied: boolean;
   fatesMercy: FatesMercyDetails;
+  /** Emergent Path subclass feature (level 9+, Chaos Form only) */
+  emergentPath: EmergentPathResult | null;
   /** Chaos Resonance bonus subclass feature (level 15+, Chaos Form only) */
   chaosResonance: ChaosResonanceResult | null;
 }
@@ -137,6 +153,29 @@ export function rollTableDFeats(count: number, exclude?: number[]): Feat[] {
 
   return results;
 }
+
+/**
+ * Emergent Path mapping: Table B result ID → Stabilized Form ID.
+ * At level 9+, Chaos Form characters gain a subclass from the form matching their Table B result.
+ *
+ * Source: The Fatebound.md, Emergent Path (Level 9) section.
+ */
+const EMERGENT_PATH_FORM_MAP: Record<number, StabilizedFormId> = {
+  1: 1,   // Rage → The Tempest
+  2: 2,   // Bardic Inspiration → The Trickster
+  3: 3,   // Channel Divinity → The Mender
+  4: 4,   // Wild Shape → The Shepherd
+  5: 5,   // Fighting Style → The Blade
+  6: 6,   // Ki → The Feral
+  7: 7,   // Divine Smite → The Warden
+  8: 8,   // Favored Foe → The Stalker
+  9: 9,   // Sneak Attack → The Shadow
+  10: 10, // Sorcery Points → The Conduit
+  11: 11, // Eldritch Invocations → The Hexer
+  12: 12, // Spellcasting (Arcane) → The Sage
+  13: 13, // Infusions → The Tinker
+  14: 14, // Crimson Rite → The Reaver
+};
 
 /** Primary feature IDs that grant an attack capability even without spellcasting */
 const ATTACK_GRANTING_PRIMARY_IDS = new Set([
@@ -279,6 +318,48 @@ function applyFatesMercyCorrections(
  * If a specific formRoll/subclassRoll are provided they override random selection
  * (useful for testing).
  */
+/**
+ * Resolve the Emergent Path subclass feature for a level 9+ character receiving a Chaos Form.
+ *
+ * Source: "After rolling Tables A–D, randomly select a subclass from the same form as
+ * your Table B class using Fate's Selection. You gain that subclass's Subclass Feature
+ * (Level 9) alongside your Chaos Form results."
+ *
+ * Maps Table B ID to the corresponding Stabilized Form, then randomly selects from that
+ * form's subclass table.
+ *
+ * If a specific subclassRoll is provided it overrides random selection (useful for testing).
+ */
+export function assembleEmergentPath(
+  primaryFeatureId: number,
+  subclassRoll?: number
+): EmergentPathResult {
+  const formId = EMERGENT_PATH_FORM_MAP[primaryFeatureId];
+  if (!formId) {
+    throw new Error(
+      `No Emergent Path form mapping for Table B id ${primaryFeatureId}`
+    );
+  }
+
+  const form = STABILIZED_FORMS.find((f) => f.id === formId);
+  if (!form) {
+    throw new Error(`No stabilized form found with id ${formId}`);
+  }
+
+  const subclasses = getSubclassesForForm(formId);
+  const roll = subclassRoll ?? rollFatesSelection(Math.max(subclasses.length, 1));
+  const subclass = subclasses[roll - 1];
+
+  return {
+    formId,
+    formName: form.name,
+    subclassId: subclass.id,
+    subclassName: subclass.name,
+    featureName: subclass.level9Feature.name,
+    featureDescription: subclass.level9Feature.description,
+  };
+}
+
 export function assembleChaosResonance(rolls?: {
   formRoll?: number;
   subclassRoll?: number;
@@ -311,7 +392,8 @@ export function assembleChaosResonance(rolls?: {
  *
  * Fate's Mercy corrections are always applied to ensure minimum viability.
  *
- * At level 15+, Chaos Resonance is applied automatically.
+ * At level 9+, Emergent Path grants a subclass feature from the form matching the Table B result.
+ * At level 15+, Chaos Resonance is applied automatically (a second, independent subclass).
  */
 export function assembleChaosForm(
   level: number,
@@ -391,6 +473,10 @@ export function assembleChaosForm(
     mercy.grantsFateStrike ||
     mercy.bonusUnarmoredDefense;
 
+  // Emergent Path (level 9+): subclass feature from the form matching Table B result
+  const emergentPath: EmergentPathResult | null =
+    level >= 9 ? assembleEmergentPath(primaryFeature.id, rolls?.chaosResonance?.subclassRoll) : null;
+
   // Chaos Resonance (level 15+): bonus subclass level-9 feature from a random stabilized form
   const chaosResonance: ChaosResonanceResult | null =
     level >= 15 ? assembleChaosResonance(rolls?.chaosResonance) : null;
@@ -405,6 +491,7 @@ export function assembleChaosForm(
     tableCRerollInfo,
     fatesMercyApplied,
     fatesMercy: mercy,
+    emergentPath,
     chaosResonance,
   };
 }

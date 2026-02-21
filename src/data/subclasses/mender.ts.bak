@@ -193,4 +193,4 @@ export const MENDER_SUBCLASSES: SubclassEntry[] = [
       description: "You and your allies inside your Twilight Sanctuary gain the benefits of half cover (+2 AC and DEX saves). (Vanilla 5e Twilight Cleric.)",
     },
   },
-];
+];;
