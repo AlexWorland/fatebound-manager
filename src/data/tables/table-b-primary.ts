@@ -12,11 +12,13 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
   },
   {
     id: 2,
-    name: "Bardic Inspiration + Expertise",
+    name: "Bardic Inspiration + Expertise + Spellcasting",
     className: "Bard",
     description:
-      "Bardic Inspiration die = d6, uses = CHA mod/long rest. Expertise in 2 skills.",
-    hasSpellcasting: false,
+      "Bardic Inspiration d6, uses = CHA mod/long rest. Expertise in 2 skills. Spellcasting: Bard spell list (CHA-based); spells known = prof bonus + CHA mod; slots = half-caster table.",
+    hasSpellcasting: true,
+    spellList: "Bard",
+    castingAbility: "CHA",
     resourcePool: "bardic_inspiration",
   },
   {
@@ -58,20 +60,24 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
   },
   {
     id: 7,
-    name: "Divine Smite + Lay on Hands",
+    name: "Divine Smite + Lay on Hands + Spellcasting",
     className: "Paladin",
     description:
-      "On hit, expend a spell slot for +2d8 radiant (+1d8 per slot above 1st). Damage capped at 5d8. +1d8 against undead or fiend. Lay on Hands pool = Fatebound level \u00d7 5. If you have no spellcasting source from another feature, you gain 2 first-level spell slots usable only for Divine Smite.",
-    hasSpellcasting: false,
+      "On a hit, expend a spell slot for +2d8 radiant (+1d8/slot above 1st, max 5d8; +1d8 bonus vs. undead/fiends, true max 6d8). Lay on Hands pool = level × 5 HP. Spellcasting: Paladin spell list (CHA-based); prepared caster (prof bonus + CHA mod spells); slots = half-caster table.",
+    hasSpellcasting: true,
+    spellList: "Paladin",
+    castingAbility: "CHA",
     resourcePool: "lay_on_hands",
   },
   {
     id: 8,
-    name: "Favored Foe + Deft Explorer",
+    name: "Favored Foe + Deft Explorer + Spellcasting",
     className: "Ranger",
     description:
-      "Mark a creature on hit (prof bonus times/day, concentration); first hit each turn deals +1d6. Expertise in one skill, +5 ft walking speed.",
-    hasSpellcasting: false,
+      "Mark a creature on hit (prof bonus times/day, concentration); first hit each turn deals +1d4. Expertise in one skill, +5 ft walking speed. Spellcasting: Ranger spell list (WIS-based); spells known = prof bonus + WIS mod; slots = half-caster table. If you also gain a Fighting Style: Ranger options only — Archery, Defense, Dueling, Two-Weapon Fighting.",
+    hasSpellcasting: true,
+    spellList: "Ranger",
+    castingAbility: "WIS",
     resourcePool: "favored_foe",
   },
   {
@@ -84,20 +90,24 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
   },
   {
     id: 10,
-    name: "Sorcery Points + Metamagic",
+    name: "Sorcery Points + Metamagic + Spellcasting",
     className: "Sorcerer",
     description:
-      "Points = prof bonus + CHA mod. Know 2 Metamagic options (randomly select 2 from the Metamagic Options table). Can convert spell slots \u2194 points. If you have no spellcasting source from another feature, you gain 2 first-level spell slots.",
-    hasSpellcasting: false,
+      "Points = prof bonus + CHA mod; convert spell slots ↔ points. Know 2 randomly selected Metamagic options. Spellcasting: Sorcerer spell list (CHA-based); spells known = prof bonus + CHA mod; cantrips = prof bonus; slots = half-caster table.",
+    hasSpellcasting: true,
+    spellList: "Sorcerer",
+    castingAbility: "CHA",
     resourcePool: "sorcery_points",
   },
   {
     id: 11,
-    name: "Eldritch Invocations",
+    name: "Eldritch Invocations + Pact Magic",
     className: "Warlock",
     description:
-      "Gain Eldritch Blast cantrip + 2 Invocations (randomly select 2 from the Eldritch Invocation Table; no Pact Boon in this context \u2014 reroll pact-dependent results).",
-    hasSpellcasting: false,
+      "Eldritch Blast cantrip + 2 randomly selected Invocations (reroll pact-dependent results). Pact Magic (CHA-based, Warlock spell list, short-rest recovery): 2 first-level slots at levels 1–4; then follows the Hexer Pact Magic table (2 slots/3rd at levels 5–8; 2 slots/4th at 9–12; 3 slots/5th at 13+). (No Pact Boon in Chaos Form.)",
+    hasSpellcasting: true,
+    spellList: "Warlock",
+    castingAbility: "CHA",
   },
   {
     id: 12,
@@ -111,10 +121,10 @@ export const TABLE_B_PRIMARY: PrimaryFeature[] = [
   },
   {
     id: 13,
-    name: "Infusions + Magical Tinkering",
+    name: "Infusions + Magical Tinkering + Spellcasting",
     className: "Artificer",
     description:
-      "Randomly select 2 infusions from the Infusion Table (using Fate's Selection). Apply to items you carry only (no party distribution in Chaos Form context). Dissolve at dawn. Additionally, touch up to INT mod Tiny nonmagical objects to give each one minor property (light, sound, odor, or static visual). INT-based.",
+      "Randomly select 2 infusions from the Infusion Table (using Fate's Selection). Apply to items you carry only (no party distribution in Chaos Form context). Dissolve at dawn. Touch up to INT mod Tiny nonmagical objects to grant a minor property (light, sound, odor, or static visual). Spellcasting: Artificer spell list (INT-based); prepared caster (prof bonus + INT mod spells); slots = half-caster table.",
     hasSpellcasting: true,
     spellList: "Artificer",
     castingAbility: "INT",
