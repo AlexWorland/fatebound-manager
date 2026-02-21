@@ -52,26 +52,26 @@ describe("isTableCIncompatible", () => {
     expect(isTableCIncompatible(2, 1, 2)).toBe(true);
   });
 
-  it("returns true for non-caster Table B + Metamagic (defensive 6, requiresSpellcasting)", () => {
+  it("returns true for non-caster Table B + Arcane Recovery (defensive 3, requiresSpellcasting)", () => {
     // Table B id 1 = Rage (hasSpellcasting: false)
-    expect(isTableCIncompatible(3, 1, 6)).toBe(true);
+    expect(isTableCIncompatible(3, 1, 3)).toBe(true);
     // Table B id 5 = Fighting Style (hasSpellcasting: false)
-    expect(isTableCIncompatible(5, 5, 6)).toBe(true);
+    expect(isTableCIncompatible(5, 5, 3)).toBe(true);
   });
 
-  it("returns false for spellcaster Table B + Metamagic (defensive 6)", () => {
+  it("returns false for spellcaster Table B + Arcane Recovery (defensive 3)", () => {
     // Table B id 3 = Spellcasting Divine (hasSpellcasting: true)
-    expect(isTableCIncompatible(3, 3, 6)).toBe(false);
+    expect(isTableCIncompatible(3, 3, 3)).toBe(false);
     // Table B id 12 = Spellcasting Arcane (hasSpellcasting: true)
-    expect(isTableCIncompatible(3, 12, 6)).toBe(false);
+    expect(isTableCIncompatible(3, 12, 3)).toBe(false);
   });
 
   it("returns false for compatible combinations", () => {
-    // Duelist (3) + Shield Spell (3) — no incompatibility
-    expect(isTableCIncompatible(3, 1, 3)).toBe(false);
-    // Trickster (6) + Cunning Action (4)
-    expect(isTableCIncompatible(6, 9, 4)).toBe(false);
-    // Arcanist (7) + Danger Sense (8)
+    // Duelist (3) + Rage (1) + Cunning Action (4) — no incompatibility
+    expect(isTableCIncompatible(3, 1, 4)).toBe(false);
+    // Trickster (6) + Sneak Attack (9) + Second Wind (5)
+    expect(isTableCIncompatible(6, 9, 5)).toBe(false);
+    // Arcanist (7) + Spellcasting Arcane (12) + Wild Shape (8)
     expect(isTableCIncompatible(7, 12, 8)).toBe(false);
   });
 });
@@ -207,47 +207,48 @@ describe("assembleChaosForm", () => {
   });
 
   it("rerolls Table C when non-caster + requiresSpellcasting defensive", () => {
-    // Duelist (3) + Rage (1, non-caster) + Metamagic (6, requiresSpellcasting)
+    // Duelist (3) + Rage (1, non-caster) + Arcane Recovery (3, requiresSpellcasting)
     mockRollFatesSelection.mockReturnValueOnce(4); // reroll: Cunning Action
     const result = assembleChaosForm(1, {
       tableA: 3,
       tableB: 1,  // Rage (hasSpellcasting: false)
-      tableC: 6,  // Metamagic (requiresSpellcasting: true)
+      tableC: 3,  // Arcane Recovery (requiresSpellcasting: true)
     });
     expect(result.tableCRerolled).toBe(true);
     expect(result.defensiveFeature.id).toBe(4);
-    expect(result.tableCRerollInfo!.reason).toContain("Metamagic");
+    expect(result.tableCRerollInfo!.reason).toContain("Arcane Recovery");
   });
 
-  it("does not reroll Table C when spellcasting + Metamagic", () => {
+  it("does not reroll Table C when spellcasting + Arcane Recovery", () => {
     const result = assembleChaosForm(1, {
       tableA: 3,  // Duelist
       tableB: 3,  // Spellcasting Divine (has spellcasting)
-      tableC: 6,  // Metamagic — compatible
+      tableC: 3,  // Arcane Recovery — compatible (has spellcasting)
     });
     expect(result.tableCRerolled).toBe(false);
-    expect(result.defensiveFeature.id).toBe(6);
+    expect(result.defensiveFeature.id).toBe(3);
     expect(result.tableCRerollInfo).toBeNull();
   });
 
   it("rolls randomly when no rolls provided", () => {
+    // Use a fresh mock setup with enough returns to cover all rollFatesSelection calls
     mockRollFatesSelection
-      .mockReturnValueOnce(3)  // Table A: Duelist
-      .mockReturnValueOnce(5)  // Table B: Fighting Style
-      .mockReturnValueOnce(8); // Table C: Danger Sense
+      .mockReturnValueOnce(3)   // Table A: Duelist
+      .mockReturnValueOnce(5)   // Table B: Fighting Style
+      .mockReturnValueOnce(7);  // Table C: Danger Sense
     const result = assembleChaosForm(1);
     expect(result.chassis.id).toBe(3);
     expect(result.primaryFeature.id).toBe(5);
-    expect(result.defensiveFeature.id).toBe(8);
+    expect(result.defensiveFeature.id).toBe(7);
   });
 
   it("includes feats at level 4 (first ASI level)", () => {
-    // Level 4 = 1 feat roll per source doc
-    mockRollFatesSelection.mockReturnValueOnce(10); // Table D: Chef
+    // Level 4 = 1 feat roll per source doc. Use TABLE_D_FEATS directly for determinism.
     const result = assembleChaosForm(4, {
       tableA: 3,
       tableB: 5,
       tableC: 4,
+      tableD: [10],  // Chef
     });
     expect(result.feats).toHaveLength(1);
     expect(result.feats[0].id).toBe(10);
@@ -269,8 +270,8 @@ describe("assembleChaosForm", () => {
     // Arcanist (7): d6, no armor, specific weapons only
     const result = assembleChaosForm(1, {
       tableA: 7,  // Arcanist
-      tableB: 2,  // Bardic Inspiration — no spellcasting, no direct attacks
-      tableC: 5,  // Lay on Hands — purely defensive
+      tableB: 14, // Crimson Rite — no spellcasting
+      tableC: 5,  // Second Wind — purely defensive
     });
     expect(result.fatesMercyApplied).toBe(true);
     // Hit die upgraded from d6 to d8
@@ -379,8 +380,11 @@ describe("assembleChaosForm", () => {
       tableB: 5,
       tableC: 4,
       tableD: [1, 5, 10],
+      chaosResonance: { subclassRoll: 1 }, // Emergent Path needs a subclass roll at level 9+
     });
     expect(result.chaosResonance).toBeNull();
+    // But Emergent Path should be populated at level 14 (level 9+)
+    expect(result.emergentPath).not.toBeNull();
   });
 
   it("chaosResonance is populated at level 15", () => {
