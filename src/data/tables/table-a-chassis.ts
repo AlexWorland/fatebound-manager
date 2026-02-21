@@ -5,7 +5,7 @@ export const TABLE_A_CHASSIS: Chassis[] = [
     id: 1,
     name: "Brute",
     hitDie: 12,
-    armorProficiencies: ["heavy", "medium", "shields"],
+    armorProficiencies: ["light", "medium", "shields"],
     weaponProficiencies: ["martial", "simple"],
   },
   {
@@ -41,7 +41,7 @@ export const TABLE_A_CHASSIS: Chassis[] = [
     name: "Trickster",
     hitDie: 8,
     armorProficiencies: ["light"],
-    weaponProficiencies: ["simple", "hand_crossbows", "rapiers", "shortswords"],
+    weaponProficiencies: ["simple", "hand_crossbows", "longswords", "rapiers", "shortswords"],
   },
   {
     id: 7,
@@ -55,6 +55,20 @@ export const TABLE_A_CHASSIS: Chassis[] = [
     name: "Wildcard",
     hitDie: 8,
     armorProficiencies: ["light"],
-    weaponProficiencies: ["simple"],
+    weaponProficiencies: ["simple", "martial"],
+  },
+  {
+    id: 9,
+    name: "Heavy Armored",
+    hitDie: 10,
+    armorProficiencies: ["heavy", "medium", "light", "shields"],
+    weaponProficiencies: ["martial", "simple"],
+  },
+  {
+    id: 10,
+    name: "Martial Artist",
+    hitDie: 8,
+    armorProficiencies: ["none"],
+    weaponProficiencies: ["simple", "shortswords"],
   },
 ];
