@@ -143,12 +143,12 @@ export default function SettingsPage() {
 
         {/* DDB Character ID */}
         <Card>
-          <h2 className="font-heading text-lg text-text-primary mb-3">
+          <h2 className="font-heading text-lg text-text-highlight mb-3">
             D&D Beyond Character ID
           </h2>
           <label
             htmlFor="ddbCharacterId"
-            className="block text-sm text-text-secondary font-body mb-1"
+            className="block text-xs text-text-secondary font-condensed uppercase tracking-wider mb-1"
           >
             Found in the character sheet URL on D&D Beyond.
           </label>
@@ -158,14 +158,14 @@ export default function SettingsPage() {
             value={ddbCharacterId}
             onChange={(e) => setDdbCharacterId(e.target.value)}
             placeholder="e.g. 123456789"
-            className="w-full bg-bg-elevated border border-border-subtle rounded-md px-3 py-2 font-mono text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-input border border-border-input rounded px-3 py-2 font-mono text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-accent"
           />
         </Card>
 
         {/* Sync Toggles */}
         <Card>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-heading text-lg text-text-primary">
+            <h2 className="font-heading text-lg text-text-highlight">
               Sync Options
             </h2>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -222,7 +222,7 @@ export default function SettingsPage() {
 
         {/* Generate Sync Commands */}
         <Card>
-          <h2 className="font-heading text-lg text-text-primary mb-3">
+          <h2 className="font-heading text-lg text-text-highlight mb-3">
             Sync Preview
           </h2>
           <p className="text-text-secondary font-body text-sm mb-4">
@@ -233,7 +233,7 @@ export default function SettingsPage() {
           <button
             onClick={handleGenerateSync}
             disabled={!syncSettings.enabled || !ddbCharacterId.trim()}
-            className="bg-accent text-bg-deep font-heading text-sm px-4 py-2 rounded-md hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+            className="bg-accent text-white font-condensed font-bold text-xs uppercase tracking-wider px-4 py-2 rounded hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Generate Sync Commands
           </button>
@@ -246,9 +246,9 @@ export default function SettingsPage() {
             <div className="mt-4 space-y-3">
               {/* Errors */}
               {syncResult.errors.length > 0 && (
-                <div className="bg-bg-elevated border border-red-500/30 rounded-md p-3">
-                  <p className="text-red-400 font-body text-xs font-semibold mb-1">Errors:</p>
-                  <ul className="list-disc list-inside text-red-400/80 font-body text-xs space-y-0.5">
+                <div className="bg-bg-elevated border border-accent/30 rounded p-3">
+                  <p className="text-accent font-body text-xs font-semibold mb-1">Errors:</p>
+                  <ul className="list-disc list-inside text-accent/80 font-body text-xs space-y-0.5">
                     {syncResult.errors.map((err, i) => (
                       <li key={i}>{err}</li>
                     ))}
@@ -286,7 +286,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-accent text-bg-deep font-heading text-sm px-6 py-2 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="bg-accent text-white font-condensed font-bold text-xs uppercase tracking-wider px-6 py-2 rounded hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save Settings"}
           </button>
@@ -294,7 +294,7 @@ export default function SettingsPage() {
             <span className="text-accent font-body text-sm">Saved.</span>
           )}
           {saveError && (
-            <span className="text-red-400 font-body text-sm">{saveError}</span>
+            <span className="text-accent font-body text-sm">{saveError}</span>
           )}
         </div>
       </div>

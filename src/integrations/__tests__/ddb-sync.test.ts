@@ -45,6 +45,7 @@ function makeCharacter(overrides: Partial<Character> = {}): Character {
         isMagic: false,
       },
     ],
+    equippedWeapons: [],
     currency: { cp: 10, sp: 20, ep: 0, gp: 50, pp: 0 },
     notes: "",
     ddbCharacterId: "99999",
@@ -73,10 +74,12 @@ function makeDailyState(overrides: Partial<DailyState> = {}): DailyState {
       "3": { used: 2, max: 2 },
     },
     classResources: {},
+    hitDice: { used: 0, max: 5, recovery: "long" },
     chaosSurgeUsed: false,
     twistOfFateUsed: false,
     defyFateUsed: false,
     fateResistanceSave: null,
+    autoRollResults: {},
     ...overrides,
   };
 }

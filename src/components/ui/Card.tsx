@@ -17,7 +17,7 @@ export default function Card({ children, className = "", variant = "default" }: 
 
   return (
     <div
-      className={`bg-bg-surface border rounded-lg p-4 ${variantClasses[variant]} ${className}`}
+      className={`bg-bg-surface border rounded p-3 shadow-card ${variantClasses[variant]} ${className}`}
     >
       {children}
     </div>

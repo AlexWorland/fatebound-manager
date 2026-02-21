@@ -6,6 +6,7 @@ export type WizardStepId =
   | "roll"
   | "form"
   | "attunement"
+  | "spells"
   | "memory"
   | "dual-nature"
   | "summary";
@@ -19,6 +20,7 @@ const ALL_STEPS: StepConfig[] = [
   { id: "roll", label: "Roll" },
   { id: "form", label: "Form" },
   { id: "attunement", label: "Attunement" },
+  { id: "spells", label: "Spells" },
   { id: "memory", label: "Memory" },
   { id: "dual-nature", label: "Dual Nature" },
   { id: "summary", label: "Summary" },

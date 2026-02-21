@@ -22,11 +22,30 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { name, abilityScores, permanentSkills, background } = body as {
+    const {
+      name,
+      level,
+      abilityScores,
+      permanentSkills,
+      background,
+      inventory,
+      equippedWeapons,
+      currency,
+      notes,
+      ddbCharacterId,
+      ddbSyncSettings,
+    } = body as {
       name: string;
+      level?: number;
       abilityScores: Character["abilityScores"];
       permanentSkills: [string, string];
       background: string;
+      inventory?: Character["inventory"];
+      equippedWeapons?: Character["equippedWeapons"];
+      currency?: Character["currency"];
+      notes?: string;
+      ddbCharacterId?: string;
+      ddbSyncSettings?: Character["ddbSyncSettings"];
     };
 
     if (!name || !abilityScores || !permanentSkills) {
@@ -36,19 +55,22 @@ export async function POST(request: Request) {
       );
     }
 
+    const startingLevel = Math.max(1, Math.min(20, Math.floor(level ?? 1)));
+
     const character = createCharacter({
       name,
-      level: 1,
+      level: startingLevel,
       abilityScores,
       permanentSkills,
       permanentMemorySlot: null,
       asiChoices: [],
       background: background ?? "",
-      inventory: [],
-      currency: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
-      notes: "",
-      ddbCharacterId: null,
-      ddbSyncSettings: null,
+      inventory: inventory ?? [],
+      equippedWeapons: equippedWeapons ?? [],
+      currency: currency ?? { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
+      notes: notes ?? "",
+      ddbCharacterId: ddbCharacterId ?? null,
+      ddbSyncSettings: ddbSyncSettings ?? null,
     });
 
     return NextResponse.json(character, { status: 201 });

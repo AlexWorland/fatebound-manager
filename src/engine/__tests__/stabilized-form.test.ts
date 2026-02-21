@@ -9,6 +9,7 @@ import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
 // Mock dice so subclass rolls are deterministic
 vi.mock("@/lib/dice", () => ({
   rollFatesSelection: vi.fn().mockReturnValue(1),
+  rollDie: vi.fn().mockReturnValue(1),
 }));
 
 describe("getAvailableFeaturesForLevel", () => {

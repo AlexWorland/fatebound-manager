@@ -27,6 +27,8 @@ type CharacterRow = {
   notes: string;
   ddb_character_id: string | null;
   ddb_sync_settings: string | null;
+  equipped_weapons: string;
+  sage_grimoire: string;
   created_at: string;
   updated_at: string;
 };
@@ -42,6 +44,8 @@ function rowToCharacter(row: CharacterRow): Character {
     asiChoices: JSON.parse(row.asi_choices),
     background: row.background,
     inventory: JSON.parse(row.inventory),
+    equippedWeapons: JSON.parse(row.equipped_weapons),
+    sageGrimoire: JSON.parse(row.sage_grimoire ?? "[]"),
     currency: JSON.parse(row.currency),
     notes: row.notes,
     ddbCharacterId: row.ddb_character_id,
@@ -79,8 +83,9 @@ export function createCharacter(
     INSERT INTO characters (
       id, name, level, ability_scores, permanent_skills, permanent_memory_slot,
       asi_choices, background, inventory, currency, notes,
-      ddb_character_id, ddb_sync_settings, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ddb_character_id, ddb_sync_settings, equipped_weapons, sage_grimoire,
+      created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
     data.name,
@@ -95,6 +100,8 @@ export function createCharacter(
     data.notes,
     data.ddbCharacterId,
     data.ddbSyncSettings ? JSON.stringify(data.ddbSyncSettings) : null,
+    JSON.stringify(data.equippedWeapons),
+    JSON.stringify(data.sageGrimoire ?? []),
     now,
     now
   );
@@ -119,7 +126,8 @@ export function updateCharacter(
       name = ?, level = ?, ability_scores = ?, permanent_skills = ?,
       permanent_memory_slot = ?, asi_choices = ?, background = ?,
       inventory = ?, currency = ?, notes = ?,
-      ddb_character_id = ?, ddb_sync_settings = ?, updated_at = ?
+      ddb_character_id = ?, ddb_sync_settings = ?, equipped_weapons = ?,
+      sage_grimoire = ?, updated_at = ?
     WHERE id = ?
   `).run(
     merged.name,
@@ -134,6 +142,8 @@ export function updateCharacter(
     merged.notes,
     merged.ddbCharacterId,
     merged.ddbSyncSettings ? JSON.stringify(merged.ddbSyncSettings) : null,
+    JSON.stringify(merged.equippedWeapons),
+    JSON.stringify(merged.sageGrimoire ?? []),
     now,
     id
   );

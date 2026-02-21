@@ -66,4 +66,18 @@ export function initSchema(): void {
   db.exec(CREATE_DAILY_STATES);
   db.exec(CREATE_FORM_HISTORY);
   db.exec(CREATE_SESSION_NOTES);
+  try {
+    db.exec(
+      "ALTER TABLE characters ADD COLUMN equipped_weapons TEXT NOT NULL DEFAULT '[]'"
+    );
+  } catch {
+    // Column already exists
+  }
+  try {
+    db.exec(
+      "ALTER TABLE characters ADD COLUMN sage_grimoire TEXT NOT NULL DEFAULT '[]'"
+    );
+  } catch {
+    // Column already exists
+  }
 }

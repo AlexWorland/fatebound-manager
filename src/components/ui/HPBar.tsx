@@ -58,7 +58,7 @@ export default function HPBar({ current, max, temp, onUpdate }: HPBarProps) {
         <span className="text-2xl font-bold font-heading text-text-highlight">{current}</span>
         <span className="text-text-secondary font-body">/ {max}</span>
         {temp > 0 && (
-          <span className="text-sm text-blue-400 font-body ml-2">+{temp} temp</span>
+          <span className="text-sm text-builder-blue font-body ml-2">+{temp} temp</span>
         )}
       </div>
 
@@ -76,7 +76,7 @@ export default function HPBar({ current, max, temp, onUpdate }: HPBarProps) {
         {/* Temp HP overlay */}
         {temp > 0 && (
           <div
-            className="absolute top-0 h-full rounded-full bg-blue-400 opacity-40 transition-all duration-300"
+            className="absolute top-0 h-full rounded-full bg-builder-blue opacity-40 transition-all duration-300"
             style={{
               left: `${hpPercent}%`,
               width: `${Math.min(tempPercent, 100 - hpPercent)}%`,
@@ -104,7 +104,7 @@ export default function HPBar({ current, max, temp, onUpdate }: HPBarProps) {
                       ? "bg-hp-red text-text-highlight"
                       : m === "heal"
                       ? "bg-hp-green text-text-highlight"
-                      : "bg-blue-600 text-text-highlight"
+                      : "bg-builder-blue text-text-highlight"
                     : "bg-bg-surface text-text-secondary hover:text-text-primary"
                 }`}
               >

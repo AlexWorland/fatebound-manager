@@ -9,10 +9,14 @@ import FateAttunement, { type FateAttunementResult } from "@/components/dawn-rol
 import MemoryAllocation, { type MemoryAllocationResult } from "@/components/dawn-roll/MemoryAllocation";
 import DualNatureStep, { type DualNatureResult } from "@/components/dawn-roll/DualNatureStep";
 import SummaryStep from "@/components/dawn-roll/SummaryStep";
+import SpellSelectionStep, { type SpellSelectionResult } from "@/components/dawn-roll/SpellSelectionStep";
 import { dawnRollUsesStabilized } from "@/engine/dawn-roll";
-import type { Character, DailyState } from "@/types/character";
+import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
+import { TABLE_B_PRIMARY } from "@/data/tables/table-b-primary";
+import type { Character, DailyState, AbilityScores } from "@/types/character";
 import type { DawnRollOutcome } from "@/types/dice";
 import type { RetainableFeature } from "@/types/features";
+import type { AbilityScore } from "@/types/forms";
 
 interface DawnRollStepData {
   die1: number;
@@ -25,8 +29,12 @@ interface DawnRollStepData {
 function buildActiveSteps(params: {
   level: number;
   useDualNature: boolean;
+  hasSpellcasting: boolean;
 }): WizardStepId[] {
   const steps: WizardStepId[] = ["roll", "form", "attunement"];
+  if (params.hasSpellcasting) {
+    steps.push("spells");
+  }
   if (params.level >= 2) {
     steps.push("memory");
   }
@@ -52,6 +60,7 @@ export default function DawnRollPage() {
   const [dawnRollData, setDawnRollData] = useState<DawnRollStepData | null>(null);
   const [formResolution, setFormResolution] = useState<FormResolutionResult | null>(null);
   const [attunement, setAttunement] = useState<FateAttunementResult | null>(null);
+  const [spellSelection, setSpellSelection] = useState<SpellSelectionResult | null>(null);
   const [memoryAllocation, setMemoryAllocation] = useState<MemoryAllocationResult | null>(null);
   const [dualNature, setDualNature] = useState<DualNatureResult | null>(null);
 
@@ -59,7 +68,7 @@ export default function DawnRollPage() {
     Promise.all([
       fetch(`/api/characters/${characterId}`).then((r) => {
         if (!r.ok) throw new Error("Character not found");
-        return r.json() as Promise<Character>;
+        return r.json().then((data: { character: Character; dailyState: unknown }) => data.character);
       }),
       fetch(`/api/characters/${characterId}/history`).then((r) => {
         if (!r.ok) return [];
@@ -79,8 +88,48 @@ export default function DawnRollPage() {
 
   const useDualNature = memoryAllocation?.useDualNature ?? false;
 
+  // Compute hasSpellcasting from the resolved form
+  const hasSpellcasting = (() => {
+    if (!formResolution) return false;
+    if (formResolution.stabilizedFormId) {
+      const form = STABILIZED_FORMS.find((f) => f.id === formResolution.stabilizedFormId);
+      return form?.hasSpellcasting ?? false;
+    }
+    if (formResolution.chaosRolls) {
+      const feature = TABLE_B_PRIMARY.find((f) => f.id === formResolution.chaosRolls?.tableB);
+      return feature?.hasSpellcasting ?? false;
+    }
+    return false;
+  })();
+
+  // Get the form's class name for spell list lookup
+  const formClassName = (() => {
+    if (formResolution?.stabilizedFormId) {
+      const form = STABILIZED_FORMS.find((f) => f.id === formResolution.stabilizedFormId);
+      return form?.className ?? "";
+    }
+    if (formResolution?.chaosRolls) {
+      const feature = TABLE_B_PRIMARY.find((f) => f.id === formResolution.chaosRolls?.tableB);
+      return feature?.className ?? "";
+    }
+    return "";
+  })();
+
+  // Compute ability scores after any attunement swap
+  function getSwappedScores(): AbilityScores {
+    if (!character) return {} as AbilityScores;
+    const base = { ...character.abilityScores };
+    if (attunement?.swap) {
+      const { score1, score2 } = attunement.swap as { score1: AbilityScore; score2: AbilityScore };
+      const temp = base[score1];
+      base[score1] = base[score2];
+      base[score2] = temp;
+    }
+    return base;
+  }
+
   const activeSteps = character
-    ? buildActiveSteps({ level: character.level, useDualNature })
+    ? buildActiveSteps({ level: character.level, useDualNature, hasSpellcasting })
     : ["roll", "form", "attunement", "summary"] as WizardStepId[];
 
   const currentIndex = activeSteps.indexOf(currentStep);
@@ -109,6 +158,7 @@ export default function DawnRollPage() {
       case "roll": return dawnRollData !== null;
       case "form": return formResolution !== null;
       case "attunement": return attunement !== null;
+      case "spells": return spellSelection !== null || !hasSpellcasting;
       case "memory": return memoryAllocation !== null;
       case "dual-nature": return dualNature !== null;
       case "summary": return false; // Summary uses its own confirm button
@@ -138,6 +188,12 @@ export default function DawnRollPage() {
       body.secondaryFormFeatures = dualNature.selectedFeatures;
     }
 
+    if (spellSelection) {
+      body.preparedSpells = spellSelection.preparedSpells;
+      body.knownCantrips = spellSelection.knownCantrips;
+      body.spellcastingProfile = spellSelection.spellcastingProfile;
+    }
+
     const res = await fetch(`/api/characters/${characterId}/dawn-roll`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -150,7 +206,7 @@ export default function DawnRollPage() {
     }
 
     router.push(`/characters/${characterId}`);
-  }, [character, dawnRollData, formResolution, attunement, memoryAllocation, dualNature, characterId, router]);
+  }, [character, dawnRollData, formResolution, attunement, spellSelection, memoryAllocation, dualNature, characterId, router]);
 
   if (loading) {
     return (
@@ -179,8 +235,10 @@ export default function DawnRollPage() {
               // Reset downstream steps if re-rolling
               setFormResolution(null);
               setAttunement(null);
+              setSpellSelection(null);
               setMemoryAllocation(null);
               setDualNature(null);
+              advanceStep();
             }}
           />
         );
@@ -192,6 +250,7 @@ export default function DawnRollPage() {
             level={character!.level}
             onComplete={(result) => {
               setFormResolution(result);
+              advanceStep();
             }}
           />
         ) : null;
@@ -202,9 +261,25 @@ export default function DawnRollPage() {
             abilityScores={character!.abilityScores}
             onComplete={(result) => {
               setAttunement(result);
+              advanceStep();
             }}
           />
         );
+
+      case "spells":
+        return hasSpellcasting && formResolution ? (
+          <SpellSelectionStep
+            character={character!}
+            formClassName={formClassName}
+            level={character!.level}
+            abilityScores={getSwappedScores()}
+            isChaosForm={!dawnRollUsesStabilized(dawnRollData!.outcome)}
+            onComplete={(result) => {
+              setSpellSelection(result);
+              advanceStep();
+            }}
+          />
+        ) : null;
 
       case "memory":
         return character!.level >= 2 ? (
@@ -213,6 +288,7 @@ export default function DawnRollPage() {
             yesterdaysFeatures={yesterdaysFeatures}
             onComplete={(result) => {
               setMemoryAllocation(result);
+              advanceStep();
             }}
           />
         ) : null;
@@ -225,6 +301,7 @@ export default function DawnRollPage() {
             primaryFormId={formResolution?.stabilizedFormId ?? null}
             onComplete={(result) => {
               setDualNature(result);
+              advanceStep();
             }}
           />
         ) : null;

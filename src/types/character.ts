@@ -1,6 +1,8 @@
 import { AbilityScore } from "./forms";
 import { MemorySlot, RetainableFeature } from "./features";
 import { DawnRollResult, DawnRollOutcome } from "./dice";
+import type { CharacterWeapon } from "@/types/equipment";
+import type { SpellcastingProfile } from "@/types/spells";
 
 export type AbilityScores = Record<AbilityScore, number>;
 
@@ -49,10 +51,12 @@ export interface Character {
   asiChoices: ASIChoice[];
   background: string;
   inventory: InventoryItem[];
+  equippedWeapons: CharacterWeapon[];
   currency: Currency;
   notes: string;
   ddbCharacterId: string | null;
   ddbSyncSettings: DDBSyncSettings | null;
+  sageGrimoire?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -60,6 +64,7 @@ export interface Character {
 export interface ResourceTracker {
   used: number;
   max: number;
+  recovery?: "short" | "long";
 }
 
 export interface DailyState {
@@ -84,10 +89,15 @@ export interface DailyState {
   tempHP: number;
   spellSlots: Record<string, ResourceTracker>;
   classResources: Record<string, ResourceTracker>;
+  hitDice: ResourceTracker;
   chaosSurgeUsed: boolean;
   twistOfFateUsed: boolean;
   defyFateUsed: boolean;
   fateResistanceSave: string | null;
+  autoRollResults: Record<string, string>;
+  preparedSpells?: string[];
+  knownCantrips?: string[];
+  spellcastingProfile?: SpellcastingProfile | null;
 }
 
 export interface FormHistory {

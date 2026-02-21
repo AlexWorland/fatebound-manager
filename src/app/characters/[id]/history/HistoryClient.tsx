@@ -204,7 +204,7 @@ function TimelineEntry({
             <div className="flex items-center gap-3 flex-shrink-0">
               {roll && (
                 <div className="text-right">
-                  <div className="text-xs text-text-secondary uppercase tracking-widest">
+                  <div className="text-xs text-text-muted uppercase tracking-wider font-condensed">
                     Roll
                   </div>
                   <div className="font-mono text-sm text-text-primary">
@@ -394,7 +394,7 @@ function EmptyState() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs text-text-secondary uppercase tracking-widest font-body">
+    <p className="text-xs text-text-muted uppercase tracking-wider font-condensed">
       {children}
     </p>
   );

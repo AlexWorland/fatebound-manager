@@ -28,7 +28,7 @@ export default function PipTracker({
               key={i}
               onClick={() => onToggle(i)}
               aria-label={`${label} pip ${i + 1}: ${isAvailable ? "available" : "spent"}`}
-              className={`w-4 h-4 rounded-full border transition-colors duration-150 cursor-pointer ${
+              className={`w-4 h-4 rounded-sm border transition-colors duration-150 cursor-pointer ${
                 isAvailable
                   ? `${color} border-transparent`
                   : "bg-transparent border-border-subtle"

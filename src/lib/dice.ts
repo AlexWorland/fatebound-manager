@@ -28,3 +28,13 @@ export function rollFatesSelection(tableSize: number): number {
 export function rollD20(): number {
   return rollDie(20);
 }
+
+export function roll4d6DropLowest(): number {
+  const rolls = [rollDie(6), rollDie(6), rollDie(6), rollDie(6)];
+  rolls.sort((a, b) => a - b);
+  return rolls[1] + rolls[2] + rolls[3];
+}
+
+export function rollAbilityScoreSet(): number[] {
+  return Array.from({ length: 6 }, () => roll4d6DropLowest());
+}

@@ -2,6 +2,7 @@ import type { StabilizedForm, SubclassEntry } from "@/types/forms";
 import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
 import { getSubclassesForForm } from "@/data/subclasses/index";
 import { rollFatesSelection } from "@/lib/dice";
+import { resolveAutoRolls } from "./auto-rolls";
 
 export interface ResolvedStabilizedForm {
   form: StabilizedForm;
@@ -10,6 +11,7 @@ export interface ResolvedStabilizedForm {
   hasSubclass: boolean;
   hasSignatureAbility: boolean;
   hasCapstone: boolean;
+  autoRollResults: Record<string, string>; // Resolved random selections keyed by feature name
 }
 
 /**
@@ -70,6 +72,8 @@ export function resolveStabilizedForm(
     }
   }
 
+  const autoRollResults = resolveAutoRolls(form.baseFeatures);
+
   return {
     form,
     subclass,
@@ -77,6 +81,7 @@ export function resolveStabilizedForm(
     hasSubclass,
     hasSignatureAbility,
     hasCapstone,
+    autoRollResults,
   };
 }
 

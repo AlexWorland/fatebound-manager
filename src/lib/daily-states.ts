@@ -51,12 +51,17 @@ function rowToDailyState(row: DailyStateRow): DailyState {
     secondaryFormId: formData.secondaryFormId ?? null,
     secondaryFormFeatures: formData.secondaryFormFeatures,
     chaosResonance: formData.chaosResonance ?? null,
+    autoRollResults: formData.autoRollResults ?? {},
+    preparedSpells: formData.preparedSpells,
+    knownCantrips: formData.knownCantrips,
+    spellcastingProfile: formData.spellcastingProfile ?? null,
     residualMemorySlots: JSON.parse(row.residual_memory),
     abilitySwap: row.ability_swap ? JSON.parse(row.ability_swap) : null,
     currentHP: row.current_hp ?? resources.currentHP ?? 0,
     tempHP: row.temp_hp ?? resources.tempHP ?? 0,
     spellSlots: resources.spellSlots ?? {},
     classResources: resources.classResources ?? {},
+    hitDice: resources.hitDice ?? { used: 0, max: 0, recovery: "long" },
     chaosSurgeUsed: featureUsage.chaosSurgeUsed ?? false,
     twistOfFateUsed: featureUsage.twistOfFateUsed ?? false,
     defyFateUsed: featureUsage.defyFateUsed ?? false,
@@ -75,6 +80,10 @@ function dailyStateToRow(state: DailyState): Omit<DailyStateRow, never> {
     secondaryFormId: state.secondaryFormId,
     secondaryFormFeatures: state.secondaryFormFeatures,
     chaosResonance: state.chaosResonance,
+    autoRollResults: state.autoRollResults,
+    preparedSpells: state.preparedSpells,
+    knownCantrips: state.knownCantrips,
+    spellcastingProfile: state.spellcastingProfile,
   };
 
   const resources = {
@@ -82,6 +91,7 @@ function dailyStateToRow(state: DailyState): Omit<DailyStateRow, never> {
     tempHP: state.tempHP,
     spellSlots: state.spellSlots,
     classResources: state.classResources,
+    hitDice: state.hitDice,
   };
 
   const featureUsage = {

@@ -197,7 +197,7 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setAsiChoice("asi")}
-              className={`flex-1 py-2 rounded-lg border text-sm font-body transition-colors ${
+              className={`flex-1 py-2 rounded border text-xs font-condensed font-bold uppercase tracking-wider transition-colors ${
                 asiChoice === "asi"
                   ? "border-accent bg-bg-elevated text-accent"
                   : "border-border-subtle bg-bg-elevated text-text-secondary hover:border-border-accent"
@@ -207,7 +207,7 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
             </button>
             <button
               onClick={() => setAsiChoice("feat")}
-              className={`flex-1 py-2 rounded-lg border text-sm font-body transition-colors ${
+              className={`flex-1 py-2 rounded border text-xs font-condensed font-bold uppercase tracking-wider transition-colors ${
                 asiChoice === "feat"
                   ? "border-accent bg-bg-elevated text-accent"
                   : "border-border-subtle bg-bg-elevated text-text-secondary hover:border-border-accent"
@@ -220,13 +220,13 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
           {asiChoice === "asi" ? (
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-text-secondary uppercase tracking-widest block mb-2">
+                <label className="text-xs text-text-secondary uppercase tracking-wider font-condensed block mb-2">
                   Score 1 (+1 or +2)
                 </label>
                 <select
                   value={asiScore}
                   onChange={(e) => setAsiScore(e.target.value)}
-                  className="w-full bg-bg-elevated border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:border-accent"
+                  className="w-full bg-bg-input border border-border-input rounded px-3 py-2 text-text-primary text-sm focus:outline-none focus:border-accent"
                 >
                   {abilityScores.map((s) => (
                     <option key={s} value={s}>{s}</option>
@@ -234,13 +234,13 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
                 </select>
               </div>
               <div>
-                <label className="text-xs text-text-secondary uppercase tracking-widest block mb-2">
+                <label className="text-xs text-text-secondary uppercase tracking-wider font-condensed block mb-2">
                   Score 2 (same = +2 to Score 1; different = +1 each)
                 </label>
                 <select
                   value={asiScore2}
                   onChange={(e) => setAsiScore2(e.target.value)}
-                  className="w-full bg-bg-elevated border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:border-accent"
+                  className="w-full bg-bg-input border border-border-input rounded px-3 py-2 text-text-primary text-sm focus:outline-none focus:border-accent"
                 >
                   {abilityScores.map((s) => (
                     <option key={s} value={s}>{s}</option>
@@ -261,7 +261,7 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
                 value={asiValue}
                 onChange={(e) => setAsiValue(e.target.value)}
                 placeholder="e.g., Sentinel, Lucky, Polearm Master..."
-                className="w-full bg-bg-elevated border border-border-subtle rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:border-accent placeholder:text-text-secondary"
+                className="w-full bg-bg-input border border-border-input rounded px-3 py-2 text-text-primary text-sm focus:outline-none focus:border-accent placeholder:text-text-secondary"
               />
             </div>
           )}
@@ -270,7 +270,7 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
         <button
           onClick={() => setPhase("confirm")}
           disabled={asiChoice === "feat" && !asiValue.trim()}
-          className="w-full py-3 rounded-lg bg-accent hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white font-body font-medium transition-colors"
+          className="w-full py-3 rounded bg-accent hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white font-condensed font-bold uppercase tracking-wider text-xs transition-colors"
         >
           Continue
         </button>
@@ -319,14 +319,14 @@ export default function LevelUpClient({ character }: LevelUpClientProps) {
         <div className="flex gap-3">
           <button
             onClick={() => setPhase(isAsiLevel ? "asi" : "hp")}
-            className="flex-1 py-3 rounded-lg border border-border-subtle bg-bg-elevated hover:bg-bg-hover text-text-secondary font-body transition-colors"
+            className="flex-1 py-3 rounded border border-border-subtle bg-bg-elevated hover:bg-bg-hover text-text-secondary font-condensed font-bold uppercase tracking-wider text-xs transition-colors"
           >
             Back
           </button>
           <button
             onClick={handleConfirm}
             disabled={saving}
-            className="flex-1 py-3 rounded-lg bg-accent hover:bg-accent-hover disabled:opacity-60 text-white font-body font-medium transition-colors"
+            className="flex-1 py-3 rounded bg-accent hover:bg-accent-hover disabled:opacity-60 text-white font-condensed font-bold uppercase tracking-wider text-xs transition-colors"
           >
             {saving ? "Saving..." : "Level Up"}
           </button>

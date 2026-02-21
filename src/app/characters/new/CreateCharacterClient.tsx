@@ -5,25 +5,7 @@ import { useRouter } from "next/navigation";
 import type { AbilityScore } from "@/types/forms";
 import type { AbilityScores } from "@/types/character";
 import { Card } from "@/components/ui";
-
-// ── D&D 5e Point Buy Constants ──────────────────────────────────────────
-
-const TOTAL_POINTS = 27;
-const MIN_SCORE = 8;
-const MAX_SCORE = 15;
-
-/** Point cost for each ability score in standard D&D 5e point buy.
- *  Scores 8-13 cost 1 point each; 14 costs 2 extra; 15 costs 2 extra. */
-const POINT_COST: Record<number, number> = {
-  8: 0,
-  9: 1,
-  10: 2,
-  11: 3,
-  12: 4,
-  13: 5,
-  14: 7,
-  15: 9,
-};
+import { rollAbilityScoreSet } from "@/lib/dice";
 
 const ABILITIES: AbilityScore[] = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
 
@@ -82,10 +64,6 @@ function formatModifier(score: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 
-function getTotalPointsUsed(scores: AbilityScores): number {
-  return ABILITIES.reduce((sum, ab) => sum + (POINT_COST[scores[ab]] ?? 0), 0);
-}
-
 // ── Component ───────────────────────────────────────────────────────────
 
 export default function CreateCharacterClient() {
@@ -96,32 +74,77 @@ export default function CreateCharacterClient() {
 
   // Form state
   const [name, setName] = useState("");
+  const [level, setLevel] = useState(1);
+  const [rolledScores, setRolledScores] = useState<number[] | null>(null);
   const [abilityScores, setAbilityScores] = useState<AbilityScores>({
-    STR: 8, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8,
+    STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0,
   });
-  const [background, setBackground] = useState("");
+  const [background] = useState("The Chaos-Marked");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
-  const pointsUsed = getTotalPointsUsed(abilityScores);
-  const pointsRemaining = TOTAL_POINTS - pointsUsed;
   const currentStepIndex = STEPS.findIndex((s) => s.id === step);
 
-  // ── Score adjustment ──────────────────────────────────────────────
+  // ── Rolling helpers ───────────────────────────────────────────────
 
-  function adjustScore(ability: AbilityScore, delta: number) {
-    const current = abilityScores[ability];
-    const next = current + delta;
-
-    if (next < MIN_SCORE || next > MAX_SCORE) return;
-
-    const nextCost = POINT_COST[next];
-    const currentCost = POINT_COST[current];
-    const costDiff = nextCost - currentCost;
-
-    if (costDiff > pointsRemaining) return;
-
-    setAbilityScores((prev) => ({ ...prev, [ability]: next }));
+  function handleRoll() {
+    const scores = rollAbilityScoreSet();
+    setRolledScores(scores);
+    setAbilityScores({ STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 });
   }
+
+  function assignScore(ability: AbilityScore, value: number) {
+    setAbilityScores((prev) => {
+      const updated = { ...prev };
+      updated[ability] = value;
+
+      // Count how many of this value exist in the rolled pool
+      const rolledCount = rolledScores!.filter((s) => s === value).length;
+      // Count how many abilities are now assigned this value
+      const assignedCount = ABILITIES.filter((ab) => updated[ab] === value).length;
+
+      // Only unassign if we've exceeded the pool — remove one at a time
+      if (assignedCount > rolledCount) {
+        for (const ab of ABILITIES) {
+          if (ab !== ability && updated[ab] === value) {
+            updated[ab] = 0;
+            break;
+          }
+        }
+      }
+
+      return updated;
+    });
+  }
+
+  function getAssignedValues(): number[] {
+    return ABILITIES.map((ab) => abilityScores[ab]).filter((v) => v > 0);
+  }
+
+  function getAvailableScores(currentAbility: AbilityScore): number[] {
+    if (!rolledScores) return [];
+    const assigned = getAssignedValues();
+    const currentValue = abilityScores[currentAbility];
+
+    // Build a pool of remaining scores by tracking which rolled scores are used
+    const usedIndices = new Set<number>();
+    for (const ab of ABILITIES) {
+      if (ab === currentAbility) continue;
+      const val = abilityScores[ab];
+      if (val > 0) {
+        const idx = rolledScores.findIndex((s, i) => s === val && !usedIndices.has(i));
+        if (idx !== -1) usedIndices.add(idx);
+      }
+    }
+
+    const available = rolledScores
+      .filter((_, i) => !usedIndices.has(i))
+      .sort((a, b) => b - a);
+
+    // Deduplicate for the dropdown display
+    return [...new Set(available)];
+  }
+
+  const allAssigned = rolledScores !== null && ABILITIES.every((ab) => abilityScores[ab] > 0);
 
   // ── Skill toggle ──────────────────────────────────────────────────
 
@@ -142,9 +165,9 @@ export default function CreateCharacterClient() {
       case "name":
         return name.trim().length > 0;
       case "abilities":
-        return pointsRemaining >= 0;
+        return allAssigned;
       case "background":
-        return true; // background is optional
+        return true;
       case "skills":
         return selectedSkills.length === 2;
       case "review":
@@ -181,6 +204,7 @@ export default function CreateCharacterClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
+          level,
           abilityScores,
           permanentSkills: selectedSkills as [string, string],
           background: background.trim(),
@@ -229,7 +253,7 @@ export default function CreateCharacterClient() {
                   // Only allow jumping to completed or current steps
                   if (i <= currentStepIndex) setStep(s.id);
                 }}
-                className={`text-xs font-body uppercase tracking-widest transition-colors ${
+                className={`text-xs font-condensed uppercase tracking-widest transition-colors ${
                   i === currentStepIndex
                     ? "text-text-highlight"
                     : i < currentStepIndex
@@ -254,19 +278,21 @@ export default function CreateCharacterClient() {
       {/* Step content */}
       <main className="max-w-2xl mx-auto px-4 py-4">
         {step === "name" && (
-          <StepName name={name} onChange={setName} />
+          <StepName name={name} onChangeName={setName} level={level} onChangeLevel={setLevel} />
         )}
 
         {step === "abilities" && (
           <StepAbilities
             scores={abilityScores}
-            pointsRemaining={pointsRemaining}
-            onAdjust={adjustScore}
+            rolledScores={rolledScores}
+            onRoll={handleRoll}
+            onAssign={assignScore}
+            getAvailableScores={getAvailableScores}
           />
         )}
 
         {step === "background" && (
-          <StepBackground background={background} onChange={setBackground} />
+          <StepBackground />
         )}
 
         {step === "skills" && (
@@ -279,8 +305,8 @@ export default function CreateCharacterClient() {
         {step === "review" && (
           <StepReview
             name={name}
+            level={level}
             abilityScores={abilityScores}
-            background={background}
             skills={selectedSkills}
           />
         )}
@@ -297,10 +323,10 @@ export default function CreateCharacterClient() {
           <button
             onClick={goBack}
             disabled={currentStepIndex === 0}
-            className={`px-4 py-2 rounded-lg text-sm font-body transition-colors ${
+            className={`px-4 py-2 rounded border text-xs font-condensed font-bold uppercase tracking-wider transition-colors ${
               currentStepIndex === 0
-                ? "text-text-secondary opacity-50 cursor-not-allowed"
-                : "text-text-primary hover:text-text-highlight hover:bg-bg-hover"
+                ? "border-border-subtle text-text-muted opacity-50 cursor-not-allowed"
+                : "border-border-subtle text-text-secondary hover:text-text-highlight hover:border-text-secondary"
             }`}
           >
             &larr; Back
@@ -310,7 +336,7 @@ export default function CreateCharacterClient() {
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-6 py-2 rounded-lg bg-accent hover:bg-accent-hover text-text-highlight text-sm font-body transition-colors disabled:opacity-50"
+              className="px-6 py-2 rounded bg-accent hover:bg-accent-hover text-white text-xs font-condensed font-bold uppercase tracking-wider transition-colors disabled:opacity-50"
             >
               {isSubmitting ? "Creating..." : "Create Character"}
             </button>
@@ -318,7 +344,7 @@ export default function CreateCharacterClient() {
             <button
               onClick={goNext}
               disabled={!canAdvance()}
-              className="px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-text-highlight text-sm font-body transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 rounded bg-accent hover:bg-accent-hover text-white text-xs font-condensed font-bold uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next &rarr;
             </button>
@@ -333,10 +359,14 @@ export default function CreateCharacterClient() {
 
 function StepName({
   name,
-  onChange,
+  onChangeName,
+  level,
+  onChangeLevel,
 }: {
   name: string;
-  onChange: (v: string) => void;
+  onChangeName: (v: string) => void;
+  level: number;
+  onChangeLevel: (v: number) => void;
 }) {
   return (
     <Card>
@@ -350,75 +380,123 @@ function StepName({
         <input
           type="text"
           value={name}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChangeName(e.target.value)}
           placeholder="Enter character name..."
           autoFocus
-          className="w-full px-4 py-3 rounded-lg bg-bg-elevated border border-border-subtle text-text-primary font-body placeholder:text-text-secondary/50 focus:outline-none focus:border-fate transition-colors"
+          className="w-full px-4 py-3 rounded bg-bg-input border border-border-input text-text-primary font-body placeholder:text-text-secondary/50 focus:outline-none focus:border-accent transition-colors"
         />
+
+        <div>
+          <label className="text-xs text-text-secondary uppercase tracking-wider font-condensed block mb-1.5">
+            Starting Level
+          </label>
+          <select
+            value={level}
+            onChange={(e) => onChangeLevel(Number(e.target.value))}
+            className="w-full px-4 py-3 rounded bg-bg-input border border-border-input text-text-primary font-body focus:outline-none focus:border-accent transition-colors"
+          >
+            {Array.from({ length: 20 }, (_, i) => i + 1).map((lvl) => (
+              <option key={lvl} value={lvl}>
+                Level {lvl}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </Card>
   );
 }
 
-// ── Step: Abilities (Point Buy) ─────────────────────────────────────────
+// ── Step: Abilities (4d6 Drop Lowest) ───────────────────────────────────
 
 function StepAbilities({
   scores,
-  pointsRemaining,
-  onAdjust,
+  rolledScores,
+  onRoll,
+  onAssign,
+  getAvailableScores,
 }: {
   scores: AbilityScores;
-  pointsRemaining: number;
-  onAdjust: (ability: AbilityScore, delta: number) => void;
+  rolledScores: number[] | null;
+  onRoll: () => void;
+  onAssign: (ability: AbilityScore, value: number) => void;
+  getAvailableScores: (ability: AbilityScore) => number[];
 }) {
   return (
     <Card>
       <div className="flex flex-col gap-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-lg font-heading text-text-highlight">
-              Ability Scores
-            </h2>
-            <p className="text-sm text-text-secondary mt-1">
-              D&D 5e point buy. Start at 8, max 15, spend 27 points. Fate Attunement lets you swap two scores daily.
-            </p>
-          </div>
-          <div className="shrink-0 ml-4 text-right">
-            <div className="text-xs text-text-secondary uppercase tracking-widest font-body">
-              Points
-            </div>
-            <div
-              className={`text-2xl font-heading font-bold ${
-                pointsRemaining === 0
-                  ? "text-accent"
-                  : pointsRemaining < 0
-                  ? "text-hp-red"
-                  : "text-text-highlight"
-              }`}
-            >
-              {pointsRemaining}
-            </div>
-            <div className="text-xs text-text-secondary font-mono">
-              / {TOTAL_POINTS}
-            </div>
-          </div>
+        <div>
+          <h2 className="text-lg font-heading text-text-highlight">
+            Ability Scores
+          </h2>
+          <p className="text-sm text-text-secondary mt-1">
+            Roll 4d6, drop the lowest die, six times. Assign each result to an ability. Fate Attunement lets you swap two scores daily.
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-          {ABILITIES.map((ab) => (
-            <AbilityScoreInput
-              key={ab}
-              ability={ab}
-              score={scores[ab]}
-              pointsRemaining={pointsRemaining}
-              onAdjust={onAdjust}
-            />
-          ))}
+        {/* Roll / Reroll button */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onRoll}
+            className="px-4 py-2 rounded bg-fate hover:bg-fate/80 text-white text-xs font-condensed font-bold uppercase tracking-wider transition-colors"
+          >
+            {rolledScores ? "Reroll All" : "Roll Ability Scores"}
+          </button>
+          {rolledScores && (
+            <span className="text-sm text-text-secondary font-mono">
+              Rolled: {[...rolledScores].sort((a, b) => b - a).join(", ")}
+            </span>
+          )}
         </div>
 
-        {pointsRemaining > 0 && (
+        {/* Assignment grid */}
+        {rolledScores && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+            {ABILITIES.map((ab) => {
+              const available = getAvailableScores(ab);
+              const current = scores[ab];
+              return (
+                <div
+                  key={ab}
+                  className="flex flex-col items-center gap-1 p-3 rounded-lg bg-bg-elevated border border-border-subtle"
+                >
+                  <span className="text-xs font-body text-text-secondary uppercase tracking-widest">
+                    {ABILITY_LABELS[ab]}
+                  </span>
+
+                  <select
+                    value={current || ""}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val > 0) onAssign(ab, val);
+                    }}
+                    className="w-full mt-1 px-2 py-1.5 rounded bg-bg-input border border-border-input text-text-primary text-center font-heading text-lg focus:outline-none focus:border-accent transition-colors"
+                  >
+                    <option value="">--</option>
+                    {current > 0 && !available.includes(current) && (
+                      <option value={current}>{current}</option>
+                    )}
+                    {available.map((score) => (
+                      <option key={score} value={score}>
+                        {score}
+                      </option>
+                    ))}
+                  </select>
+
+                  {current > 0 && (
+                    <span className="text-xs text-text-secondary font-mono">
+                      ({formatModifier(current)})
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {!rolledScores && (
           <p className="text-xs text-text-secondary text-center mt-2">
-            {pointsRemaining} point{pointsRemaining !== 1 ? "s" : ""} remaining &mdash; consider raising your primary stat to 15 for Fate Attunement swaps.
+            Click &ldquo;Roll Ability Scores&rdquo; to generate six scores using the 4d6 drop lowest method.
           </p>
         )}
       </div>
@@ -426,86 +504,60 @@ function StepAbilities({
   );
 }
 
-function AbilityScoreInput({
-  ability,
-  score,
-  pointsRemaining,
-  onAdjust,
-}: {
-  ability: AbilityScore;
-  score: number;
-  pointsRemaining: number;
-  onAdjust: (ability: AbilityScore, delta: number) => void;
-}) {
-  const mod = formatModifier(score);
-  const canIncrease = score < MAX_SCORE && (POINT_COST[score + 1] - POINT_COST[score]) <= pointsRemaining;
-  const canDecrease = score > MIN_SCORE;
+// ── Step: Background (Locked — Chaos-Marked) ───────────────────────────
 
+function StepBackground() {
   return (
-    <div className="flex flex-col items-center gap-1 p-3 rounded-lg bg-bg-elevated border border-border-subtle">
-      <span className="text-xs font-body text-text-secondary uppercase tracking-widest">
-        {ABILITY_LABELS[ability]}
-      </span>
-
-      <div className="flex items-center gap-2 mt-1">
-        <button
-          onClick={() => onAdjust(ability, -1)}
-          disabled={!canDecrease}
-          className="w-7 h-7 rounded flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          &minus;
-        </button>
-
-        <div className="flex flex-col items-center min-w-[40px]">
-          <span className="text-xl font-heading font-bold text-text-highlight">
-            {score}
-          </span>
-          <span className="text-xs text-text-secondary font-mono">
-            ({mod})
-          </span>
-        </div>
-
-        <button
-          onClick={() => onAdjust(ability, 1)}
-          disabled={!canIncrease}
-          className="w-7 h-7 rounded flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          +
-        </button>
-      </div>
-
-      <span className="text-xs text-text-secondary font-mono">
-        {POINT_COST[score]} pts
-      </span>
-    </div>
-  );
-}
-
-// ── Step: Background ────────────────────────────────────────────────────
-
-function StepBackground({
-  background,
-  onChange,
-}: {
-  background: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <Card>
+    <Card variant="fate">
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-heading text-text-highlight">
-          Background
+          Background: The Chaos-Marked
         </h2>
-        <p className="text-sm text-text-secondary">
-          Describe your character's background. This is optional but helps ground your Fatebound's identity as everything else shifts.
+        <p className="text-sm text-text-secondary italic">
+          All Fatebound characters share this background. A moment of contact with raw fate itself left its Mark on you — now chaos clings to you like a second shadow.
         </p>
-        <textarea
-          value={background}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Acolyte, Sage, Criminal, Folk Hero, or describe your own..."
-          rows={3}
-          className="w-full px-4 py-3 rounded-lg bg-bg-elevated border border-border-subtle text-text-primary font-body placeholder:text-text-secondary/50 focus:outline-none focus:border-fate transition-colors resize-none"
-        />
+
+        <div className="flex flex-col gap-3 mt-1">
+          {/* Feature */}
+          <div className="p-3 rounded-lg bg-bg-elevated border border-border-subtle">
+            <span className="text-xs text-fate uppercase tracking-widest font-body block mb-1">
+              Feature: Ambient Chaos
+            </span>
+            <p className="text-sm text-text-primary">
+              Chaotic phenomena manifest passively around you. Once per long rest, in a moment of tension or uncertainty, you can lean into the chaos — a minor, unpredictable beneficial event occurs. The DM determines the manifestation.
+            </p>
+          </div>
+
+          {/* Skill proficiencies */}
+          <div className="p-3 rounded-lg bg-bg-elevated border border-border-subtle">
+            <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+              Skill Proficiencies
+            </span>
+            <p className="text-sm text-text-primary">
+              Choose 2 from: Arcana, Insight, Perception, Sleight of Hand, Survival
+            </p>
+          </div>
+
+          {/* Languages */}
+          <div className="p-3 rounded-lg bg-bg-elevated border border-border-subtle">
+            <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+              Languages
+            </span>
+            <p className="text-sm text-text-primary">
+              Two languages of your choice
+            </p>
+          </div>
+
+          {/* Equipment */}
+          <div className="p-3 rounded-lg bg-bg-elevated border border-border-subtle">
+            <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+              Equipment
+            </span>
+            <p className="text-sm text-text-primary">
+              Common clothes with faintly shifting patterns, a trinket from your former life, a journal of half-remembered dreams, and a belt pouch containing 10 gp
+            </p>
+          </div>
+        </div>
       </div>
     </Card>
   );
@@ -569,13 +621,13 @@ function StepSkills({
 
 function StepReview({
   name,
+  level,
   abilityScores,
-  background,
   skills,
 }: {
   name: string;
+  level: number;
   abilityScores: AbilityScores;
-  background: string;
   skills: string[];
 }) {
   return (
@@ -614,14 +666,12 @@ function StepReview({
         </div>
 
         {/* Background */}
-        {background && (
-          <div>
-            <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
-              Background
-            </span>
-            <span className="text-sm text-text-primary">{background}</span>
-          </div>
-        )}
+        <div>
+          <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+            Background
+          </span>
+          <span className="text-sm text-text-primary">The Chaos-Marked</span>
+        </div>
 
         {/* Skills */}
         <div>
@@ -643,8 +693,8 @@ function StepReview({
         {/* Level notice */}
         <div className="pt-3 border-t border-border-subtle">
           <p className="text-xs text-text-secondary">
-            Your character will start at <span className="text-text-highlight font-medium">Level 1</span>.
-            After creation, you'll perform your first Dawn Roll to determine today's form.
+            Your character will start at <span className="text-text-highlight font-medium">Level {level}</span>.
+            After creation, you&apos;ll perform your first Dawn Roll to determine today&apos;s form.
           </p>
         </div>
       </div>

@@ -53,6 +53,7 @@ const DEFAULT_CHARACTER: Omit<Character, "id" | "createdAt" | "updatedAt"> = {
   asiChoices: [],
   background: "Soldier",
   inventory: [],
+  equippedWeapons: [],
   currency: { cp: 0, sp: 10, ep: 0, gp: 5, pp: 0 },
   notes: "Test notes",
   ddbCharacterId: null,
@@ -73,10 +74,12 @@ const DEFAULT_DAILY_STATE: Omit<DailyState, "id"> = {
   tempHP: 0,
   spellSlots: {},
   classResources: { rage: { used: 0, max: 3 } },
+  hitDice: { used: 0, max: 5, recovery: "long" },
   chaosSurgeUsed: false,
   twistOfFateUsed: false,
   defyFateUsed: false,
   fateResistanceSave: null,
+  autoRollResults: {},
 };
 
 beforeEach(() => {

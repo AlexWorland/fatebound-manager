@@ -86,7 +86,7 @@ export default function DiceRoller({
   return (
     <div className="flex flex-col items-center gap-2">
       {label && (
-        <span className="text-xs font-body text-text-secondary uppercase tracking-widest">
+        <span className="text-xs font-condensed font-bold text-text-secondary uppercase tracking-wider">
           {label}
         </span>
       )}
@@ -133,7 +133,7 @@ export default function DiceRoller({
       </button>
 
       {phase === "result" && finalResult !== null && (
-        <span className="text-xs text-text-secondary font-body">tap to reset</span>
+        <span className="text-xs text-text-muted font-condensed uppercase tracking-wider">tap to reset</span>
       )}
 
       {/* Shake keyframes injected via style tag */}

@@ -18,12 +18,12 @@ export default function TabNav({ tabs, activeTab, onTabChange }: TabNavProps) {
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={`
-              px-4 py-2.5 text-sm font-body tracking-widest uppercase transition-colors duration-150
-              relative border-b-2 -mb-px
+              px-4 py-2.5 text-sm font-condensed font-bold uppercase transition-colors duration-150
+              relative border-b-[3px] -mb-px gap-4
               ${
                 isActive
-                  ? "text-text-highlight border-accent"
-                  : "text-text-secondary border-transparent hover:text-text-primary hover:border-border-subtle"
+                  ? "text-accent border-accent"
+                  : "text-text-muted border-transparent hover:text-text-primary hover:border-border-subtle"
               }
             `}
           >

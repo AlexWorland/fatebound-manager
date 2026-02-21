@@ -40,3 +40,14 @@ Reviewed all five engine modules (chaos-form, dawn-roll, stabilized-form, spell-
 - `getSecondaryFormFeatures()` has both overloaded signatures (with and without level) for backward compatibility
 - Table D rolls use `TABLE_D_FEATS.length` which correctly handles the 91-feat table
 - Level progression data (FATE_POOL_BY_LEVEL) correctly ranges coverage across all levels
+
+## Emergent Path Implementation (Task #21 Complete)
+- **Feature**: Level 9+ Chaos Forms now grant a subclass feature tied to their Table B primary feature
+- **Mapping**: 14-entry EMERGENT_PATH_FORM_MAP connects each Table B result to its Stabilized Form equivalent
+  - E.g., Rage → The Tempest, Wild Shape → The Shepherd, Sneak Attack → The Shadow
+- **Implementation**: 
+  - `assembleEmergentPath(primaryFeatureId, optionalSubclassRoll)` function
+  - Returns `EmergentPathResult` with subclass ID, name, level 9 feature name & description
+  - Integrated into `assembleChaosForm()` at level 9+, works alongside Chaos Resonance at level 15+
+- **Data Fix**: Added `incompatibleChassis: [1, 2, 9]` to Table C entries 1-2 (Unarmored Defense variants)
+  - Brute, Skirmisher, Heavy Armored all grant medium/heavy armor, making Unarmored Defense redundant

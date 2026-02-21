@@ -1,11 +1,10 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
 
 @theme inline {
-  --color-bg-deep: #0B0B0D;
-  --color-bg-surface: #1A1B1E;
-  --color-bg-elevated: #242528;
-  --color-bg-hover: #2C2D31;
+  --color-bg-deep: #12181c;
+  --color-bg-surface: #232b2f;
+  --color-bg-elevated: #374045;
+  --color-bg-hover: #374045;
 
   --color-accent: #C53131;
   --color-accent-hover: #E03E3E;
@@ -14,12 +13,21 @@
   --color-fate: #7C3AED;
   --color-fate-glow: #A78BFA;
 
-  --color-text-primary: #E8E6E3;
-  --color-text-secondary: #9B9B9B;
-  --color-text-highlight: #FFFFFF;
+  --color-text-primary: #ecedee;
+  --color-text-secondary: #75838b;
+  --color-text-highlight: #f9fafa;
+  --color-text-muted: #525c63;
+  --color-text-dark: #a2acb2;
 
-  --color-border-subtle: #333538;
+  --color-border-subtle: #374045;
   --color-border-accent: #C53131;
+
+  --color-bg-chrome: #090809;
+  --color-bg-input: #10161a;
+  --color-border-input: #202b33;
+  --color-builder-blue: #1b9af0;
+  --color-spell: #704cd9;
+  --color-danger: #c42e2d;
 
   --color-hp-green: #22C55E;
   --color-hp-yellow: #EAB308;
@@ -27,7 +35,13 @@
 
   --font-heading: 'Cinzel', serif;
   --font-body: 'Roboto', sans-serif;
+  --font-condensed: 'Roboto Condensed', sans-serif;
   --font-mono: 'Roboto Mono', monospace;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(35,43,47,0.1);
+  --shadow-card: 0 4px 8px rgba(35,43,47,0.5), inset 0 -1px 0 rgba(0,0,0,0.1);
+  --shadow-elevated: 0 6px 12px rgba(0,0,0,0.5);
+  --shadow-floating: 0 12px 36px rgba(0,0,0,0.52);
 }
 
 @layer base {

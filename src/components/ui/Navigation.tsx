@@ -45,7 +45,7 @@ export default function Navigation() {
   const isHome = pathname === "/" || pathname === "/characters";
 
   return (
-    <nav className="sticky top-0 z-50 bg-bg-surface/95 backdrop-blur-sm border-b border-border-subtle">
+    <nav className="sticky top-0 z-50 bg-bg-chrome/95 backdrop-blur-sm border-b border-border-subtle">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo / Title */}
@@ -56,7 +56,7 @@ export default function Navigation() {
             <span className="text-fate text-lg font-bold font-heading tracking-wide group-hover:text-fate-glow transition-colors">
               Fatebound
             </span>
-            <span className="text-text-secondary text-xs font-body hidden sm:inline">
+            <span className="text-text-dark text-xs font-body hidden sm:inline">
               Manager
             </span>
           </Link>
@@ -74,7 +74,7 @@ export default function Navigation() {
                   ) : (
                     <Link
                       href={crumb.href}
-                      className="text-text-secondary hover:text-accent transition-colors"
+                      className="text-text-dark hover:text-accent transition-colors"
                     >
                       {crumb.label}
                     </Link>

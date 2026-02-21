@@ -9,8 +9,22 @@ import {
 import { assembleChaosForm } from "@/engine/chaos-form";
 import { resolveStabilizedForm } from "@/engine/stabilized-form";
 import { rollD20 } from "@/lib/dice";
-import type { DailyState } from "@/types/character";
+import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
+import { initSpellSlots, initClassResources, initChaosResources } from "@/engine/resource-init";
+import type { Character, DailyState } from "@/types/character";
 import type { AbilityScore } from "@/types/forms";
+import type { SpellcastingProfile } from "@/types/spells";
+
+function calculateMaxHP(level: number, hitDie: number, conMod: number): number {
+  // Level 1: max hit die + CON mod; Level 2+: average (hitDie/2 + 1) + CON mod per level
+  const level1HP = hitDie + conMod;
+  const perLevelHP = Math.floor(hitDie / 2) + 1 + conMod;
+  return Math.max(1, level1HP + (level - 1) * perLevelHP);
+}
+
+function getConMod(character: Character): number {
+  return Math.floor((character.abilityScores.CON - 10) / 2);
+}
 
 interface DawnRollRequestBody {
   forcedRoll?: number;
@@ -23,6 +37,9 @@ interface DawnRollRequestBody {
   };
   residualMemory?: DailyState["residualMemorySlots"];
   abilitySwap?: { score1: AbilityScore; score2: AbilityScore };
+  preparedSpells?: string[];
+  knownCantrips?: string[];
+  spellcastingProfile?: SpellcastingProfile | null;
 }
 
 export async function POST(
@@ -38,6 +55,8 @@ export async function POST(
         { status: 404 }
       );
     }
+
+    const profBonus = Math.ceil(character.level / 4) + 1;
 
     const body = (await request.json()) as DawnRollRequestBody;
 
@@ -83,6 +102,9 @@ export async function POST(
       }
 
       const resolved = resolveStabilizedForm(formId, character.level);
+      const stabForm = STABILIZED_FORMS.find((f) => f.id === formId);
+      const stabHitDie = stabForm?.hitDie ?? 8;
+      const stabMaxHP = calculateMaxHP(character.level, stabHitDie, getConMod(character));
 
       const dailyState = saveDailyState({
         characterId: id,
@@ -96,14 +118,19 @@ export async function POST(
         secondaryFormFeatures: [],
         residualMemorySlots: body.residualMemory ?? [],
         abilitySwap: body.abilitySwap ?? null,
-        currentHP: 0,
+        currentHP: stabMaxHP,
         tempHP: 0,
-        spellSlots: {},
-        classResources: {},
+        spellSlots: initSpellSlots(character.level, stabForm?.hasSpellcasting ?? false, stabForm?.className === "Warlock"),
+        classResources: initClassResources(stabForm?.baseFeatures ?? [], character.level, profBonus, character.abilityScores),
+        hitDice: { used: 0, max: character.level, recovery: "long" as const },
         chaosSurgeUsed: false,
         twistOfFateUsed: false,
         defyFateUsed: false,
         fateResistanceSave: null,
+        autoRollResults: resolved.autoRollResults,
+        preparedSpells: body.preparedSpells,
+        knownCantrips: body.knownCantrips,
+        spellcastingProfile: body.spellcastingProfile ?? null,
       });
 
       return NextResponse.json({
@@ -116,6 +143,7 @@ export async function POST(
     } else {
       // Chaos form path
       const chaosForm = assembleChaosForm(character.level, body.chaosRolls);
+      const chaosMaxHP = calculateMaxHP(character.level, chaosForm.chassis.hitDie, getConMod(character));
 
       const dailyState = saveDailyState({
         characterId: id,
@@ -138,14 +166,19 @@ export async function POST(
         chaosTableD: chaosForm.feats.map((f) => ({ roll: 0, featId: f.id })),
         residualMemorySlots: body.residualMemory ?? [],
         abilitySwap: body.abilitySwap ?? null,
-        currentHP: 0,
+        currentHP: chaosMaxHP,
         tempHP: 0,
-        spellSlots: {},
-        classResources: {},
+        spellSlots: initSpellSlots(character.level, chaosForm.primaryFeature.hasSpellcasting, chaosForm.primaryFeature.id === 11),
+        classResources: initChaosResources(chaosForm.primaryFeature, character.level, profBonus, character.abilityScores),
+        hitDice: { used: 0, max: character.level, recovery: "long" as const },
         chaosSurgeUsed: false,
         twistOfFateUsed: false,
         defyFateUsed: false,
         fateResistanceSave: null,
+        autoRollResults: {},
+        preparedSpells: body.preparedSpells,
+        knownCantrips: body.knownCantrips,
+        spellcastingProfile: body.spellcastingProfile ?? null,
       });
 
       return NextResponse.json({

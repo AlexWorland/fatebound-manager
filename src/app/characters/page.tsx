@@ -23,7 +23,7 @@ function CharacterCard({
 
   return (
     <button onClick={onClick} className="text-left w-full group">
-      <Card className="transition-all duration-150 hover:border-fate group-hover:shadow-lg group-hover:shadow-fate/10">
+      <Card className="transition-all duration-150 hover:shadow-elevated hover:border-border-subtle group-hover:shadow-elevated">
         <div className="flex flex-col gap-3">
           {/* Name and level */}
           <div className="flex items-start justify-between">
@@ -102,7 +102,7 @@ export default function CharacterListPage() {
           </div>
           <button
             onClick={() => router.push("/characters/new")}
-            className="px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-text-highlight text-sm font-body transition-colors"
+            className="px-4 py-2 rounded bg-accent hover:bg-accent-hover text-white text-xs font-condensed font-bold uppercase tracking-wider transition-colors"
           >
             New Character
           </button>
@@ -134,7 +134,7 @@ export default function CharacterListPage() {
             </p>
             <button
               onClick={() => router.push("/characters/new")}
-              className="px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover text-text-highlight font-body transition-colors"
+              className="px-6 py-3 rounded bg-accent hover:bg-accent-hover text-white font-condensed font-bold uppercase tracking-wider text-xs transition-colors"
             >
               Create Character
             </button>
