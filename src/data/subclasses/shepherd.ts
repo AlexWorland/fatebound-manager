@@ -38,15 +38,15 @@ export const SHEPHERD_SUBCLASSES: SubclassEntry[] = [
     name: "Circle of Dreams",
     level9Feature: {
       name: "Balm of the Summer Court + Hidden Paths",
-      description: "Gain a pool of d6s equal to your Fatebound level; as a bonus action, spend up to half your level in dice to heal a creature within 120 ft by the total rolled, and grant it 1 temporary hit point per die spent. Hidden Paths: As a bonus action, teleport yourself up to 60 ft to an unoccupied space, or cause a willing ally within 30 ft to teleport up to 30 ft (WIS mod/long rest).",
+      description: "Gain a pool of d6s equal to your Fatebound level; as a bonus action, spend up to half your level in dice to heal a creature within 120 ft by the total rolled, and grant it 1 temporary hit point per die spent. Hidden Paths: As a bonus action, teleport yourself up to 60 ft to an unoccupied space you can see. Alternatively, you can use your action to teleport one willing creature you touch up to 30 ft to an unoccupied space you can see. Once you use this feature, you can't use it again until you finish a short or long rest.",
     },
     level13Feature: {
       name: "Walker in Dreams",
-      description: "When you finish a short rest, you can cast dream (as the caster), scrying, or teleportation circle (via a linked tree you have touched) once without expending a spell slot (1/long rest).",
+      description: "When you finish a short rest, you can cast dream (as the caster), scrying, or teleportation circle (via a linked tree you have touched) once without expending a spell slot or requiring material components (1/long rest).",
     },
     level17Feature: {
-      name: "Hidden Paths Mastery",
-      description: "Your Hidden Paths teleport range increases to 120 ft, and allies you send through Hidden Paths can travel up to 60 ft. You can use Hidden Paths a number of times equal to twice your WIS modifier per long rest.",
+      name: "Dream Realm",
+      description: "Your Walker in Dreams feature can now be used once per short rest instead of once per long rest. Additionally, when you use Hidden Paths to teleport yourself, you can bring one willing creature you can touch along with you.",
     },
   },
   {

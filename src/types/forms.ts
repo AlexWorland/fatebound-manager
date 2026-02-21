@@ -32,6 +32,7 @@ export interface Chassis {
   hitDie: HitDie;
   armorProficiencies: ArmorProficiency[];
   weaponProficiencies: WeaponProficiency[];
+  description?: string;
 }
 
 export interface PrimaryFeature {
@@ -51,6 +52,7 @@ export interface DefensiveFeature {
   description: string;
   requiresSpellcasting?: boolean;
   incompatibleChassis?: number[];
+  levelRequirement?: number;
 }
 
 export type StabilizedFormId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
