@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Character, DailyState } from "@/types/character";
 import { Card, PipTracker } from "@/components/ui";
+import SpellRow from "@/components/character-sheet/SpellRow";
 import { FATEBOUND_SPELLS } from "@/data/spells";
 import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
 import { getMysticArcanumLevels } from "@/engine/spell-slots";
@@ -11,46 +12,6 @@ interface Props {
   character: Character;
   dailyState: DailyState | null;
   onDailyStateChange: (state: DailyState) => void;
-}
-
-function SpellCard({ spell }: { spell: (typeof FATEBOUND_SPELLS)[0] }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-border-subtle last:border-0">
-      <button
-        className="w-full flex items-start gap-3 py-2 text-left group"
-        onClick={() => setOpen((o) => !o)}
-      >
-        <span className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center bg-bg-elevated text-xs font-mono text-text-secondary border border-border-subtle">
-          {spell.level === 0 ? "C" : spell.level}
-        </span>
-        <div className="flex-1 min-w-0">
-          <span className="text-sm font-body text-text-primary group-hover:text-text-highlight transition-colors">
-            {spell.name}
-          </span>
-          <span className="text-xs text-text-secondary ml-2">{spell.school}</span>
-        </div>
-        <span className="text-xs text-text-secondary mt-0.5">{open ? "▲" : "▼"}</span>
-      </button>
-      {open && (
-        <div className="pb-3 pl-8 text-xs font-body text-text-secondary space-y-1">
-          <p>
-            <span className="text-text-primary">Casting Time:</span> {spell.castingTime}
-          </p>
-          <p>
-            <span className="text-text-primary">Range:</span> {spell.range}
-          </p>
-          <p>
-            <span className="text-text-primary">Components:</span> {spell.components}
-          </p>
-          <p>
-            <span className="text-text-primary">Duration:</span> {spell.duration}
-          </p>
-          <p className="leading-relaxed mt-2">{spell.description}</p>
-        </div>
-      )}
-    </div>
-  );
 }
 
 export default function SpellsTab({ character, dailyState, onDailyStateChange }: Props) {
@@ -99,6 +60,35 @@ export default function SpellsTab({ character, dailyState, onDailyStateChange }:
     }
   };
 
+  // Consume one use of a specific slot level
+  const handleCast = async (spellSlotLevel: number) => {
+    if (!dailyState) return;
+    const key = String(spellSlotLevel);
+    const tracker = dailyState.spellSlots[key];
+    if (!tracker || tracker.used >= tracker.max) return;
+
+    const newState: DailyState = {
+      ...dailyState,
+      spellSlots: {
+        ...dailyState.spellSlots,
+        [key]: { ...tracker, used: tracker.used + 1 },
+      },
+    };
+    onDailyStateChange(newState);
+
+    try {
+      await fetch(`/api/characters/${character.id}/daily-state`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ spellSlots: newState.spellSlots }),
+      });
+    } catch {
+      // Ignore network errors; parent state already updated optimistically
+    }
+  };
+
+  const currentSpellSlots = dailyState?.spellSlots ?? {};
+
   if (!hasSpellcasting) {
     return (
       <div className="flex flex-col gap-4">
@@ -113,9 +103,21 @@ export default function SpellsTab({ character, dailyState, onDailyStateChange }:
           <h3 className="text-xs font-heading text-text-secondary uppercase tracking-widest mb-3">
             Fatebound Spell List (Reference)
           </h3>
-          <div>
+          <div className="flex flex-col gap-1">
             {FATEBOUND_SPELLS.map((spell) => (
-              <SpellCard key={spell.name} spell={spell} />
+              <SpellRow
+                key={spell.name}
+                name={spell.name}
+                level={spell.level}
+                school={spell.school}
+                castingTime={spell.castingTime}
+                range={spell.range}
+                components={spell.components}
+                duration={spell.duration}
+                description={spell.description}
+                spellSlots={{}}
+                onCast={() => {}}
+              />
             ))}
           </div>
         </Card>
@@ -180,9 +182,21 @@ export default function SpellsTab({ character, dailyState, onDailyStateChange }:
         <h3 className="text-xs font-heading text-text-secondary uppercase tracking-widest mb-3">
           Fatebound Spells
         </h3>
-        <div>
+        <div className="flex flex-col gap-1">
           {FATEBOUND_SPELLS.map((spell) => (
-            <SpellCard key={spell.name} spell={spell} />
+            <SpellRow
+              key={spell.name}
+              name={spell.name}
+              level={spell.level}
+              school={spell.school}
+              castingTime={spell.castingTime}
+              range={spell.range}
+              components={spell.components}
+              duration={spell.duration}
+              description={spell.description}
+              spellSlots={currentSpellSlots}
+              onCast={handleCast}
+            />
           ))}
         </div>
       </Card>
