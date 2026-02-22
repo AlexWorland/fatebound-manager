@@ -8,6 +8,7 @@ import FeaturesTab from "./FeaturesTab";
 import SpellsTab from "./SpellsTab";
 import EquipmentTab from "./EquipmentTab";
 import NotesTab from "./NotesTab";
+import ShortRestModal from "./ShortRestModal";
 
 interface Props {
   character: Character;
@@ -47,6 +48,7 @@ function getOutcomeLabel(dailyState: DailyState | null): string {
 export default function CharacterSheetClient({ character, dailyState: initialDailyState }: Props) {
   const [dailyState, setDailyState] = useState<DailyState | null>(initialDailyState);
   const [activeTab, setActiveTab] = useState("features");
+  const [showShortRest, setShowShortRest] = useState(false);
 
   const handleHPUpdate = useCallback(
     async (current: number, temp: number) => {
@@ -74,6 +76,37 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
     [character.id, dailyState, initialDailyState]
   );
 
+  const handleShortRestConfirm = useCallback(
+    async (hitDiceSpent: number) => {
+      if (!dailyState) return;
+
+      setShowShortRest(false);
+
+      // Restore Chaos Surge and Twist of Fate on short rest
+      const updates = {
+        hitDiceSpent,
+        chaosSurgeUsed: false,
+        twistOfFateUsed: false,
+      };
+
+      setDailyState((prev) => (prev ? { ...prev, ...updates } : prev));
+
+      try {
+        const res = await fetch(`/api/characters/${character.id}/daily-state`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
+        if (!res.ok) {
+          setDailyState(initialDailyState);
+        }
+      } catch {
+        setDailyState(initialDailyState);
+      }
+    },
+    [character.id, dailyState, initialDailyState]
+  );
+
   const profBonus = getProficiencyBonus(character.level);
   const formLabel = getFormLabel(dailyState);
   const outcomeLabel = getOutcomeLabel(dailyState);
@@ -90,6 +123,14 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
 
   return (
     <div className="min-h-screen bg-bg-deep">
+      {showShortRest && dailyState && (
+        <ShortRestModal
+          character={character}
+          dailyState={dailyState}
+          onClose={() => setShowShortRest(false)}
+          onConfirm={handleShortRestConfirm}
+        />
+      )}
       {/* ── Header ───────────────────────────────────────── */}
       <header className="bg-bg-surface border-b border-border-subtle">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -134,14 +175,24 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
             </div>
           </div>
 
-          {/* HP Bar */}
-          <div className="mt-4 max-w-md">
-            <HPBar
-              current={currentHP}
-              max={maxHP}
-              temp={tempHP}
-              onUpdate={handleHPUpdate}
-            />
+          {/* HP Bar + rest actions */}
+          <div className="mt-4 flex flex-wrap items-end gap-4">
+            <div className="max-w-md flex-1">
+              <HPBar
+                current={currentHP}
+                max={maxHP}
+                temp={tempHP}
+                onUpdate={handleHPUpdate}
+              />
+            </div>
+            {dailyState && (
+              <button
+                onClick={() => setShowShortRest(true)}
+                className="shrink-0 px-3 py-1.5 rounded border border-border-subtle bg-bg-elevated hover:bg-bg-hover text-text-secondary hover:text-text-primary text-xs font-body transition-colors"
+              >
+                Short Rest
+              </button>
+            )}
           </div>
 
           {/* Fate abilities row */}
