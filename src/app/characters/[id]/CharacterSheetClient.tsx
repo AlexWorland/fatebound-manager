@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Character, DailyState } from "@/types/character";
+import { Character, DailyState, InventoryItem, Currency } from "@/types/character";
 import { TabNav, HPBar } from "@/components/ui";
 import AbilitySidebar from "./AbilitySidebar";
 import FeaturesTab from "./FeaturesTab";
@@ -51,6 +51,8 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
   const [dailyState, setDailyState] = useState<DailyState | null>(initialDailyState);
   const [activeTab, setActiveTab] = useState("features");
   const [showShortRest, setShowShortRest] = useState(false);
+  const [inventory, setInventory] = useState<InventoryItem[]>(character.inventory);
+  const [currency, setCurrency] = useState<Currency>(character.currency);
 
   const handleHPUpdate = useCallback(
     async (current: number, temp: number) => {
@@ -107,6 +109,38 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
       }
     },
     [character.id, dailyState, initialDailyState]
+  );
+
+  const handleInventoryUpdate = useCallback(
+    async (updated: InventoryItem[]) => {
+      setInventory(updated);
+      try {
+        await fetch(`/api/characters/${character.id}/inventory`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ inventory: updated }),
+        });
+      } catch {
+        // best-effort; local state already updated
+      }
+    },
+    [character.id]
+  );
+
+  const handleCurrencyUpdate = useCallback(
+    async (updated: Currency) => {
+      setCurrency(updated);
+      try {
+        await fetch(`/api/characters/${character.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currency: updated }),
+        });
+      } catch {
+        // best-effort; local state already updated
+      }
+    },
+    [character.id]
   );
 
   const profBonus = getProficiencyBonus(character.level);
@@ -281,7 +315,12 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
                 />
               )}
               {activeTab === "equipment" && (
-                <EquipmentTab character={character} />
+                <EquipmentTab
+                  inventory={inventory}
+                  currency={currency}
+                  onInventoryUpdate={handleInventoryUpdate}
+                  onCurrencyUpdate={handleCurrencyUpdate}
+                />
               )}
               {activeTab === "description" && (
                 <DescriptionTab
