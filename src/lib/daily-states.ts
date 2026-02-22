@@ -55,12 +55,18 @@ function rowToDailyState(row: DailyStateRow): DailyState {
     abilitySwap: row.ability_swap ? JSON.parse(row.ability_swap) : null,
     currentHP: row.current_hp ?? resources.currentHP ?? 0,
     tempHP: row.temp_hp ?? resources.tempHP ?? 0,
+    hitDiceSpent: resources.hitDiceSpent ?? 0,
     spellSlots: resources.spellSlots ?? {},
     classResources: resources.classResources ?? {},
     chaosSurgeUsed: featureUsage.chaosSurgeUsed ?? false,
     twistOfFateUsed: featureUsage.twistOfFateUsed ?? false,
     defyFateUsed: featureUsage.defyFateUsed ?? false,
     fateResistanceSave: featureUsage.fateResistanceSave ?? null,
+    conditions: featureUsage.conditions ?? [],
+    inspiration: featureUsage.inspiration ?? false,
+    concentrationSpell: featureUsage.concentrationSpell ?? null,
+    deathSaves: featureUsage.deathSaves ?? { successes: 0, failures: 0 },
+    movementSpeeds: featureUsage.movementSpeeds ?? { walking: 30 },
   };
 }
 
@@ -80,6 +86,7 @@ function dailyStateToRow(state: DailyState): Omit<DailyStateRow, never> {
   const resources = {
     currentHP: state.currentHP,
     tempHP: state.tempHP,
+    hitDiceSpent: state.hitDiceSpent,
     spellSlots: state.spellSlots,
     classResources: state.classResources,
   };
@@ -89,6 +96,11 @@ function dailyStateToRow(state: DailyState): Omit<DailyStateRow, never> {
     twistOfFateUsed: state.twistOfFateUsed,
     defyFateUsed: state.defyFateUsed,
     fateResistanceSave: state.fateResistanceSave,
+    conditions: state.conditions,
+    inspiration: state.inspiration,
+    concentrationSpell: state.concentrationSpell,
+    deathSaves: state.deathSaves,
+    movementSpeeds: state.movementSpeeds,
   };
 
   return {

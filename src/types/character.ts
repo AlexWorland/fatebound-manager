@@ -20,6 +20,8 @@ export interface InventoryItem {
   description: string;
   isEquipped: boolean;
   isMagic: boolean;
+  rarity?: "common" | "uncommon" | "rare" | "very_rare" | "legendary" | "artifact";
+  location?: "equipped" | "carried" | "stored";
 }
 
 export interface ASIChoice {
@@ -55,6 +57,22 @@ export interface Character {
   ddbSyncSettings: DDBSyncSettings | null;
   createdAt: string;
   updatedAt: string;
+  personality: string;
+  ideals: string;
+  bonds: string;
+  flaws: string;
+  backstory: string;
+  alignment: string;
+  appearance: {
+    age?: string;
+    height?: string;
+    weight?: string;
+    eyes?: string;
+    hair?: string;
+    skin?: string;
+    gender?: string;
+  };
+  portraitUrl: string | null;
 }
 
 export interface ResourceTracker {
@@ -82,12 +100,18 @@ export interface DailyState {
   chaosResonance?: { formId: number; subclassId: string } | null;
   currentHP: number;
   tempHP: number;
+  hitDiceSpent: number;
   spellSlots: Record<string, ResourceTracker>;
   classResources: Record<string, ResourceTracker>;
   chaosSurgeUsed: boolean;
   twistOfFateUsed: boolean;
   defyFateUsed: boolean;
   fateResistanceSave: string | null;
+  conditions: string[];
+  inspiration: boolean;
+  concentrationSpell: string | null;
+  deathSaves: { successes: number; failures: number };
+  movementSpeeds: Record<string, number>;
 }
 
 export interface FormHistory {

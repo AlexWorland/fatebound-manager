@@ -49,6 +49,14 @@ export async function POST(request: Request) {
       notes: "",
       ddbCharacterId: null,
       ddbSyncSettings: null,
+      personality: "",
+      ideals: "",
+      bonds: "",
+      flaws: "",
+      backstory: "",
+      alignment: "",
+      appearance: {},
+      portraitUrl: null,
     });
 
     return NextResponse.json(character, { status: 201 });

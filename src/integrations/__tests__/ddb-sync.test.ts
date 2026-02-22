@@ -51,6 +51,14 @@ function makeCharacter(overrides: Partial<Character> = {}): Character {
     ddbSyncSettings: BASE_SYNC_SETTINGS,
     createdAt: "2026-01-01T00:00:00Z",
     updatedAt: "2026-01-01T00:00:00Z",
+    personality: "",
+    ideals: "",
+    bonds: "",
+    flaws: "",
+    backstory: "",
+    alignment: "",
+    appearance: {},
+    portraitUrl: null,
     ...overrides,
   };
 }
@@ -67,6 +75,7 @@ function makeDailyState(overrides: Partial<DailyState> = {}): DailyState {
     abilitySwap: null,
     currentHP: 30,
     tempHP: 5,
+    hitDiceSpent: 0,
     spellSlots: {
       "1": { used: 1, max: 4 },
       "2": { used: 0, max: 3 },
@@ -77,6 +86,11 @@ function makeDailyState(overrides: Partial<DailyState> = {}): DailyState {
     twistOfFateUsed: false,
     defyFateUsed: false,
     fateResistanceSave: null,
+    conditions: [],
+    inspiration: false,
+    concentrationSpell: null,
+    deathSaves: { successes: 0, failures: 0 },
+    movementSpeeds: { walking: 30 },
     ...overrides,
   };
 }

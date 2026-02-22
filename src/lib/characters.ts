@@ -29,6 +29,14 @@ type CharacterRow = {
   ddb_sync_settings: string | null;
   created_at: string;
   updated_at: string;
+  personality: string;
+  ideals: string;
+  bonds: string;
+  flaws: string;
+  backstory: string;
+  alignment: string;
+  appearance: string;
+  portrait_url: string | null;
 };
 
 function rowToCharacter(row: CharacterRow): Character {
@@ -50,6 +58,14 @@ function rowToCharacter(row: CharacterRow): Character {
       : null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    personality: row.personality ?? "",
+    ideals: row.ideals ?? "",
+    bonds: row.bonds ?? "",
+    flaws: row.flaws ?? "",
+    backstory: row.backstory ?? "",
+    alignment: row.alignment ?? "",
+    appearance: row.appearance ? JSON.parse(row.appearance) : {},
+    portraitUrl: row.portrait_url ?? null,
   };
 }
 
@@ -79,8 +95,9 @@ export function createCharacter(
     INSERT INTO characters (
       id, name, level, ability_scores, permanent_skills, permanent_memory_slot,
       asi_choices, background, inventory, currency, notes,
-      ddb_character_id, ddb_sync_settings, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ddb_character_id, ddb_sync_settings, created_at, updated_at,
+      personality, ideals, bonds, flaws, backstory, alignment, appearance, portrait_url
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
     data.name,
@@ -96,7 +113,15 @@ export function createCharacter(
     data.ddbCharacterId,
     data.ddbSyncSettings ? JSON.stringify(data.ddbSyncSettings) : null,
     now,
-    now
+    now,
+    data.personality ?? "",
+    data.ideals ?? "",
+    data.bonds ?? "",
+    data.flaws ?? "",
+    data.backstory ?? "",
+    data.alignment ?? "",
+    JSON.stringify(data.appearance ?? {}),
+    data.portraitUrl ?? null
   );
 
   return getCharacterById(id)!;
@@ -119,7 +144,9 @@ export function updateCharacter(
       name = ?, level = ?, ability_scores = ?, permanent_skills = ?,
       permanent_memory_slot = ?, asi_choices = ?, background = ?,
       inventory = ?, currency = ?, notes = ?,
-      ddb_character_id = ?, ddb_sync_settings = ?, updated_at = ?
+      ddb_character_id = ?, ddb_sync_settings = ?, updated_at = ?,
+      personality = ?, ideals = ?, bonds = ?, flaws = ?, backstory = ?,
+      alignment = ?, appearance = ?, portrait_url = ?
     WHERE id = ?
   `).run(
     merged.name,
@@ -135,6 +162,14 @@ export function updateCharacter(
     merged.ddbCharacterId,
     merged.ddbSyncSettings ? JSON.stringify(merged.ddbSyncSettings) : null,
     now,
+    merged.personality ?? "",
+    merged.ideals ?? "",
+    merged.bonds ?? "",
+    merged.flaws ?? "",
+    merged.backstory ?? "",
+    merged.alignment ?? "",
+    JSON.stringify(merged.appearance ?? {}),
+    merged.portraitUrl ?? null,
     id
   );
 

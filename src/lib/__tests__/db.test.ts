@@ -57,6 +57,14 @@ const DEFAULT_CHARACTER: Omit<Character, "id" | "createdAt" | "updatedAt"> = {
   notes: "Test notes",
   ddbCharacterId: null,
   ddbSyncSettings: null,
+  personality: "",
+  ideals: "",
+  bonds: "",
+  flaws: "",
+  backstory: "",
+  alignment: "",
+  appearance: {},
+  portraitUrl: null,
 };
 
 const DEFAULT_DAILY_STATE: Omit<DailyState, "id"> = {
@@ -71,12 +79,18 @@ const DEFAULT_DAILY_STATE: Omit<DailyState, "id"> = {
   abilitySwap: null,
   currentHP: 40,
   tempHP: 0,
+  hitDiceSpent: 0,
   spellSlots: {},
   classResources: { rage: { used: 0, max: 3 } },
   chaosSurgeUsed: false,
   twistOfFateUsed: false,
   defyFateUsed: false,
   fateResistanceSave: null,
+  conditions: [],
+  inspiration: false,
+  concentrationSpell: null,
+  deathSaves: { successes: 0, failures: 0 },
+  movementSpeeds: { walking: 30 },
 };
 
 beforeEach(() => {

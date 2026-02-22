@@ -16,7 +16,15 @@ const CREATE_CHARACTERS = `
     ddb_character_id TEXT,
     ddb_sync_settings TEXT,
     created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
+    updated_at TEXT NOT NULL,
+    personality TEXT NOT NULL DEFAULT '',
+    ideals TEXT NOT NULL DEFAULT '',
+    bonds TEXT NOT NULL DEFAULT '',
+    flaws TEXT NOT NULL DEFAULT '',
+    backstory TEXT NOT NULL DEFAULT '',
+    alignment TEXT NOT NULL DEFAULT '',
+    appearance TEXT NOT NULL DEFAULT '{}',
+    portrait_url TEXT DEFAULT NULL
   )
 `;
 
@@ -60,10 +68,36 @@ const CREATE_SESSION_NOTES = `
   )
 `;
 
+function migrateCharactersTable(): void {
+  const db = getDb();
+  const columns = db
+    .prepare("PRAGMA table_info(characters)")
+    .all() as { name: string }[];
+  const colNames = new Set(columns.map((c) => c.name));
+
+  const migrations: [string, string][] = [
+    ["personality", "ALTER TABLE characters ADD COLUMN personality TEXT NOT NULL DEFAULT ''"],
+    ["ideals", "ALTER TABLE characters ADD COLUMN ideals TEXT NOT NULL DEFAULT ''"],
+    ["bonds", "ALTER TABLE characters ADD COLUMN bonds TEXT NOT NULL DEFAULT ''"],
+    ["flaws", "ALTER TABLE characters ADD COLUMN flaws TEXT NOT NULL DEFAULT ''"],
+    ["backstory", "ALTER TABLE characters ADD COLUMN backstory TEXT NOT NULL DEFAULT ''"],
+    ["alignment", "ALTER TABLE characters ADD COLUMN alignment TEXT NOT NULL DEFAULT ''"],
+    ["appearance", "ALTER TABLE characters ADD COLUMN appearance TEXT NOT NULL DEFAULT '{}'"],
+    ["portrait_url", "ALTER TABLE characters ADD COLUMN portrait_url TEXT DEFAULT NULL"],
+  ];
+
+  for (const [col, sql] of migrations) {
+    if (!colNames.has(col)) {
+      db.exec(sql);
+    }
+  }
+}
+
 export function initSchema(): void {
   const db = getDb();
   db.exec(CREATE_CHARACTERS);
   db.exec(CREATE_DAILY_STATES);
   db.exec(CREATE_FORM_HISTORY);
   db.exec(CREATE_SESSION_NOTES);
+  migrateCharactersTable();
 }

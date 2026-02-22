@@ -98,12 +98,18 @@ export async function POST(
         abilitySwap: body.abilitySwap ?? null,
         currentHP: 0,
         tempHP: 0,
+        hitDiceSpent: 0,
         spellSlots: {},
         classResources: {},
         chaosSurgeUsed: false,
         twistOfFateUsed: false,
         defyFateUsed: false,
         fateResistanceSave: null,
+        conditions: [],
+        inspiration: false,
+        concentrationSpell: null,
+        deathSaves: { successes: 0, failures: 0 },
+        movementSpeeds: { walking: 30 },
       });
 
       return NextResponse.json({
@@ -140,12 +146,18 @@ export async function POST(
         abilitySwap: body.abilitySwap ?? null,
         currentHP: 0,
         tempHP: 0,
+        hitDiceSpent: 0,
         spellSlots: {},
         classResources: {},
         chaosSurgeUsed: false,
         twistOfFateUsed: false,
         defyFateUsed: false,
         fateResistanceSave: null,
+        conditions: [],
+        inspiration: false,
+        concentrationSpell: null,
+        deathSaves: { successes: 0, failures: 0 },
+        movementSpeeds: { walking: 30 },
       });
 
       return NextResponse.json({
