@@ -6,3 +6,5 @@ export { default as TabNav } from "./TabNav";
 export { default as DiceRoller } from "./DiceRoller";
 export { default as Navigation } from "./Navigation";
 export { default as Skeleton } from "./Skeleton";
+export { default as Tooltip } from "./Tooltip";
+export { default as RollableValue } from "./RollableValue";
