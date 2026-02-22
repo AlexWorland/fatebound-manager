@@ -217,6 +217,7 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
                   character={character}
                   dailyState={dailyState}
                   proficiencyBonus={profBonus}
+                  characterId={character.id}
                 />
               )}
               {activeTab === "spells" && (
