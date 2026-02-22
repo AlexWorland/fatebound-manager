@@ -8,6 +8,7 @@ import FeaturesTab from "./FeaturesTab";
 import SpellsTab from "./SpellsTab";
 import EquipmentTab from "./EquipmentTab";
 import NotesTab from "./NotesTab";
+import DescriptionTab from "./DescriptionTab";
 import ShortRestModal from "./ShortRestModal";
 
 interface Props {
@@ -19,6 +20,7 @@ const TABS = [
   { id: "features", label: "Features" },
   { id: "spells", label: "Spells" },
   { id: "equipment", label: "Equipment" },
+  { id: "description", label: "Description" },
   { id: "notes", label: "Notes" },
 ];
 
@@ -280,6 +282,19 @@ export default function CharacterSheetClient({ character, dailyState: initialDai
               )}
               {activeTab === "equipment" && (
                 <EquipmentTab character={character} />
+              )}
+              {activeTab === "description" && (
+                <DescriptionTab
+                  characterId={character.id}
+                  personality={character.personality}
+                  ideals={character.ideals}
+                  bonds={character.bonds}
+                  flaws={character.flaws}
+                  backstory={character.backstory}
+                  alignment={character.alignment}
+                  appearance={character.appearance}
+                  portraitUrl={character.portraitUrl}
+                />
               )}
               {activeTab === "notes" && (
                 <NotesTab character={character} />
