@@ -9,8 +9,8 @@ export const BLADE_SUBCLASSES: SubclassEntry[] = [
       description: "Your weapon attacks score a critical hit on a roll of 19 or 20. Add half your proficiency bonus (rounded up) to any STR, DEX, or CON check that doesn't already include your full proficiency bonus.",
     },
     level13Feature: {
-      name: "Additional Fighting Style + Improved Critical Damage",
-      description: "Gain an additional Fighting Style (roll d6). Your critical hit damage dice are doubled (not just the weapon dice).",
+      name: "Additional Fighting Style",
+      description: "Gain an additional Fighting Style (roll d6).",
     },
     level17Feature: {
       name: "Superior Critical + Survivor",

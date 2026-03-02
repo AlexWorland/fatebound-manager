@@ -182,7 +182,7 @@ export const SAGE_SUBCLASSES: SubclassEntry[] = [
     name: "Order of Scribes",
     level9Feature: {
       name: "Awakened Spellbook + Manifest Mind",
-      description: "Your spellbook awakens. When you cast a prepared wizard spell, you can replace its damage type with a damage type used by another spell in your spellbook. When casting a ritual, it takes the spell's normal casting time (not +10 minutes). Manifest Mind: Conjure a Tiny spectral spellbook in an unoccupied space within 300 ft; you can cast spells through it and use its senses as a bonus action (proficiency bonus/long rest).",
+      description: "Your spellbook awakens. When you cast a prepared wizard spell, you can replace its damage type with a damage type used by another spell in your spellbook. When casting a ritual, it takes the spell's normal casting time (not +10 minutes). Manifest Mind: Conjure a Tiny spectral spellbook in an unoccupied space within 60 ft; you can cast any spell through the manifested mind as though you were in its space, and you can use its senses as a bonus action (proficiency bonus/long rest). At level 13+, the range extends to 300 ft.",
     },
     level13Feature: {
       name: "Master Scrivener",

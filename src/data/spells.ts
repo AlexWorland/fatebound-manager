@@ -58,7 +58,7 @@ export const FATEBOUND_SPELLS: Spell[] = [
     components: "V, S, M (tangled knot of silk)",
     duration: "Concentration, up to 1 minute",
     description:
-      "Target a creature within range. It must make a CHA saving throw. On a failure, choose one of the following to suppress for the duration: a class feature (Rage, Sneak Attack, Channel Divinity, etc.) or a racial trait (darkvision, breath weapon, innate spellcasting, etc.). Suppressing Spellcasting as a whole requires a 6th-level or higher spell slot. The target repeats the saving throw at the end of each of its turns, ending the effect on a success. At Higher Levels: When you cast this spell using a 5th-level slot, you can target two creatures or suppress two features on a single creature.",
+      "Target a creature within range. It must make a CHA saving throw. On a failure, choose one of the following to suppress for the duration: a class feature — one specific subclass feature, one resource pool (Ki, Rage, Channel Divinity, Superiority Dice), or one combat feature (Sneak Attack, Extra Attack, Divine Smite). You cannot suppress Spellcasting as a whole at this spell level — suppressing a creature's Spellcasting feature requires casting Unravel using a 6th-level or higher spell slot. Alternatively, you can suppress a racial trait (darkvision, breath weapon, innate spellcasting, etc.). The target repeats the saving throw at the end of each of its turns, ending the effect on a success. At Higher Levels: When you cast this spell using a 5th-level slot, you can target two creatures or suppress two features on a single creature.",
     spellLists: ["Fatebound"],
   },
   {

@@ -23,6 +23,6 @@ export const FATEBOUND_MAGIC_ITEMS: MagicItem[] = [
     rarity: "Rare",
     attunement: "Requires attunement by a Fatebound",
     description:
-      "A tarnished bronze ring inscribed with the words: \"What was, is not. What is, was not. What will be, already is.\" When you allocate your Fate Pool after a Dawn Roll, designate one feature stored in Residual Memory as \"empowered.\" That feature functions as if you were one class level higher than your Fatebound level (affecting damage dice, uses per rest, DC calculations, or other scaling). Only one feature can be empowered at a time.",
+      "A tarnished bronze ring inscribed with the words: \"What was, is not. What is, was not. What will be, already is.\" When you allocate your Fate Pool after a Dawn Roll, designate one feature stored in Residual Memory as \"empowered.\" That feature functions as if your Fatebound level were one higher for the purpose of calculating that feature's effects (affecting damage dice, uses per rest, DC calculations, or other scaling). Only one feature can be empowered at a time.",
   },
 ];

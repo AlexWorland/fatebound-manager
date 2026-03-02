@@ -11,6 +11,8 @@ import { SHADOW_SUBCLASSES } from "./shadow";
 import { CONDUIT_SUBCLASSES } from "./conduit";
 import { HEXER_SUBCLASSES } from "./hexer";
 import { SAGE_SUBCLASSES } from "./sage";
+import { TINKER_SUBCLASSES } from "./tinker";
+import { REAVER_SUBCLASSES } from "./reaver";
 
 export {
   TEMPEST_SUBCLASSES,
@@ -25,6 +27,8 @@ export {
   CONDUIT_SUBCLASSES,
   HEXER_SUBCLASSES,
   SAGE_SUBCLASSES,
+  TINKER_SUBCLASSES,
+  REAVER_SUBCLASSES,
 };
 
 const SUBCLASS_MAP: Record<StabilizedFormId, SubclassEntry[]> = {
@@ -40,6 +44,8 @@ const SUBCLASS_MAP: Record<StabilizedFormId, SubclassEntry[]> = {
   10: CONDUIT_SUBCLASSES,
   11: HEXER_SUBCLASSES,
   12: SAGE_SUBCLASSES,
+  13: TINKER_SUBCLASSES,
+  14: REAVER_SUBCLASSES,
 };
 
 export function getSubclassesForForm(formId: StabilizedFormId): SubclassEntry[] {

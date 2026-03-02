@@ -22,11 +22,30 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { name, abilityScores, permanentSkills, background } = body as {
+    const {
+      name,
+      abilityScores,
+      permanentSkills,
+      background,
+      personality,
+      ideals,
+      bonds,
+      flaws,
+      alignment,
+      backstory,
+      appearance,
+    } = body as {
       name: string;
       abilityScores: Character["abilityScores"];
       permanentSkills: [string, string];
       background: string;
+      personality?: string;
+      ideals?: string;
+      bonds?: string;
+      flaws?: string;
+      alignment?: string;
+      backstory?: string;
+      appearance?: Character["appearance"];
     };
 
     if (!name || !abilityScores || !permanentSkills) {
@@ -49,6 +68,14 @@ export async function POST(request: Request) {
       notes: "",
       ddbCharacterId: null,
       ddbSyncSettings: null,
+      personality: personality ?? "",
+      ideals: ideals ?? "",
+      bonds: bonds ?? "",
+      flaws: flaws ?? "",
+      backstory: backstory ?? "",
+      alignment: alignment ?? "",
+      appearance: appearance ?? {},
+      portraitUrl: null,
     });
 
     return NextResponse.json(character, { status: 201 });

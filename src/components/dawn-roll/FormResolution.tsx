@@ -398,7 +398,7 @@ function StabilizedFormResolution({
           <span className="inline-block px-3 py-1 rounded-full text-xs font-body bg-fate text-white uppercase tracking-widest">
             Guided
           </span>
-          <p className="text-sm text-text-secondary font-body">Roll d12 to determine your form.</p>
+          <p className="text-sm text-text-secondary font-body">Roll d20 (reroll 15-20) to determine your form.</p>
         </div>
 
         <div className="flex justify-center">

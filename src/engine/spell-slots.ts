@@ -56,3 +56,18 @@ export function getMysticArcanumLevel(level: number): number | null {
 export function getArcaneRecoveryBudget(level: number): number {
   return Math.ceil(level / 2);
 }
+
+/** Hexer Pact Magic slot table (Warlock-style).
+ *  Returns the pact slot count and level for a given character level.
+ *  - Level 5-8:   2 slots, 3rd level
+ *  - Level 9-12:  2 slots, 4th level
+ *  - Level 13-16: 3 slots, 5th level
+ *  - Level 17-20: 3 slots, 5th level
+ *  - Below 5:     0 slots, 0th level (no pact magic yet) */
+export function getHexerPactSlots(level: number): { count: number; level: number } {
+  if (level >= 17) return { count: 3, level: 5 };
+  if (level >= 13) return { count: 3, level: 5 };
+  if (level >= 9) return { count: 2, level: 4 };
+  if (level >= 5) return { count: 2, level: 3 };
+  return { count: 0, level: 0 };
+}

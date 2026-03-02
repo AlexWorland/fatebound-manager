@@ -33,6 +33,14 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
         name: "Extra Attack",
         description: "You can attack twice when you take the Attack action.",
       },
+      {
+        name: "Fast Movement",
+        description: "Your speed increases by 10 feet while you are not wearing heavy armor.",
+      },
+      {
+        name: "Feral Instinct",
+        description: "Level 7+: You have advantage on initiative rolls. Additionally, if you are surprised at the beginning of combat and aren't incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn.",
+      },
     ],
     hasSpellcasting: false,
     subclasses: [],
@@ -54,9 +62,9 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Bardic Inspiration",
-        description: "Bonus action, grant one creature within 60 ft a d8 Inspiration die (add to one ability check, attack roll, or save). Uses = CHA mod/long rest.",
+        description: "Bonus action, grant one creature within 60 ft a d8 Inspiration die (add to one ability check, attack roll, or save). Uses = CHA mod/short or long rest.",
         resourceKey: "bardic_inspiration",
-        maxUses: "CHA mod/long rest",
+        maxUses: "CHA mod/short or long rest",
       },
       {
         name: "Jack of All Trades",
@@ -65,6 +73,18 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       {
         name: "Expertise",
         description: "Double proficiency bonus in 2 skills of your choice.",
+      },
+      {
+        name: "Font of Inspiration",
+        description: "Your Bardic Inspiration dice recharge on a short or long rest (not just a long rest).",
+      },
+      {
+        name: "Countercharm",
+        description: "Level 6+: As an action, you can start a performance that lasts until the end of your next turn. During that time, you and any friendly creatures within 30 feet of you have advantage on saving throws against being frightened or charmed. The performance ends early if you are incapacitated or silenced, or if you voluntarily end it (no action required).",
+      },
+      {
+        name: "Cantrips Known",
+        description: "2 (from the Bard spell list). Your cantrips scale with your total character level, not your Fatebound level.",
       },
     ],
     hasSpellcasting: true,
@@ -89,13 +109,25 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Channel Divinity",
-        description: "Turn Undead \u2014 each undead within 30 ft must make a WIS save or be turned for 1 minute.",
+        description: "Turn Undead \u2014 each undead within 30 ft must make a WIS save or be turned for 1 minute. Destroy Undead: When an undead fails its save against Turn Undead, it is instantly destroyed if its CR is at or below a threshold based on your Fatebound level (CR 1/2 at level 5, CR 1 at level 8, CR 2 at level 11, CR 3 at level 14, CR 4 at level 17).",
         resourceKey: "channel_divinity",
         maxUses: "1 use/rest",
       },
       {
         name: "Bonus Proficiency",
-        description: "Heavy armor.",
+        description: "None at base. Some domains grant heavy armor proficiency (see subclass table at level 9).",
+      },
+      {
+        name: "Cantrips Known",
+        description: "3 (from the Cleric spell list). Your cantrips scale with your total character level, not your Fatebound level.",
+      },
+      {
+        name: "Channel Divinity (2nd Use)",
+        description: "Level 6+: You gain a second use of Channel Divinity between rests.",
+      },
+      {
+        name: "Divine Intervention",
+        description: "Level 10+: You can call on your deity to intervene on your behalf. Describe the assistance you seek, and roll a d100. If you roll a number equal to or lower than your Fatebound level, your deity intervenes. If the intervention fails, you can't use this feature again until after a long rest. If it succeeds, you can't use it again for 7 days.",
       },
     ],
     hasSpellcasting: true,
@@ -125,8 +157,8 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
         maxUses: "2 uses/rest",
       },
       {
-        name: "Speak with Animals",
-        description: "At will.",
+        name: "Cantrips Known",
+        description: "2 (from the Druid spell list). Your cantrips scale with your total character level, not your Fatebound level.",
       },
     ],
     hasSpellcasting: true,
@@ -164,6 +196,16 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
         description: "Bonus action to regain 1d10 + Fatebound level HP.",
         resourceKey: "second_wind",
         maxUses: "1 use/rest",
+      },
+      {
+        name: "Indomitable",
+        description: "Level 9+: You can reroll a saving throw that you fail. If you do so, you must use the new roll. You can use this feature once per long rest (increases to 2 uses at level 13).",
+        resourceKey: "indomitable",
+        maxUses: "1/long rest",
+      },
+      {
+        name: "Martial Discipline",
+        description: "The Blade form grants bonus ASI/Feat choices at Fatebound levels 6 and 14 (matching the Fighter's additional ASIs). These persist permanently, even when you change forms. You must be in the Blade form when you reach these levels to gain them.",
       },
     ],
     hasSpellcasting: false,
@@ -204,7 +246,19 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Unarmored Movement",
-        description: "+15 ft movement speed.",
+        description: "Your speed increases by 10 ft while you are not wearing armor or wielding a shield. This increases to +15 ft at level 9, +20 ft at level 13, and +30 ft at level 17.",
+      },
+      {
+        name: "Ki-Empowered Strikes",
+        description: "Level 6+: Your unarmed strikes count as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.",
+      },
+      {
+        name: "Evasion",
+        description: "Level 7+: When you are subjected to an effect that allows you to make a DEX saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail.",
+      },
+      {
+        name: "Stillness of Mind",
+        description: "Level 7+: You can use your action to end one effect on yourself that is causing you to be charmed or frightened.",
       },
     ],
     hasSpellcasting: false,
@@ -231,9 +285,9 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       },
       {
         name: "Lay on Hands",
-        description: "Pool = Fatebound level \u00d7 3.",
+        description: "Pool = Fatebound level × 5.",
         resourceKey: "lay_on_hands",
-        maxUses: "Fatebound level \u00d7 3 HP pool",
+        maxUses: "Fatebound level × 5 HP pool",
       },
       {
         name: "Fighting Style",
@@ -242,6 +296,16 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       {
         name: "Extra Attack",
         description: "You can attack twice when you take the Attack action.",
+      },
+      {
+        name: "Divine Health",
+        description: "You are immune to disease.",
+      },
+      {
+        name: "Divine Sense",
+        description: "As an action, you can detect the presence of any celestial, fiend, or undead within 60 feet. You know the type but not the identity. You can use this feature a number of times equal to 1 + your CHA modifier per long rest.",
+        resourceKey: "divine_sense",
+        maxUses: "1 + CHA mod/long rest",
       },
     ],
     hasSpellcasting: true,
@@ -282,6 +346,16 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
         name: "Deft Explorer",
         description: "You gain Expertise in one skill, and your walking speed increases by 5 ft.",
       },
+      {
+        name: "Deft Explorer \u2014 Roaming",
+        description: "Level 6+: You gain a climbing speed and a swimming speed equal to your walking speed.",
+      },
+      {
+        name: "Deft Explorer \u2014 Tireless",
+        description: "Level 10+: As an action, you can give yourself a number of temporary hit points equal to 1d8 + your WIS modifier (minimum of 1 temporary hit point). You can use this action a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest. In addition, whenever you finish a long rest, your exhaustion level, if any, decreases by 1.",
+        resourceKey: "tireless",
+        maxUses: "proficiency bonus/long rest",
+      },
     ],
     hasSpellcasting: true,
     spellList: "Ranger",
@@ -314,6 +388,14 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
       {
         name: "Uncanny Dodge",
         description: "Reaction to halve one attack's damage.",
+      },
+      {
+        name: "Thieves' Tools",
+        description: "You gain proficiency with thieves' tools.",
+      },
+      {
+        name: "Evasion",
+        description: "Level 7+: When you are subjected to an effect that allows you to make a DEX saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail.",
       },
     ],
     hasSpellcasting: false,
@@ -370,20 +452,20 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     dailySkillOptions: ["Arcana", "Intimidation"],
     baseFeatures: [
       {
-        name: "Pact Magic (Half-Caster variant)",
-        description: "CHA-based. Spell slots per the half-caster table, but they recharge on a short rest instead of a long rest. Recovered slots cannot exceed your highest available slot level on the half-caster table. Warlock spell list.",
+        name: "Pact Magic (Warlock-style)",
+        description: "CHA-based. You have a small number of spell slots that recharge on a short rest. Warlock spell list. Slots: 2 at 3rd level (L5\u20138), 2 at 4th level (L9\u201312), 3 at 5th level (L13\u201320).",
       },
       {
-        name: "Eldritch Blast",
-        description: "Cantrip (scales with Fatebound level).",
+        name: "Cantrips Known",
+        description: "You know Eldritch Blast plus 2 additional Warlock cantrips. At level 10+, you learn a 4th Warlock cantrip. Your cantrips scale with your total character level, not your Fatebound level.",
       },
       {
         name: "Eldritch Invocations",
-        description: "Randomly select 2 from the Eldritch Invocation Table (50 invocations; use Fate's Selection). Reroll pact-dependent invocations that don't match your Pact Boon.",
+        description: "Randomly select 2 from the Eldritch Invocation Table (53 invocations; use Fate's Selection). Reroll pact-dependent invocations that don't match your Pact Boon.",
       },
       {
         name: "Pact Boon",
-        description: "Randomly select \u2014 1: Pact of the Chain (familiar), 2: Pact of the Blade (conjure weapon), 3: Pact of the Tome (3 cantrips from any list).",
+        description: "Randomly select \u2014 1: Pact of the Chain (familiar), 2: Pact of the Blade (conjure weapon), 3: Pact of the Tome (3 cantrips from any list), 4: Pact of the Talisman (when the wearer fails an ability check, add a d4 to the roll, uses = prof bonus/long rest).",
       },
     ],
     hasSpellcasting: true,
@@ -404,7 +486,7 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     baseFeatures: [
       {
         name: "Half-Caster (Wizard Spell List, INT-based)",
-        description: "You maintain a mental \"grimoire\" \u2014 spells known (grimoire) = 4 + Fatebound level. Prepared caster (prepare INT mod + half Fatebound level, rounded down, each day).",
+        description: "You maintain a mental \"grimoire\" \u2014 spells known (grimoire) = 4 + Fatebound level. You add 2 spells to your grimoire each time you gain a Fatebound level. Prepared caster (prepare prof bonus + INT mod spells each day).",
       },
       {
         name: "Arcane Recovery",
@@ -424,6 +506,108 @@ export const STABILIZED_FORMS: StabilizedForm[] = [
     hasSpellcasting: true,
     spellList: "Wizard",
     castingAbility: "INT",
+    subclasses: [],
+  },
+  {
+    id: 13,
+    name: "The Tinker",
+    className: "Artificer",
+    flavorText: "Gears click behind your eyes. Every object whispers what it could become.",
+    hitDie: 8,
+    armorProficiencies: ["light", "medium", "shields"],
+    weaponProficiencies: ["simple"],
+    savingThrows: ["CON", "INT"],
+    dailySkillOptions: ["Arcana", "Investigation"],
+    baseFeatures: [
+      {
+        name: "Half-Caster (Artificer Spell List, INT-based)",
+        description: "Prepared caster (prof bonus + INT mod spells). Ritual casting: you can cast any Artificer spell you have prepared as a ritual if it has the ritual tag.",
+      },
+      {
+        name: "Infuse Item",
+        description: "You infuse mundane items with magical properties. Randomly select infusions from the Infusion Table using Fate's Selection. Infusions are applied during the dawn transition and dissolve at your next dawn.",
+      },
+      {
+        name: "Magical Tinkering",
+        description: "Touch a Tiny nonmagical object to give it one property: 5-ft radius light, recorded message (6 seconds), continuous odor/sound (10-ft range), or static visual effect on surface. Up to INT mod objects at once. Objects lose their property at dawn.",
+      },
+      {
+        name: "The Right Tool for the Job",
+        description: "1-hour ritual to magically produce one set of artisan's tools in an unoccupied space within 5 ft.",
+      },
+      {
+        name: "Tool Expertise (Level 6+)",
+        description: "Double proficiency bonus on ability checks using any tool you are proficient with.",
+      },
+      {
+        name: "Flash of Genius (Level 7+)",
+        description: "Reaction when you or a creature you can see within 30 ft makes an ability check or saving throw: add your INT modifier to the roll. Uses = INT mod/long rest.",
+        resourceKey: "flash_of_genius",
+        maxUses: "INT mod/long rest",
+      },
+      {
+        name: "Cantrips Known",
+        description: "2 (from the Artificer spell list). Your cantrips scale with your total character level, not your Fatebound level.",
+      },
+    ],
+    hasSpellcasting: true,
+    spellList: "Artificer",
+    castingAbility: "INT",
+    subclasses: [],
+  },
+  {
+    id: 14,
+    name: "The Reaver",
+    className: "Blood Hunter",
+    flavorText: "Veins darken beneath the skin. The taste of iron rises unbidden. Pain becomes purpose.",
+    hitDie: 10,
+    armorProficiencies: ["light", "medium", "shields"],
+    weaponProficiencies: ["simple", "martial"],
+    savingThrows: ["DEX", "INT"],
+    dailySkillOptions: ["Investigation", "Survival"],
+    baseFeatures: [
+      {
+        name: "Hemocraft Save DC",
+        description: "8 + proficiency bonus + INT modifier.",
+      },
+      {
+        name: "Hemocraft Die",
+        description: "d6 (increases to d8 at level 9; see Subclass Feature. Increases to d10 at level 17; see Capstone).",
+      },
+      {
+        name: "Hunter's Bane",
+        description: "Advantage on WIS (Survival) checks to track fey, fiends, or undead, and on INT checks to recall information about them.",
+      },
+      {
+        name: "Fighting Style",
+        description: "Randomly select \u2014 1: Archery, 2: Dueling, 3: Great Weapon Fighting, 4: Two-Weapon Fighting.",
+      },
+      {
+        name: "Crimson Rite",
+        description: "Bonus action to activate on one weapon you are holding. You take necrotic damage equal to one roll of your hemocraft die (cannot be reduced); your hit point maximum is reduced by the same amount until the rite ends. The weapon deals extra damage equal to your hemocraft die on each hit, of the rite's damage type. Lasts until you finish a short or long rest, or until you are unconscious. You can activate Crimson Rite on multiple weapons (each costs HP separately). Primal Rites: Rite of the Flame (fire), Rite of the Frozen (cold), Rite of the Storm (lightning).",
+      },
+      {
+        name: "Blood Maledict",
+        description: "Uses = proficiency bonus per long rest. You know 2 Blood Curses (randomly select from the Blood Curse Table using Fate's Selection). Creatures without blood are immune to blood curses unless you amplify the curse. Amplification: Before a curse takes effect, you may take irreducible necrotic damage equal to one hemocraft die roll to add a stronger secondary effect.",
+        resourceKey: "blood_maledict",
+        maxUses: "proficiency bonus/long rest",
+      },
+      {
+        name: "Extra Attack",
+        description: "You can attack twice when you take the Attack action.",
+      },
+      {
+        name: "Brand of Castigation",
+        description: "Level 6+: After hitting a creature with a Crimson Rite weapon (1/short rest), sear an arcane brand into it. You always know the branded creature's direction. Whenever the branded creature damages you or an ally within 5 ft of you, it takes psychic damage equal to your INT modifier (min 1). Lasts until dismissed or a new brand is applied. Dispellable (spell level = half Fatebound level, max 9).",
+        resourceKey: "brand_of_castigation",
+        maxUses: "1/short rest",
+      },
+      {
+        name: "Dark Augmentation",
+        description: "Level 8+: Speed +5 ft. Bonus to STR, DEX, and CON saving throws equal to your INT modifier (min +1).",
+      },
+    ],
+    hasSpellcasting: false,
     subclasses: [],
   },
 ];

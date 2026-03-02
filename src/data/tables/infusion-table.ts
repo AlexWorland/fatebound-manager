@@ -1,0 +1,491 @@
+export interface Infusion {
+  id: number;
+  name: string;
+  effect: string;
+  itemRequirement: string;
+  levelPrerequisite?: number;
+  requiresAttunement?: boolean;
+}
+
+export interface ReplicableMagicItem {
+  id: number;
+  name: string;
+  effect: string;
+  requiresAttunement: boolean;
+  tier: 1 | 2 | 3 | 4;
+  levelPrerequisite?: number;
+}
+
+export interface InfusionScaling {
+  levelRange: string;
+  infusionsKnown: number;
+  maxInfusedItems: number;
+}
+
+export const INFUSION_SCALING: InfusionScaling[] = [
+  { levelRange: "5-8", infusionsKnown: 4, maxInfusedItems: 2 },
+  { levelRange: "9-12", infusionsKnown: 6, maxInfusedItems: 3 },
+  { levelRange: "13-16", infusionsKnown: 8, maxInfusedItems: 4 },
+  { levelRange: "17-20", infusionsKnown: 10, maxInfusedItems: 5 },
+];
+
+export const INFUSIONS: Infusion[] = [
+  {
+    id: 1,
+    name: "Enhanced Arcane Focus",
+    effect: "+1 bonus to spell attack rolls; ignore half cover when making a spell attack.",
+    itemRequirement: "A rod, staff, or wand",
+  },
+  {
+    id: 2,
+    name: "Enhanced Defense",
+    effect: "+1 bonus to AC.",
+    itemRequirement: "A suit of armor or a shield",
+  },
+  {
+    id: 3,
+    name: "Enhanced Weapon",
+    effect: "+1 bonus to attack and damage rolls.",
+    itemRequirement: "A simple or martial weapon",
+  },
+  {
+    id: 4,
+    name: "Homunculus Servant",
+    effect: "Create a homunculus companion (AC 13, HP 1 + INT mod + Fatebound level, Force Strike: 1d4 + proficiency bonus force damage, fly speed 30 ft). You can use your bonus action to mentally command it. Dissolves at dawn or form change (whichever comes first).",
+    itemRequirement: "A gem or crystal worth 100+ gp",
+  },
+  {
+    id: 5,
+    name: "Repeating Shot",
+    effect: "+1 bonus to attack and damage rolls; the weapon ignores the loading property and produces its own ammunition.",
+    itemRequirement: "A simple or martial ranged weapon with the ammunition property",
+  },
+  {
+    id: 6,
+    name: "Returning Weapon",
+    effect: "+1 bonus to attack and damage rolls; after you use the weapon to make a ranged attack, it flies back to your hand immediately after the attack.",
+    itemRequirement: "A simple or martial weapon with the thrown property",
+  },
+  {
+    id: 7,
+    name: "Replicate Magic Item",
+    effect: "Create a copy of a particular magic item. Roll on the Replicable Magic Items Sub-Table using Fate's Selection. Level prerequisites apply \u2014 reroll items whose level prerequisite exceeds your Fatebound level.",
+    itemRequirement: "Varies by item (see sub-table)",
+  },
+  {
+    id: 8,
+    name: "Armor of Magical Strength",
+    effect: "Add your INT modifier to Strength checks and Strength saving throws. As a reaction when you are knocked prone, expend one use to avoid being knocked prone instead. Uses = proficiency bonus per long rest.",
+    itemRequirement: "A suit of armor",
+  },
+  {
+    id: 9,
+    name: "Mind Sharpener",
+    effect: "The infused item can send a jolt of memory to its wearer. When you fail a Constitution saving throw to maintain concentration on a spell, you can use your reaction to succeed instead. 4 uses per long rest.",
+    itemRequirement: "A suit of armor or robes",
+  },
+  {
+    id: 10,
+    name: "Boots of the Winding Path",
+    effect: "As a bonus action, teleport to an unoccupied space you occupied within the last round (must be within 15 ft).",
+    itemRequirement: "A pair of boots",
+    levelPrerequisite: 6,
+  },
+  {
+    id: 11,
+    name: "Radiant Weapon",
+    effect: "+1 bonus to attack and damage rolls; sheds bright light in a 30-ft radius and dim light for an additional 30 ft (toggle as a bonus action). As a reaction when the attuned creature is hit by an attack, the attacker must succeed on a Constitution saving throw or be blinded until the end of the attacker's next turn. Uses = proficiency bonus per long rest.",
+    itemRequirement: "A simple or martial weapon",
+    levelPrerequisite: 6,
+    requiresAttunement: true,
+  },
+  {
+    id: 12,
+    name: "Repulsion Shield",
+    effect: "+1 bonus to AC while holding the shield. As a reaction when the attuned creature is hit by a melee attack, push the attacker up to 15 ft away. Uses = proficiency bonus per long rest.",
+    itemRequirement: "A shield",
+    levelPrerequisite: 6,
+    requiresAttunement: true,
+  },
+  {
+    id: 13,
+    name: "Resistant Armor",
+    effect: "Grants resistance to one damage type, randomly determined using Fate's Selection (10 entries, d12 reroll 11\u201312): 1-Acid, 2-Cold, 3-Fire, 4-Force, 5-Lightning, 6-Necrotic, 7-Poison, 8-Psychic, 9-Radiant, 10-Thunder. Roll at dawn when this infusion is applied.",
+    itemRequirement: "A suit of armor",
+    levelPrerequisite: 6,
+    requiresAttunement: true,
+  },
+  {
+    id: 14,
+    name: "Spell-Refueling Ring",
+    effect: "When the attuned creature expends a spell slot of 3rd level or lower, it can recover the slot immediately (1/day).",
+    itemRequirement: "A ring",
+    levelPrerequisite: 6,
+    requiresAttunement: true,
+  },
+  {
+    id: 15,
+    name: "Helm of Awareness",
+    effect: "Advantage on initiative rolls. Cannot be surprised while conscious.",
+    itemRequirement: "A helmet",
+    levelPrerequisite: 10,
+    requiresAttunement: true,
+  },
+  {
+    id: 16,
+    name: "Arcane Propulsion Armor",
+    effect: "Walking speed increases by 5 ft. Includes a gauntlet melee weapon (1d8 force damage, thrown with range 20/60, returns immediately after each attack).",
+    itemRequirement: "A suit of armor",
+    levelPrerequisite: 14,
+    requiresAttunement: true,
+  },
+  {
+    id: 17,
+    name: "Armor of Tools",
+    effect: "As an action, integrate one set of artisan's tools into the armor. The wearer gains proficiency with those tools as long as the tools are integrated. Only one set of tools at a time.",
+    itemRequirement: "A suit of armor",
+  },
+];
+
+export const REPLICABLE_MAGIC_ITEMS: ReplicableMagicItem[] = [
+  // Tier 1: No Level Prerequisite (16 items)
+  {
+    id: 1,
+    name: "Alchemy Jug",
+    effect: "This ceramic jug produces a chosen liquid when tapped (one type per day, limited quantities): water, beer, wine, vinegar, fresh water, salt water, olive oil, honey, wine, acid (4 oz), or basic poison (1/2 oz). The liquid pours for 1 minute.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 2,
+    name: "Bag of Holding",
+    effect: "This bag's interior space is considerably larger than its outside dimensions (roughly 2 ft in diameter at the mouth, 4 ft deep). Holds up to 500 lbs / 64 cubic ft. Retrieving an item takes an action. Overloading, piercing, or tearing the bag destroys it and scatters contents to a random plane.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 3,
+    name: "Cap of Water Breathing",
+    effect: "While wearing this cap underwater, you can speak its command word to create a bubble of air around your head, allowing you to breathe normally. The bubble lasts until you speak the command word again or remove the cap.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 4,
+    name: "Cloak of Elvenkind",
+    effect: "Advantage on Dexterity (Stealth) checks to hide. Disadvantage on Wisdom (Perception) checks of creatures that rely on sight to find the wearer.",
+    requiresAttunement: true,
+    tier: 1,
+  },
+  {
+    id: 5,
+    name: "Cloak of Many Fashions",
+    effect: "As a bonus action, change the style, color, and apparent quality of the cloak. It remains a cloak.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 6,
+    name: "Cloak of Protection",
+    effect: "+1 bonus to AC and saving throws.",
+    requiresAttunement: true,
+    tier: 1,
+  },
+  {
+    id: 7,
+    name: "Cloak of the Manta Ray",
+    effect: "While wearing the cloak with its hood up, you can breathe underwater and have a swim speed of 60 ft.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 8,
+    name: "Eyes of Charming",
+    effect: "These crystal lenses fit over the eyes. While wearing them, you can cast the charm person spell (save DC 13) once per day.",
+    requiresAttunement: true,
+    tier: 1,
+  },
+  {
+    id: 9,
+    name: "Gloves of Thievery",
+    effect: "+5 bonus to Dexterity (Sleight of Hand) checks and Dexterity checks made to pick locks.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 10,
+    name: "Goggles of Night",
+    effect: "While wearing these dark lenses, you have darkvision out to 60 ft. If you already have darkvision, wearing the goggles increases its range by 60 ft.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 11,
+    name: "Lantern of Revealing",
+    effect: "Sheds bright light in a 30-ft radius and dim light for an additional 30 ft. Invisible creatures and objects are visible while in the bright light. Takes 1 minute to light or douse (bonus action once lit). Uses 1 pint of oil per hour.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 12,
+    name: "Pipes of Haunting",
+    effect: "You must be proficient with wind instruments to use these pipes. They have 3 charges. You can use an action to expend 1 charge and play an eerie, haunting melody. Each creature within 30 ft that hears you must succeed on a DC 13 Wisdom saving throw or become frightened of you for 1 minute (save each turn). Regains 1d3 charges daily at dawn.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 13,
+    name: "Ring of Water Walking",
+    effect: "While wearing this ring, you can stand on and move across any liquid surface as if it were solid ground.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 14,
+    name: "Sending Stones",
+    effect: "These smooth stones, inscribed with arcane sigils, come in pairs. While you touch one stone, you can use an action to cast the sending spell from it. If no reply is received, that stone can't be used again until the next dawn.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 15,
+    name: "Wand of Magic Detection",
+    effect: "This wand has 3 charges. While holding it, you can expend 1 charge to cast the detect magic spell. The wand regains 1d3 expended charges daily at dawn. If the wand's last charge is expended, roll a d20; on a 1, the wand crumbles to dust.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  {
+    id: 16,
+    name: "Wand of Secrets",
+    effect: "The wand has 3 charges. While holding it, you can use an action to expend 1 charge, and the wand detects the presence of secret doors within 30 ft for 1 minute. The wand regains 1d3 expended charges daily at dawn.",
+    requiresAttunement: false,
+    tier: 1,
+  },
+  // Tier 2: Level 6+ Prerequisite (12 items)
+  {
+    id: 17,
+    name: "Boots of Elvenkind",
+    effect: "Advantage on Dexterity (Stealth) checks to move silently.",
+    requiresAttunement: false,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 18,
+    name: "Boots of Speed",
+    effect: "As a bonus action, click heels together. For 10 minutes, double your walking speed and opportunity attacks against you are made with disadvantage. Once used, cannot be activated again until the next dawn.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 19,
+    name: "Bracers of Archery",
+    effect: "+2 bonus to damage rolls on ranged attacks made with shortbows or longbows. Grants proficiency with shortbows and longbows.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 20,
+    name: "Brooch of Shielding",
+    effect: "Resistance to force damage; immune to damage from magic missile.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 21,
+    name: "Eyes of the Eagle",
+    effect: "Advantage on Wisdom (Perception) checks that rely on sight. In conditions of clear visibility, you can make out details of extremely distant creatures and objects as small as 2 ft across.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 22,
+    name: "Gauntlets of Ogre Power",
+    effect: "Strength score becomes 19 (no effect if already 19 or higher).",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 23,
+    name: "Gloves of Missile Snaring",
+    effect: "Reaction when a ranged weapon attack hits you: reduce the damage by 1d10 + Dexterity modifier. If the damage is reduced to 0, you can catch the missile if you have a free hand.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 24,
+    name: "Hat of Disguise",
+    effect: "Cast disguise self at will.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 25,
+    name: "Headband of Intellect",
+    effect: "Intelligence score becomes 19 (no effect if already 19 or higher).",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 26,
+    name: "Necklace of Adaptation",
+    effect: "Breathe normally in any environment, and have advantage on saving throws against harmful gases and vapors (such as cloudkill and stinking cloud effects, inhaled poisons, and the breath weapons of some dragons).",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 27,
+    name: "Periapt of Wound Closure",
+    effect: "Stabilize automatically whenever making death saves. Doubles hit points regained from Hit Dice.",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  {
+    id: 28,
+    name: "Winged Boots",
+    effect: "Fly speed equal to your walking speed (4 hours total, recharges at 2 hr/day).",
+    requiresAttunement: true,
+    tier: 2,
+    levelPrerequisite: 6,
+  },
+  // Tier 3: Level 10+ Prerequisite (10 items)
+  {
+    id: 29,
+    name: "Amulet of Health",
+    effect: "Constitution score becomes 19 (no effect if already 19 or higher).",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 30,
+    name: "Belt of Hill Giant Strength",
+    effect: "Strength score becomes 21 (no effect if already 21 or higher).",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 31,
+    name: "Boots of Levitation",
+    effect: "Cast levitate on yourself at will.",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 32,
+    name: "Bracers of Defense",
+    effect: "+2 bonus to AC if wearing no armor and carrying no shield.",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 33,
+    name: "Cloak of the Bat",
+    effect: "Advantage on Dexterity (Stealth) checks. In an area of dim light or darkness, you can grip the edges to fly at 40 ft. You can also cast polymorph on yourself to transform into a bat (1/day at dusk; reverts at dawn, when you take damage, or when you end the transformation as a bonus action).",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 34,
+    name: "Dimensional Shackles",
+    effect: "You can use an action to place the shackles on an incapacitated creature. As a bonus action on each of your turns, you can tighten the shackles to prevent the target from using any method of extradimensional movement, including teleportation or travel to another plane of existence.",
+    requiresAttunement: false,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 35,
+    name: "Gem of Seeing",
+    effect: "Has 3 charges. Use an action to expend 1 charge and gain truesight (120 ft) for 10 minutes. Regains 1d3 charges daily at dawn.",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 36,
+    name: "Horn of Blasting",
+    effect: "Use an action to blow the horn, emitting a thunderous blast in a 30-ft cone (DC 15 CON save; 5d6 thunder on fail, half on success; deafened for 1 minute on fail). Objects in the cone take 5d6 thunder damage. Each use has a 20% chance (1\u20134 on d20) of exploding, dealing 10d6 fire damage to the user and destroying the horn.",
+    requiresAttunement: false,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 37,
+    name: "Ring of Free Action",
+    effect: "Difficult terrain doesn't cost extra movement. Immune to the paralyzed and restrained conditions.",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  {
+    id: 38,
+    name: "Ring of Protection",
+    effect: "+1 bonus to AC and saving throws.",
+    requiresAttunement: true,
+    tier: 3,
+    levelPrerequisite: 10,
+  },
+  // Tier 4: Level 14+ Prerequisite (6 items)
+  {
+    id: 39,
+    name: "Amulet of the Planes",
+    effect: "Use an action to name a location on another plane of existence. Succeed on a DC 15 Intelligence check to cast plane shift (on fail, you and each creature within 15 ft travel to a random destination on a random plane).",
+    requiresAttunement: true,
+    tier: 4,
+    levelPrerequisite: 14,
+  },
+  {
+    id: 40,
+    name: "Belt of Fire Giant Strength",
+    effect: "Strength score becomes 25 (no effect if already 25 or higher).",
+    requiresAttunement: true,
+    tier: 4,
+    levelPrerequisite: 14,
+  },
+  {
+    id: 41,
+    name: "Cloak of Invisibility",
+    effect: "Pull the hood up (action) to become invisible. Anything worn or carried is also invisible. Remain invisible until the hood is pulled down, you attack, or you cast a spell. The cloak has 2 hours of use per day, replenishing at midnight.",
+    requiresAttunement: true,
+    tier: 4,
+    levelPrerequisite: 14,
+  },
+  {
+    id: 42,
+    name: "Ring of Spell Storing",
+    effect: "Stores up to 5 levels of spells cast into it. A creature holding the ring can cast any stored spell (using the slot level and spellcasting ability of the original caster). All stored spells are lost when the infusion dissolves at dawn.",
+    requiresAttunement: true,
+    tier: 4,
+    levelPrerequisite: 14,
+  },
+  {
+    id: 43,
+    name: "Ring of Telekinesis",
+    effect: "Cast telekinesis at will.",
+    requiresAttunement: true,
+    tier: 4,
+    levelPrerequisite: 14,
+  },
+  {
+    id: 44,
+    name: "Robe of Eyes",
+    effect: "See in all directions; advantage on Perception checks relying on sight; darkvision 120 ft; see invisible creatures within 120 ft; see into the Ethereal Plane within 120 ft. Cannot be blinded. Light and daylight cast on the robe cause blindness for 1 minute (CON save DC 13 negates).",
+    requiresAttunement: true,
+    tier: 4,
+    levelPrerequisite: 14,
+  },
+];

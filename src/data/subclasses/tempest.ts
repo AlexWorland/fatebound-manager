@@ -102,7 +102,7 @@ export const TEMPEST_SUBCLASSES: SubclassEntry[] = [
     name: "Wild Magic",
     level9Feature: {
       name: "Wild Surge",
-      description: "While raging, you emanate wild magic. At the start of each of your turns while raging, the DM can have you randomly select from the Wild Magic Surge table (Tasha's Cauldron of Everything) \u2014 on an 8, you cast detect magic for free. Additionally, once per rage you can randomly select from the table voluntarily.",
+      description: "While raging, you emanate wild magic. At the start of each of your turns while raging, the DM can have you randomly select from the Wild Surge table below. Additionally, once per rage you can randomly select from the table voluntarily. Wild Surge (d8): 1 \u2014 Magic weapon: extra 1d6 damage (type: 1-fire, 2-cold, 3-lightning, 4-acid, 5-force, 6-necrotic). 2 \u2014 Teleport up to 30 ft (bonus action each turn while raging). 3 \u2014 Intangible spirit explodes near a creature within 30 ft: 5-ft radius, DEX save or 1d6 force (bonus action each turn). 4 \u2014 Weapon becomes force damage, gains light/thrown 20/60 (returns to hand). 5 \u2014 Creatures hitting you take 1d6 force damage. 6 \u2014 +1 AC aura (10 ft, allies included). 7 \u2014 15-ft difficult terrain for enemies. 8 \u2014 Bolt of light: creature within 30 ft makes CON save or takes 1d6 radiant + blinded until your next turn (bonus action each turn).",
     },
     level13Feature: {
       name: "Unstable Backlash",

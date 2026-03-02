@@ -22,7 +22,7 @@ export const SHEPHERD_SUBCLASSES: SubclassEntry[] = [
     name: "Circle of the Moon",
     level9Feature: {
       name: "Combat Wild Shape",
-      description: "Wild Shape as a bonus action. Your CR limit for Wild Shape increases to Fatebound level \u00f7 2 (rounded down, minimum 1). While in Wild Shape, you may expend a spell slot as a bonus action to regain 1d8 hit points per level of the slot spent.",
+      description: "Wild Shape as a bonus action. Your CR limit for Wild Shape increases to Fatebound level \u00f7 3 (rounded down, minimum 1). While in Wild Shape, you may expend a spell slot as a bonus action to regain 1d8 hit points per level of the slot spent.",
     },
     level13Feature: {
       name: "Elemental Wild Shape",
@@ -54,7 +54,7 @@ export const SHEPHERD_SUBCLASSES: SubclassEntry[] = [
     name: "Circle of the Shepherd",
     level9Feature: {
       name: "Spirit Totem",
-      description: "As a bonus action, summon a spirit totem in a 30-ft radius centered on a point within 60 ft; it lasts 1 minute and recharges on a short rest. Randomly select your totem: Bear (1, all creatures you choose gain temporary HP equal to 5 + your Fatebound level and have advantage on STR checks and saves), Hawk (2, all creatures you choose have advantage on Perception checks, and you can use a reaction to grant one ally advantage on an attack roll against a creature in the aura), or Unicorn (3, all creatures you choose have advantage on ability checks to detect creatures within the aura, and each time you cast a healing spell while the totem is active, each creature you choose regains additional HP equal to your Fatebound level).",
+      description: "Speech of the Woods: You can cast speak with animals at will, without expending a spell slot. As a bonus action, summon a spirit totem in a 30-ft radius centered on a point within 60 ft; it lasts 1 minute and recharges on a short rest. Randomly select your totem: Bear (1, all creatures you choose gain temporary HP equal to 5 + your Fatebound level and have advantage on STR checks and saves), Hawk (2, all creatures you choose have advantage on Perception checks, and you can use a reaction to grant one ally advantage on an attack roll against a creature in the aura), or Unicorn (3, all creatures you choose have advantage on ability checks to detect creatures within the aura, and each time you cast a healing spell while the totem is active, each creature you choose regains additional HP equal to your Fatebound level).",
     },
     level13Feature: {
       name: "Mighty Summoner",
@@ -70,15 +70,15 @@ export const SHEPHERD_SUBCLASSES: SubclassEntry[] = [
     name: "Circle of Spores",
     level9Feature: {
       name: "Halo of Spores + Symbiotic Entity",
-      description: "Halo of Spores: When a creature moves into or within 10 ft of you, use your reaction to deal 1d4 necrotic damage (CON save for none; damage scales with Fatebound level). Symbiotic Entity: Expend a use of Wild Shape to gain temporary hit points equal to 4 \u00d7 your Fatebound level; while these persist, your Halo damage doubles and your melee attacks deal an extra 1d6 necrotic damage.",
+      description: "Halo of Spores: When a creature moves into or within 10 ft of you, use your reaction to deal 1d6 necrotic damage (CON save for none). Symbiotic Entity: Expend a use of Wild Shape to gain temporary hit points equal to 4 \u00d7 your Fatebound level; while these persist, your Halo damage doubles and your melee attacks deal an extra 1d6 necrotic damage.",
     },
     level13Feature: {
       name: "Spreading Spores + Fungal Infestation",
-      description: "Spreading Spores: As a bonus action, cause your Halo of Spores to emanate from a point within 30 ft rather than yourself until the start of your next turn. Fungal Infestation: When a beast or humanoid of CR 1 or lower dies within 10 ft of you, you can animate it as a zombie (1 HP) that obeys your commands for 1 hour.",
+      description: "Halo of Spores damage increases to 1d8. Spreading Spores: As a bonus action, cause your Halo of Spores to emanate from a point within 30 ft rather than yourself until the start of your next turn. Fungal Infestation: When a beast or humanoid of CR 1 or lower dies within 10 ft of you, you can animate it as a zombie (1 HP) that obeys your commands for 1 hour.",
     },
     level17Feature: {
       name: "Spreading Spores Mastery",
-      description: "Your Halo of Spores and Symbiotic Entity both deal 1d10 necrotic damage instead of 1d4/1d6. Zombies raised by Fungal Infestation gain additional hit points equal to your Fatebound level.",
+      description: "Your Halo of Spores damage increases to 1d10. Zombies raised by Fungal Infestation gain additional hit points equal to your Fatebound level.",
     },
   },
   {

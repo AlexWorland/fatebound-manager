@@ -8,7 +8,7 @@ export const LEVEL_PROGRESSION: LevelFeature[] = [
   { level: 2, features: ["Residual Memory (1 Fate Pool point)"] },
   { level: 3, features: ["Chaos Surge"] },
   { level: 4, features: ["ASI / Feat"] },
-  { level: 5, features: ["Stabilized Form Table (d12) unlocked"] },
+  { level: 5, features: ["Stabilized Form Table (d20, reroll 15-20) unlocked"] },
   { level: 6, features: ["Extra Dawn Die", "Residual Memory (2 Fate Pool points)"] },
   { level: 7, features: ["Fate Resistance"] },
   { level: 8, features: ["ASI / Feat"] },

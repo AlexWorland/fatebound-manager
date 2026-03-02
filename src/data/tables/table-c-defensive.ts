@@ -26,7 +26,7 @@ export const TABLE_C_DEFENSIVE: DefensiveFeature[] = [
   {
     id: 5,
     name: "Lay on Hands",
-    description: "Lay on Hands (pool = Fatebound level \u00d7 3)",
+    description: "Lay on Hands (pool = Fatebound level \u00d7 5)",
   },
   {
     id: 6,

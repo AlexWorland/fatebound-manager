@@ -24,6 +24,15 @@ export default function HPBar({ current, max, temp, onUpdate }: HPBarProps) {
       ? "bg-hp-yellow"
       : "bg-hp-red";
 
+  const textColor =
+    current === 0
+      ? "text-text-secondary"
+      : hpPercent > 50
+      ? "text-hp-green"
+      : hpPercent > 25
+      ? "text-hp-yellow"
+      : "text-hp-red";
+
   function applyChange() {
     const amount = parseInt(inputValue, 10);
     if (isNaN(amount) || amount < 0) return;
@@ -55,7 +64,7 @@ export default function HPBar({ current, max, temp, onUpdate }: HPBarProps) {
     <div className="flex flex-col gap-2">
       {/* HP Numbers */}
       <div className="flex items-baseline gap-1">
-        <span className="text-2xl font-bold font-heading text-text-highlight">{current}</span>
+        <span className={`text-2xl font-bold font-heading ${textColor}`}>{current}</span>
         <span className="text-text-secondary font-body">/ {max}</span>
         {temp > 0 && (
           <span className="text-sm text-blue-400 font-body ml-2">+{temp} temp</span>

@@ -5,6 +5,7 @@ import {
   getMysticArcanumLevels,
   getMysticArcanumLevel,
   getArcaneRecoveryBudget,
+  getHexerPactSlots,
 } from "../spell-slots";
 
 describe("getSpellSlots", () => {
@@ -142,6 +143,48 @@ describe("getSpellSlots edge cases", () => {
     const slots = getSpellSlots(0);
     expect(slots[1]).toBe(0);
     expect(slots[5]).toBe(0);
+  });
+});
+
+describe("getHexerPactSlots", () => {
+  it("below level 5 returns 0 slots at level 0", () => {
+    expect(getHexerPactSlots(0)).toEqual({ count: 0, level: 0 });
+  });
+
+  it("below level 5 returns 0 slots at level 4", () => {
+    expect(getHexerPactSlots(4)).toEqual({ count: 0, level: 0 });
+  });
+
+  it("level 5 returns 2 slots at 3rd level", () => {
+    expect(getHexerPactSlots(5)).toEqual({ count: 2, level: 3 });
+  });
+
+  it("level 8 returns 2 slots at 3rd level (boundary)", () => {
+    expect(getHexerPactSlots(8)).toEqual({ count: 2, level: 3 });
+  });
+
+  it("level 9 returns 2 slots at 4th level", () => {
+    expect(getHexerPactSlots(9)).toEqual({ count: 2, level: 4 });
+  });
+
+  it("level 12 returns 2 slots at 4th level (boundary)", () => {
+    expect(getHexerPactSlots(12)).toEqual({ count: 2, level: 4 });
+  });
+
+  it("level 13 returns 3 slots at 5th level", () => {
+    expect(getHexerPactSlots(13)).toEqual({ count: 3, level: 5 });
+  });
+
+  it("level 16 returns 3 slots at 5th level (boundary)", () => {
+    expect(getHexerPactSlots(16)).toEqual({ count: 3, level: 5 });
+  });
+
+  it("level 17 returns 3 slots at 5th level", () => {
+    expect(getHexerPactSlots(17)).toEqual({ count: 3, level: 5 });
+  });
+
+  it("level 20 returns 3 slots at 5th level", () => {
+    expect(getHexerPactSlots(20)).toEqual({ count: 3, level: 5 });
   });
 });
 

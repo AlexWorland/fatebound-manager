@@ -69,16 +69,16 @@ export const SHADOW_SUBCLASSES: SubclassEntry[] = [
     id: "shadow-swashbuckler",
     name: "Swashbuckler",
     level9Feature: {
-      name: "Rakish Audacity + Fancy Footwork",
-      description: "Add your CHA modifier to your initiative rolls. You can apply your Sneak Attack when no other creature is within 5 ft of your target, even without advantage or an ally adjacent. When you make a melee attack against a creature, it cannot make opportunity attacks against you until the start of your next turn.",
+      name: "Rakish Audacity + Fancy Footwork + Panache",
+      description: "Add your CHA modifier to your initiative rolls. You can apply your Sneak Attack when no other creature is within 5 ft of your target, even without advantage or an ally adjacent. When you make a melee attack against a creature, it cannot make opportunity attacks against you until the start of your next turn. Panache: As an action, make a Persuasion check contested by a creature's Insight. If hostile and you succeed: the creature has disadvantage on attacks against targets other than you and can't make opportunity attacks against creatures other than you. If not hostile and you succeed: the creature is charmed for 1 minute.",
     },
     level13Feature: {
       name: "Elegant Maneuver",
       description: "As a bonus action, you gain advantage on the next Acrobatics or Athletics check you make during the same turn.",
     },
     level17Feature: {
-      name: "Master Duelist + Panache",
-      description: "Master Duelist: When you miss with an attack on your turn, you can reroll the attack with advantage against the same target (1/short rest). Panache: As an action, make a Persuasion check contested by a creature's Insight; a hostile creature that fails is charmed by you for 1 minute (or until harmed), and during that time has disadvantage on attack rolls against any creature other than you.",
+      name: "Master Duelist",
+      description: "When you miss with an attack roll, you can roll again with advantage. Once used, you can't do so again until you finish a short or long rest.",
     },
   },
   {

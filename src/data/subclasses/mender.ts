@@ -102,7 +102,7 @@ export const MENDER_SUBCLASSES: SubclassEntry[] = [
     name: "War",
     level9Feature: {
       name: "War Priest + CD: Guided Strike",
-      description: "When you take the Attack action, make one weapon attack as a bonus action (WIS mod uses/long rest). CD: Guided Strike: Add +10 to one attack roll you or an ally within 30 ft is making, after seeing the roll but before the outcome.",
+      description: "When you take the Attack action, make one weapon attack as a bonus action (WIS mod uses/long rest). CD: Guided Strike: Add +10 to one attack roll you make, after seeing the roll but before the outcome.",
     },
     level13Feature: {
       name: "War God's Blessing",
@@ -134,7 +134,7 @@ export const MENDER_SUBCLASSES: SubclassEntry[] = [
     name: "Grave",
     level9Feature: {
       name: "Circle of Mortality + CD: Path to the Grave",
-      description: "Healing spell dice that affect a creature at 0 HP use their maximum values. You can cast spare the dying as a bonus action at a range of 30 ft. CD: Path to the Grave: Curse a creature within 30 ft; the next hit it takes is treated as a critical hit, consuming the curse.",
+      description: "Healing spell dice that affect a creature at 0 HP use their maximum values. You can cast spare the dying as a bonus action at a range of 30 ft. CD: Path to the Grave: Choose one creature you can see within 30 feet. The next time you or an ally hits the cursed creature with an attack, the creature has vulnerability to all of that attack's damage. The curse ends after the first attack that benefits from it or after 1 minute.",
     },
     level13Feature: {
       name: "Sentinel at Death's Door",
@@ -174,7 +174,7 @@ export const MENDER_SUBCLASSES: SubclassEntry[] = [
     },
     level17Feature: {
       name: "Expansive Bond",
-      description: "Emboldening Bond extends to 60 ft. When a bonded creature is about to take damage, another bonded creature within 60 ft can use its reaction to teleport adjacent and take that damage instead.",
+      description: "Emboldening Bond and Protective Bond ranges extend to 60 ft.",
     },
   },
   {
@@ -182,7 +182,7 @@ export const MENDER_SUBCLASSES: SubclassEntry[] = [
     name: "Twilight",
     level9Feature: {
       name: "Eyes of Night + Vigilant Blessing + CD: Twilight Sanctuary",
-      description: "You gain darkvision out to 300 ft, and as an action can extend darkvision 300 ft to any number of creatures within 10 ft for 1 hour (1/long rest). Vigilant Blessing: When initiative is rolled, grant one creature you can see advantage on that roll. CD: Twilight Sanctuary: Create a 30-ft radius sphere of dim light centered on you for 1 minute. Each turn a creature inside can gain temp HP equal to 1d6 + your Fatebound level, or end one charmed or frightened effect on itself.",
+      description: "You gain darkvision out to 300 ft, and as an action can extend darkvision 300 ft to a number of willing creatures you can see within 10 ft equal to your WIS modifier (minimum 1) for 1 hour. You can use this feature a number of times equal to your WIS modifier (minimum 1) per long rest. You can expend a spell slot to use it again. Vigilant Blessing: When initiative is rolled, grant one creature you can see advantage on that roll. CD: Twilight Sanctuary: Create a 30-ft radius sphere of dim light centered on you for 1 minute. At the end of each of your turns, you or one creature of your choice within the sphere gains temporary hit points equal to 1d6 + your Fatebound level.",
     },
     level13Feature: {
       name: "Steps of Night",

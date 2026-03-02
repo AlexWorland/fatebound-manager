@@ -5,6 +5,7 @@ import { AbilityScores } from "@/types/character";
 import { DailyState } from "@/types/character";
 import { AbilityScore } from "@/types/forms";
 import { HexBadge, Card } from "@/components/ui";
+import RollableValue from "@/components/ui/RollableValue";
 import { STABILIZED_FORMS } from "@/data/tables/stabilized-forms";
 
 interface Props {
@@ -12,6 +13,9 @@ interface Props {
   proficiencyBonus: number;
   dailyState: DailyState | null;
   level: number;
+  onSkillClick?: (skill: string) => void;
+  onSaveClick?: (save: AbilityScore) => void;
+  onAbilityClick?: (ability: AbilityScore) => void;
 }
 
 const ABILITY_ORDER: AbilityScore[] = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
@@ -35,6 +39,9 @@ export default function AbilitySidebar({
   proficiencyBonus,
   dailyState,
   level,
+  onSkillClick,
+  onSaveClick,
+  onAbilityClick,
 }: Props) {
   const swappedAbilities = dailyState?.abilitySwap
     ? new Set([dailyState.abilitySwap.score1, dailyState.abilitySwap.score2])
@@ -83,15 +90,20 @@ export default function AbilitySidebar({
             const saveBonus = isProfSave ? mod + proficiencyBonus : mod;
 
             return (
-              <HexBadge
+              <div
                 key={ability}
-                ability={ability}
-                score={score}
-                modifier={mod}
-                isSwapped={isSwapped}
-                saveProficient={isProfSave}
-                saveBonus={saveBonus}
-              />
+                className={onAbilityClick ? "cursor-pointer" : ""}
+                onClick={() => onAbilityClick?.(ability)}
+              >
+                <HexBadge
+                  ability={ability}
+                  score={score}
+                  modifier={mod}
+                  isSwapped={isSwapped}
+                  saveProficient={isProfSave}
+                  saveBonus={saveBonus}
+                />
+              </div>
             );
           })}
         </div>
@@ -103,12 +115,53 @@ export default function AbilitySidebar({
           Combat
         </h2>
         <div className="flex flex-col gap-2 text-sm font-body">
-          <StatRow label="Initiative" value={dexMod >= 0 ? `+${dexMod}` : `${dexMod}`} />
+          <div className="flex justify-between items-center">
+            <span className="text-text-secondary">Initiative</span>
+            <RollableValue onClick={() => onAbilityClick?.("DEX")} label="Initiative">
+              {dexMod >= 0 ? `+${dexMod}` : `${dexMod}`}
+            </RollableValue>
+          </div>
           <StatRow label="Passive Perc." value={`${passivePerception}`} />
           <StatRow label="Prof. Bonus" value={`+${proficiencyBonus}`} />
           <StatRow label="Level" value={`${level}`} />
         </div>
       </Card>
+
+      {/* Saving throws */}
+      {savingThrows && (
+        <Card variant="default">
+          <h2 className="text-xs font-heading text-text-secondary uppercase tracking-widest mb-3">
+            Saving Throws
+          </h2>
+          <div className="flex flex-col gap-1.5 text-sm font-body">
+            {ABILITY_ORDER.map((ability) => {
+              const score = effectiveScore(ability);
+              const mod = getModifier(score);
+              const isProfSave = saveSet.has(ability);
+              const saveBonus = isProfSave ? mod + proficiencyBonus : mod;
+              const saveStr = saveBonus >= 0 ? `+${saveBonus}` : `${saveBonus}`;
+
+              return (
+                <div key={ability} className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-2 h-2 rounded-full border ${
+                        isProfSave
+                          ? "bg-accent border-accent"
+                          : "bg-transparent border-border-subtle"
+                      }`}
+                    />
+                    <span className="text-text-secondary">{ability}</span>
+                  </div>
+                  <RollableValue onClick={() => onSaveClick?.(ability)} label={`${ability} Save`}>
+                    {saveStr}
+                  </RollableValue>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
 
       {/* Dawn roll info */}
       {dailyState && (

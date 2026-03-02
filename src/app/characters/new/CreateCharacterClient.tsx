@@ -5,36 +5,36 @@ import { useRouter } from "next/navigation";
 import type { AbilityScore } from "@/types/forms";
 import type { AbilityScores } from "@/types/character";
 import { Card } from "@/components/ui";
+import { SpeciesStep } from "./steps/SpeciesStep";
+import {
+  BackgroundStep,
+  type BackgroundData,
+} from "./steps/BackgroundStep";
+import {
+  AbilityScoreStep,
+  ABILITIES,
+  formatModifier,
+  type ScoreMethod,
+} from "./steps/AbilityScoreStep";
+import {
+  EquipmentStep,
+  type EquipmentData,
+} from "./steps/EquipmentStep";
+import { STARTING_GOLD } from "@/data/starting-equipment";
 
-// ── D&D 5e Point Buy Constants ──────────────────────────────────────────
+// ── Step Type ───────────────────────────────────────────────────────────
 
-const TOTAL_POINTS = 27;
-const MIN_SCORE = 8;
-const MAX_SCORE = 15;
+type Step = "name" | "species" | "background" | "abilities" | "skills" | "equipment" | "review";
 
-/** Point cost for each ability score in standard D&D 5e point buy.
- *  Scores 8-13 cost 1 point each; 14 costs 2 extra; 15 costs 2 extra. */
-const POINT_COST: Record<number, number> = {
-  8: 0,
-  9: 1,
-  10: 2,
-  11: 3,
-  12: 4,
-  13: 5,
-  14: 7,
-  15: 9,
-};
-
-const ABILITIES: AbilityScore[] = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
-
-const ABILITY_LABELS: Record<AbilityScore, string> = {
-  STR: "Strength",
-  DEX: "Dexterity",
-  CON: "Constitution",
-  INT: "Intelligence",
-  WIS: "Wisdom",
-  CHA: "Charisma",
-};
+const STEPS: { id: Step; label: string }[] = [
+  { id: "name", label: "Name" },
+  { id: "species", label: "Species" },
+  { id: "background", label: "Background" },
+  { id: "abilities", label: "Abilities" },
+  { id: "skills", label: "Skills" },
+  { id: "equipment", label: "Equipment" },
+  { id: "review", label: "Review" },
+];
 
 // ── 5e Skill List ───────────────────────────────────────────────────────
 
@@ -59,32 +59,14 @@ const SKILLS = [
   "Survival",
 ];
 
-// ── Step Type ───────────────────────────────────────────────────────────
-
-type Step = "name" | "abilities" | "background" | "skills" | "review";
-
-const STEPS: { id: Step; label: string }[] = [
-  { id: "name", label: "Name" },
-  { id: "abilities", label: "Abilities" },
-  { id: "background", label: "Background" },
-  { id: "skills", label: "Skills" },
-  { id: "review", label: "Review" },
-];
-
-// ── Helpers ─────────────────────────────────────────────────────────────
-
-function getModifier(score: number): number {
-  return Math.floor((score - 10) / 2);
-}
-
-function formatModifier(score: number): string {
-  const mod = getModifier(score);
-  return mod >= 0 ? `+${mod}` : `${mod}`;
-}
-
-function getTotalPointsUsed(scores: AbilityScores): number {
-  return ABILITIES.reduce((sum, ab) => sum + (POINT_COST[scores[ab]] ?? 0), 0);
-}
+const ABILITY_LABELS: Record<AbilityScore, string> = {
+  STR: "Strength",
+  DEX: "Dexterity",
+  CON: "Constitution",
+  INT: "Intelligence",
+  WIS: "Wisdom",
+  CHA: "Charisma",
+};
 
 // ── Component ───────────────────────────────────────────────────────────
 
@@ -94,42 +76,44 @@ export default function CreateCharacterClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state
+  // Step 1: Name
   const [name, setName] = useState("");
+
+  // Step 2: Species
+  const [species, setSpecies] = useState("");
+
+  // Step 3: Background
+  const [backgroundData, setBackgroundData] = useState<BackgroundData>({
+    name: "",
+    personality: "",
+    ideals: "",
+    bonds: "",
+    flaws: "",
+  });
+
+  // Step 4: Ability Scores
   const [abilityScores, setAbilityScores] = useState<AbilityScores>({
     STR: 8, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8,
   });
-  const [background, setBackground] = useState("");
+  const [scoreMethod, setScoreMethod] = useState<ScoreMethod>("pointbuy");
+
+  // Step 5: Skills
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
-  const pointsUsed = getTotalPointsUsed(abilityScores);
-  const pointsRemaining = TOTAL_POINTS - pointsUsed;
+  // Step 6: Equipment
+  const [equipmentData, setEquipmentData] = useState<EquipmentData>({
+    packName: "",
+    weapon: "",
+    startingGold: STARTING_GOLD.default,
+  });
+
   const currentStepIndex = STEPS.findIndex((s) => s.id === step);
-
-  // ── Score adjustment ──────────────────────────────────────────────
-
-  function adjustScore(ability: AbilityScore, delta: number) {
-    const current = abilityScores[ability];
-    const next = current + delta;
-
-    if (next < MIN_SCORE || next > MAX_SCORE) return;
-
-    const nextCost = POINT_COST[next];
-    const currentCost = POINT_COST[current];
-    const costDiff = nextCost - currentCost;
-
-    if (costDiff > pointsRemaining) return;
-
-    setAbilityScores((prev) => ({ ...prev, [ability]: next }));
-  }
 
   // ── Skill toggle ──────────────────────────────────────────────────
 
   function toggleSkill(skill: string) {
     setSelectedSkills((prev) => {
-      if (prev.includes(skill)) {
-        return prev.filter((s) => s !== skill);
-      }
+      if (prev.includes(skill)) return prev.filter((s) => s !== skill);
       if (prev.length >= 2) return prev;
       return [...prev, skill];
     });
@@ -141,12 +125,16 @@ export default function CreateCharacterClient() {
     switch (step) {
       case "name":
         return name.trim().length > 0;
-      case "abilities":
-        return pointsRemaining >= 0;
+      case "species":
+        return species.length > 0;
       case "background":
-        return true; // background is optional
+        return true; // optional
+      case "abilities":
+        return true;
       case "skills":
         return selectedSkills.length === 2;
+      case "equipment":
+        return true; // optional
       case "review":
         return true;
       default:
@@ -156,16 +144,12 @@ export default function CreateCharacterClient() {
 
   function goNext() {
     const idx = currentStepIndex;
-    if (idx < STEPS.length - 1) {
-      setStep(STEPS[idx + 1].id);
-    }
+    if (idx < STEPS.length - 1) setStep(STEPS[idx + 1].id);
   }
 
   function goBack() {
     const idx = currentStepIndex;
-    if (idx > 0) {
-      setStep(STEPS[idx - 1].id);
-    }
+    if (idx > 0) setStep(STEPS[idx - 1].id);
   }
 
   // ── Submit ────────────────────────────────────────────────────────
@@ -183,7 +167,14 @@ export default function CreateCharacterClient() {
           name: name.trim(),
           abilityScores,
           permanentSkills: selectedSkills as [string, string],
-          background: background.trim(),
+          background: backgroundData.name,
+          personality: backgroundData.personality,
+          ideals: backgroundData.ideals,
+          bonds: backgroundData.bonds,
+          flaws: backgroundData.flaws,
+          alignment: "",
+          backstory: "",
+          appearance: {},
         }),
       });
 
@@ -200,7 +191,7 @@ export default function CreateCharacterClient() {
     }
   }
 
-  // ── Render Steps ──────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-bg-deep">
@@ -213,23 +204,20 @@ export default function CreateCharacterClient() {
           >
             &larr; Back to Characters
           </button>
-          <h1 className="text-2xl font-heading text-text-highlight">
-            Create Character
-          </h1>
+          <h1 className="text-2xl font-heading text-text-highlight">Create Character</h1>
         </div>
       </header>
 
       {/* Progress bar */}
-      <div className="max-w-2xl mx-auto px-4 py-4">
-        <div className="flex items-center gap-1">
+      <div className="max-w-2xl mx-auto px-4 py-4 overflow-x-auto">
+        <div className="flex items-center gap-1 min-w-max">
           {STEPS.map((s, i) => (
             <React.Fragment key={s.id}>
               <button
                 onClick={() => {
-                  // Only allow jumping to completed or current steps
                   if (i <= currentStepIndex) setStep(s.id);
                 }}
-                className={`text-xs font-body uppercase tracking-widest transition-colors ${
+                className={`text-xs font-body uppercase tracking-widest transition-colors whitespace-nowrap ${
                   i === currentStepIndex
                     ? "text-text-highlight"
                     : i < currentStepIndex
@@ -241,7 +229,7 @@ export default function CreateCharacterClient() {
               </button>
               {i < STEPS.length - 1 && (
                 <div
-                  className={`flex-1 h-px mx-2 ${
+                  className={`w-4 h-px mx-1 shrink-0 ${
                     i < currentStepIndex ? "bg-accent" : "bg-border-subtle"
                   }`}
                 />
@@ -253,35 +241,41 @@ export default function CreateCharacterClient() {
 
       {/* Step content */}
       <main className="max-w-2xl mx-auto px-4 py-4">
-        {step === "name" && (
-          <StepName name={name} onChange={setName} />
-        )}
+        {step === "name" && <StepName name={name} onChange={setName} />}
 
-        {step === "abilities" && (
-          <StepAbilities
-            scores={abilityScores}
-            pointsRemaining={pointsRemaining}
-            onAdjust={adjustScore}
-          />
+        {step === "species" && (
+          <SpeciesStep selected={species} onSelect={setSpecies} />
         )}
 
         {step === "background" && (
-          <StepBackground background={background} onChange={setBackground} />
+          <BackgroundStep data={backgroundData} onChange={setBackgroundData} />
+        )}
+
+        {step === "abilities" && (
+          <AbilityScoreStep
+            scores={abilityScores}
+            method={scoreMethod}
+            onScoresChange={setAbilityScores}
+            onMethodChange={setScoreMethod}
+          />
         )}
 
         {step === "skills" && (
-          <StepSkills
-            selectedSkills={selectedSkills}
-            onToggle={toggleSkill}
-          />
+          <StepSkills selectedSkills={selectedSkills} onToggle={toggleSkill} />
+        )}
+
+        {step === "equipment" && (
+          <EquipmentStep data={equipmentData} onChange={setEquipmentData} />
         )}
 
         {step === "review" && (
           <StepReview
             name={name}
+            species={species}
+            backgroundData={backgroundData}
             abilityScores={abilityScores}
-            background={background}
             skills={selectedSkills}
+            equipmentData={equipmentData}
           />
         )}
 
@@ -341,9 +335,7 @@ function StepName({
   return (
     <Card>
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-heading text-text-highlight">
-          Character Name
-        </h2>
+        <h2 className="text-lg font-heading text-text-highlight">Character Name</h2>
         <p className="text-sm text-text-secondary">
           Choose a name for your Fatebound. This is the one constant as fate reshapes everything else about you each dawn.
         </p>
@@ -354,157 +346,6 @@ function StepName({
           placeholder="Enter character name..."
           autoFocus
           className="w-full px-4 py-3 rounded-lg bg-bg-elevated border border-border-subtle text-text-primary font-body placeholder:text-text-secondary/50 focus:outline-none focus:border-fate transition-colors"
-        />
-      </div>
-    </Card>
-  );
-}
-
-// ── Step: Abilities (Point Buy) ─────────────────────────────────────────
-
-function StepAbilities({
-  scores,
-  pointsRemaining,
-  onAdjust,
-}: {
-  scores: AbilityScores;
-  pointsRemaining: number;
-  onAdjust: (ability: AbilityScore, delta: number) => void;
-}) {
-  return (
-    <Card>
-      <div className="flex flex-col gap-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-lg font-heading text-text-highlight">
-              Ability Scores
-            </h2>
-            <p className="text-sm text-text-secondary mt-1">
-              D&D 5e point buy. Start at 8, max 15, spend 27 points. Fate Attunement lets you swap two scores daily.
-            </p>
-          </div>
-          <div className="shrink-0 ml-4 text-right">
-            <div className="text-xs text-text-secondary uppercase tracking-widest font-body">
-              Points
-            </div>
-            <div
-              className={`text-2xl font-heading font-bold ${
-                pointsRemaining === 0
-                  ? "text-accent"
-                  : pointsRemaining < 0
-                  ? "text-hp-red"
-                  : "text-text-highlight"
-              }`}
-            >
-              {pointsRemaining}
-            </div>
-            <div className="text-xs text-text-secondary font-mono">
-              / {TOTAL_POINTS}
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-          {ABILITIES.map((ab) => (
-            <AbilityScoreInput
-              key={ab}
-              ability={ab}
-              score={scores[ab]}
-              pointsRemaining={pointsRemaining}
-              onAdjust={onAdjust}
-            />
-          ))}
-        </div>
-
-        {pointsRemaining > 0 && (
-          <p className="text-xs text-text-secondary text-center mt-2">
-            {pointsRemaining} point{pointsRemaining !== 1 ? "s" : ""} remaining &mdash; consider raising your primary stat to 15 for Fate Attunement swaps.
-          </p>
-        )}
-      </div>
-    </Card>
-  );
-}
-
-function AbilityScoreInput({
-  ability,
-  score,
-  pointsRemaining,
-  onAdjust,
-}: {
-  ability: AbilityScore;
-  score: number;
-  pointsRemaining: number;
-  onAdjust: (ability: AbilityScore, delta: number) => void;
-}) {
-  const mod = formatModifier(score);
-  const canIncrease = score < MAX_SCORE && (POINT_COST[score + 1] - POINT_COST[score]) <= pointsRemaining;
-  const canDecrease = score > MIN_SCORE;
-
-  return (
-    <div className="flex flex-col items-center gap-1 p-3 rounded-lg bg-bg-elevated border border-border-subtle">
-      <span className="text-xs font-body text-text-secondary uppercase tracking-widest">
-        {ABILITY_LABELS[ability]}
-      </span>
-
-      <div className="flex items-center gap-2 mt-1">
-        <button
-          onClick={() => onAdjust(ability, -1)}
-          disabled={!canDecrease}
-          className="w-7 h-7 rounded flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          &minus;
-        </button>
-
-        <div className="flex flex-col items-center min-w-[40px]">
-          <span className="text-xl font-heading font-bold text-text-highlight">
-            {score}
-          </span>
-          <span className="text-xs text-text-secondary font-mono">
-            ({mod})
-          </span>
-        </div>
-
-        <button
-          onClick={() => onAdjust(ability, 1)}
-          disabled={!canIncrease}
-          className="w-7 h-7 rounded flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-hover transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          +
-        </button>
-      </div>
-
-      <span className="text-xs text-text-secondary font-mono">
-        {POINT_COST[score]} pts
-      </span>
-    </div>
-  );
-}
-
-// ── Step: Background ────────────────────────────────────────────────────
-
-function StepBackground({
-  background,
-  onChange,
-}: {
-  background: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <Card>
-      <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-heading text-text-highlight">
-          Background
-        </h2>
-        <p className="text-sm text-text-secondary">
-          Describe your character's background. This is optional but helps ground your Fatebound's identity as everything else shifts.
-        </p>
-        <textarea
-          value={background}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Acolyte, Sage, Criminal, Folk Hero, or describe your own..."
-          rows={3}
-          className="w-full px-4 py-3 rounded-lg bg-bg-elevated border border-border-subtle text-text-primary font-body placeholder:text-text-secondary/50 focus:outline-none focus:border-fate transition-colors resize-none"
         />
       </div>
     </Card>
@@ -525,9 +366,7 @@ function StepSkills({
       <div className="flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-heading text-text-highlight">
-              Permanent Skills
-            </h2>
+            <h2 className="text-lg font-heading text-text-highlight">Permanent Skills</h2>
             <p className="text-sm text-text-secondary mt-1">
               Choose 2 skill proficiencies. These persist across all Daily Forms &mdash; your Fatemark anchors them.
             </p>
@@ -569,39 +408,56 @@ function StepSkills({
 
 function StepReview({
   name,
+  species,
+  backgroundData,
   abilityScores,
-  background,
   skills,
+  equipmentData,
 }: {
   name: string;
+  species: string;
+  backgroundData: BackgroundData;
   abilityScores: AbilityScores;
-  background: string;
   skills: string[];
+  equipmentData: EquipmentData;
 }) {
   return (
     <Card variant="fate">
       <div className="flex flex-col gap-5">
-        <h2 className="text-lg font-heading text-text-highlight">
-          Review Your Character
-        </h2>
+        <h2 className="text-lg font-heading text-text-highlight">Review Your Character</h2>
 
-        {/* Name */}
-        <div>
-          <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
-            Name
-          </span>
-          <span className="text-lg font-heading text-text-highlight">{name}</span>
+        {/* Name & Species */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+              Name
+            </span>
+            <span className="text-lg font-heading text-text-highlight">{name}</span>
+          </div>
+          {species && (
+            <div>
+              <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+                Species
+              </span>
+              <span className="text-base font-heading text-text-highlight">{species}</span>
+            </div>
+          )}
         </div>
 
-        {/* Abilities */}
+        {/* Ability Scores */}
         <div>
           <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-2">
             Ability Scores
           </span>
           <div className="grid grid-cols-6 gap-2">
             {ABILITIES.map((ab) => (
-              <div key={ab} className="flex flex-col items-center gap-0.5 p-2 rounded bg-bg-elevated">
-                <span className="text-xs text-text-secondary font-body">{ab}</span>
+              <div
+                key={ab}
+                className="flex flex-col items-center gap-0.5 p-2 rounded bg-bg-elevated"
+              >
+                <span className="text-xs text-text-secondary font-body">
+                  {ABILITY_LABELS[ab].slice(0, 3).toUpperCase()}
+                </span>
                 <span className="text-lg font-heading font-bold text-text-highlight">
                   {abilityScores[ab]}
                 </span>
@@ -614,12 +470,15 @@ function StepReview({
         </div>
 
         {/* Background */}
-        {background && (
+        {backgroundData.name && (
           <div>
             <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
               Background
             </span>
-            <span className="text-sm text-text-primary">{background}</span>
+            <span className="text-sm font-heading text-text-highlight">{backgroundData.name}</span>
+            {backgroundData.personality && (
+              <p className="text-xs text-text-secondary mt-1">{backgroundData.personality}</p>
+            )}
           </div>
         )}
 
@@ -628,7 +487,7 @@ function StepReview({
           <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
             Permanent Skills
           </span>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {skills.map((skill) => (
               <span
                 key={skill}
@@ -640,10 +499,35 @@ function StepReview({
           </div>
         </div>
 
+        {/* Equipment */}
+        {(equipmentData.packName || equipmentData.weapon) && (
+          <div>
+            <span className="text-xs text-text-secondary uppercase tracking-widest font-body block mb-1">
+              Starting Equipment
+            </span>
+            <div className="flex flex-wrap gap-2 text-sm text-text-primary">
+              {equipmentData.packName && (
+                <span className="px-2 py-0.5 rounded bg-bg-elevated border border-border-subtle">
+                  {equipmentData.packName}
+                </span>
+              )}
+              {equipmentData.weapon && (
+                <span className="px-2 py-0.5 rounded bg-bg-elevated border border-border-subtle">
+                  {equipmentData.weapon}
+                </span>
+              )}
+              <span className="px-2 py-0.5 rounded bg-bg-elevated border border-border-subtle">
+                {equipmentData.startingGold} gp
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Level notice */}
         <div className="pt-3 border-t border-border-subtle">
           <p className="text-xs text-text-secondary">
-            Your character will start at <span className="text-text-highlight font-medium">Level 1</span>.
+            Your character will start at{" "}
+            <span className="text-text-highlight font-medium">Level 1</span>.
             After creation, you'll perform your first Dawn Roll to determine today's form.
           </p>
         </div>

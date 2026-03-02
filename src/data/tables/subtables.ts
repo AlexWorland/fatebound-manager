@@ -35,7 +35,7 @@ export const WILDCARD_MARTIAL_WEAPONS: WildcardWeapon[] = [
   { id: 12, name: "Whip", damage: "1d4 slashing", properties: "Finesse, Reach" },
 ];
 
-export type PactBoon = "blade" | "chain" | "tome";
+export type PactBoon = "blade" | "chain" | "tome" | "talisman";
 
 export interface EldritchInvocation {
   id: number;
@@ -46,11 +46,10 @@ export interface EldritchInvocation {
   requiresHexOrCurse?: boolean;
 }
 
-/** Full 50-entry invocation table from the supplementary document.
- *  Fate's Selection (d100; on 51-100, reroll). Duplicates rerolled.
+/** Full 53-entry invocation table from the supplementary document.
+ *  Fate's Selection (d100; on 54-100, reroll). Duplicates rerolled.
  *  Pact Boon prerequisites apply — reroll pact-dependent invocations you can't use.
- *  Level prerequisites are waived.
- *  Pact of the Talisman invocations are excluded. */
+ *  Level prerequisites are waived. */
 export const ELDRITCH_INVOCATIONS: EldritchInvocation[] = [
   { id: 1, name: "Agonizing Blast", effect: "Add CHA mod to eldritch blast damage (each beam).", requiresEldritchBlast: true },
   { id: 2, name: "Armor of Shadows", effect: "Cast mage armor on self at will, without a spell slot." },
@@ -102,6 +101,9 @@ export const ELDRITCH_INVOCATIONS: EldritchInvocation[] = [
   { id: 48, name: "Voice of the Chain Master", effect: "Communicate telepathically with your familiar and perceive through its senses while on the same plane.", pactRequired: "chain" },
   { id: 49, name: "Whispers of the Grave", effect: "Cast speak with dead at will, without a spell slot." },
   { id: 50, name: "Witch Sight", effect: "See the true form of any shapechanger or creature concealed by illusion or transmutation magic within 30 ft." },
+  { id: 51, name: "Bond of the Talisman", effect: "While someone else is wearing your talisman, you can use your action to teleport to the talisman's location (within 10 ft, same plane). The wearer can also teleport to you. Prof bonus uses/long rest total (shared).", pactRequired: "talisman" },
+  { id: 52, name: "Protection of the Talisman", effect: "When the wearer of your talisman fails a saving throw, they can add a d4 to the roll (prof bonus uses/long rest).", pactRequired: "talisman" },
+  { id: 53, name: "Rebuke of the Talisman", effect: "When the wearer of your talisman is hit by an attacker, deal psychic damage to the attacker equal to your prof bonus and push it 10 ft away.", pactRequired: "talisman" },
 ];
 
 export interface BattleMasterManeuver {
@@ -158,4 +160,76 @@ export const CLERIC_DOMAINS: ClericDomain[] = [
   { id: 6, name: "Trickery", channelDivinity: "Invoke Duplicity \u2014 Create illusory duplicate within 30 ft (1 min, concentration). Advantage on attacks vs. creatures within 5 ft of duplicate." },
   { id: 7, name: "Nature", channelDivinity: "Charm Animals and Plants \u2014 Beasts/plants within 30 ft: WIS save or charmed 1 min" },
   { id: 8, name: "Forge", channelDivinity: "Artisan's Blessing \u2014 1-hour ritual to craft a weapon or armor (consumes 100 gp metal)" },
+];
+
+// ── Blood Hunter (Reaver) Subtables ──────────────────────────────────
+
+export interface BloodCurse {
+  id: number;
+  name: string;
+  activation: string;
+  effect: string;
+  amplified: string;
+}
+
+/** Blood Curse Table: 8 entries (d8). Used by Blood Maledict. */
+export const BLOOD_CURSES: BloodCurse[] = [
+  { id: 1, name: "Blood Curse of the Anxious", activation: "Bonus action, 30 ft", effect: "You have advantage on Intimidation checks against the target until the end of your next turn.", amplified: "The target's next Wisdom saving throw has disadvantage." },
+  { id: 2, name: "Blood Curse of Binding", activation: "Bonus action, 30 ft, Large or smaller creature", effect: "Target makes a STR save or has speed 0 and can't take reactions until end of your next turn.", amplified: "Affects any size, lasts 1 minute, target can repeat the save at end of each of its turns." },
+  { id: 3, name: "Blood Curse of Bloated Agony", activation: "Bonus action, 30 ft", effect: "Target has disadvantage on STR and DEX checks and takes 1d8 necrotic damage if it makes more than one attack on its turn, until end of your next turn.", amplified: "Lasts 1 minute; target makes a CON save at end of each of its turns to end the effect." },
+  { id: 4, name: "Blood Curse of Exposure", activation: "Reaction (when you see a creature take damage), 30 ft", effect: "Target loses resistance to that damage type until end of your next turn.", amplified: "Target loses immunity instead, gaining resistance to that type." },
+  { id: 5, name: "Blood Curse of the Eyeless", activation: "Reaction (when a creature makes an attack roll), 30 ft", effect: "Roll your hemocraft die and subtract the result from the attack roll.", amplified: "Applies to all of the creature's attack rolls until end of its turn." },
+  { id: 6, name: "Blood Curse of the Fallen Puppet", activation: "Reaction (when a creature you can see drops to 0 HP), 30 ft", effect: "The creature immediately makes one weapon attack against a target of your choice within its reach.", amplified: "The creature can move up to half its speed before attacking; the attack gains a bonus to its attack roll equal to your INT modifier." },
+  { id: 7, name: "Blood Curse of the Marked", activation: "Bonus action, 30 ft", effect: "Until the end of your turn, whenever you hit the target with a weapon that has an active Crimson Rite, roll an additional hemocraft die of rite damage.", amplified: "The next attack roll you make against the target has advantage." },
+  { id: 8, name: "Blood Curse of the Muddled Mind", activation: "Bonus action, 30 ft", effect: "Target has disadvantage on Concentration saving throws until the end of your next turn.", amplified: "Target makes a WIS save or has disadvantage on all Wisdom saving throws until the end of your next turn." },
+];
+
+export interface MutagenFormula {
+  id: number;
+  name: string;
+  prerequisite: string | null;
+  benefit: string;
+  sideEffect: string;
+}
+
+/** Mutagen Formula Table: 20 entries (d20). Used by Mutant subclass Mutagencraft. */
+export const MUTAGEN_FORMULAS: MutagenFormula[] = [
+  { id: 1, name: "Alluring", prerequisite: null, benefit: "Advantage on CHA checks", sideEffect: "Disadvantage on initiative rolls" },
+  { id: 2, name: "Celerity", prerequisite: null, benefit: "DEX +3 (+4 at level 13, +5 at level 17)", sideEffect: "Disadvantage on WIS saves" },
+  { id: 3, name: "Conversant", prerequisite: null, benefit: "Advantage on INT checks", sideEffect: "Disadvantage on WIS checks" },
+  { id: 4, name: "Deftness", prerequisite: null, benefit: "Advantage on DEX checks", sideEffect: "Disadvantage on WIS checks" },
+  { id: 5, name: "Embers", prerequisite: null, benefit: "Resistance to fire damage", sideEffect: "Vulnerability to cold damage" },
+  { id: 6, name: "Gelid", prerequisite: null, benefit: "Resistance to cold damage", sideEffect: "Vulnerability to fire damage" },
+  { id: 7, name: "Impermeable", prerequisite: null, benefit: "Resistance to piercing damage", sideEffect: "Vulnerability to slashing damage" },
+  { id: 8, name: "Mobility", prerequisite: null, benefit: "Immunity to grappled and restrained (+ paralyzed at level 13)", sideEffect: "Disadvantage on STR checks" },
+  { id: 9, name: "Nighteye", prerequisite: null, benefit: "Darkvision 60 ft (or extend existing by 60 ft)", sideEffect: "Disadvantage on attack rolls and Perception checks in direct sunlight" },
+  { id: 10, name: "Percipient", prerequisite: null, benefit: "Advantage on WIS checks", sideEffect: "Disadvantage on CHA checks" },
+  { id: 11, name: "Potency", prerequisite: null, benefit: "STR +3 (+4 at level 13, +5 at level 17)", sideEffect: "Disadvantage on DEX saves" },
+  { id: 12, name: "Rapidity", prerequisite: null, benefit: "Speed +10 ft (+15 ft at level 17)", sideEffect: "Disadvantage on INT checks" },
+  { id: 13, name: "Sagacity", prerequisite: null, benefit: "INT +3 (+4 at level 13, +5 at level 17)", sideEffect: "Disadvantage on CHA saves" },
+  { id: 14, name: "Shielded", prerequisite: null, benefit: "Resistance to slashing damage", sideEffect: "Vulnerability to bludgeoning damage" },
+  { id: 15, name: "Unbreakable", prerequisite: null, benefit: "Resistance to bludgeoning damage", sideEffect: "Vulnerability to piercing damage" },
+  { id: 16, name: "Vermillion", prerequisite: null, benefit: "+1 Blood Maledict use for the day", sideEffect: "Disadvantage on death saving throws" },
+  { id: 17, name: "Reconstruction", prerequisite: "Level 9+", benefit: "Regain prof bonus HP at start of turn when below half HP (1 hour)", sideEffect: "Speed reduced by 10 ft" },
+  { id: 18, name: "Aether", prerequisite: "Level 13+", benefit: "20 ft flying speed (1 hour)", sideEffect: "Disadvantage on STR and DEX checks" },
+  { id: 19, name: "Cruelty", prerequisite: "Level 13+", benefit: "Extra weapon attack as bonus action", sideEffect: "Disadvantage on INT, WIS, and CHA saves" },
+  { id: 20, name: "Precision", prerequisite: "Level 13+", benefit: "Critical hit on 19\u201320", sideEffect: "Disadvantage on STR saves" },
+];
+
+export interface ProfaneSoulPatron {
+  id: number;
+  name: string;
+  riteFocusBenefit: string;
+  revealedArcanaSpell: string;
+  unsealedArcanaSpell: string;
+}
+
+/** Profane Soul Patron Benefits: 6 entries (d6). Used by Profane Soul subclass. */
+export const PROFANE_SOUL_PATRONS: ProfaneSoulPatron[] = [
+  { id: 1, name: "Archfey", riteFocusBenefit: "Creatures damaged by your Crimson Rite weapon glow faintly; they gain no benefit from cover or invisibility against your attacks until end of your next turn.", revealedArcanaSpell: "Blur", unsealedArcanaSpell: "Slow" },
+  { id: 2, name: "Celestial", riteFocusBenefit: "Bonus action: expend a Blood Maledict use to heal a creature within 60 ft for 1 hemocraft die + INT mod HP.", revealedArcanaSpell: "Lesser Restoration", unsealedArcanaSpell: "Revivify" },
+  { id: 3, name: "Fiend", riteFocusBenefit: "Reroll 1s and 2s on Crimson Rite damage dice (keep the new result).", revealedArcanaSpell: "Scorching Ray", unsealedArcanaSpell: "Fireball" },
+  { id: 4, name: "Great Old One", riteFocusBenefit: "Critical hits frighten the target and creatures within 10 ft until end of your next turn (no save).", revealedArcanaSpell: "Detect Thoughts", unsealedArcanaSpell: "Haste" },
+  { id: 5, name: "Hexblade", riteFocusBenefit: "When you use a blood curse on a creature, your next weapon attack against that creature before end of your next turn deals bonus damage equal to your proficiency bonus.", revealedArcanaSpell: "Branding Smite", unsealedArcanaSpell: "Blink" },
+  { id: 6, name: "Undead", riteFocusBenefit: "Reaction when you take necrotic damage: halve the necrotic damage taken.", revealedArcanaSpell: "Blindness/Deafness", unsealedArcanaSpell: "Speak with Dead" },
 ];

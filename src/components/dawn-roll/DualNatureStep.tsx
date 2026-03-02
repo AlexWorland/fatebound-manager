@@ -118,7 +118,7 @@ export default function DualNatureStep({
             onRollComplete={handleRoll}
             label="Secondary Form"
           />
-          <p className="text-xs text-text-secondary font-body">Roll d12 for secondary form</p>
+          <p className="text-xs text-text-secondary font-body">Roll d20 (reroll 15-20) for secondary form</p>
         </div>
       )}
 

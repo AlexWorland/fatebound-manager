@@ -3,6 +3,7 @@
 import React from "react";
 import { Character, DailyState } from "@/types/character";
 import { Card, PipTracker } from "@/components/ui";
+import { useExpandedState } from "@/lib/ui-state";
 import { TABLE_A_CHASSIS } from "@/data/tables/table-a-chassis";
 import { TABLE_B_PRIMARY } from "@/data/tables/table-b-primary";
 import { TABLE_C_DEFENSIVE } from "@/data/tables/table-c-defensive";
@@ -14,6 +15,7 @@ interface Props {
   character: Character;
   dailyState: DailyState | null;
   proficiencyBonus: number;
+  characterId: string;
 }
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
@@ -24,21 +26,28 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FeatureRow({
-  name,
-  source,
-  description,
-}: {
+interface FeatureRowProps {
+  id: string;
   name: string;
   source?: string;
   description: string;
-}) {
-  const [expanded, setExpanded] = React.useState(false);
+  expanded: boolean;
+  onToggle: (id: string) => void;
+}
+
+function FeatureRow({
+  id,
+  name,
+  source,
+  description,
+  expanded,
+  onToggle,
+}: FeatureRowProps) {
   return (
     <div className="border-b border-border-subtle last:border-0 pb-2 mb-2 last:pb-0 last:mb-0">
       <button
         className="w-full flex items-start justify-between gap-2 text-left group"
-        onClick={() => setExpanded((e) => !e)}
+        onClick={() => onToggle(id)}
       >
         <div>
           <span className="text-sm font-body text-text-primary group-hover:text-text-highlight transition-colors">
@@ -63,7 +72,7 @@ function FeatureRow({
   );
 }
 
-export default function FeaturesTab({ character, dailyState, proficiencyBonus }: Props) {
+export default function FeaturesTab({ character, dailyState, proficiencyBonus, characterId }: Props) {
   // Class-level features from level progression
   const classFeatures = LEVEL_PROGRESSION.filter((lf) => lf.level <= character.level).flatMap(
     (lf) => lf.features.map((f) => ({ name: f, level: lf.level }))
@@ -100,9 +109,9 @@ export default function FeaturesTab({ character, dailyState, proficiencyBonus }:
   return (
     <div className="flex flex-col gap-4">
       {isChaos ? (
-        <ChaosFormFeatures dailyState={dailyState} proficiencyBonus={proficiencyBonus} />
+        <ChaosFormFeatures dailyState={dailyState} proficiencyBonus={proficiencyBonus} characterId={characterId} />
       ) : (
-        <StabilizedFormFeatures dailyState={dailyState} character={character} proficiencyBonus={proficiencyBonus} />
+        <StabilizedFormFeatures dailyState={dailyState} character={character} proficiencyBonus={proficiencyBonus} characterId={characterId} />
       )}
 
       {/* Residual Memory */}
@@ -150,10 +159,14 @@ export default function FeaturesTab({ character, dailyState, proficiencyBonus }:
 function ChaosFormFeatures({
   dailyState,
   proficiencyBonus,
+  characterId,
 }: {
   dailyState: DailyState;
   proficiencyBonus: number;
+  characterId: string;
 }) {
+  const { isExpanded, toggle } = useExpandedState(`${characterId}:chaos-features`);
+
   const chassis = dailyState.chaosTableA
     ? TABLE_A_CHASSIS.find((c) => c.id === dailyState.chaosTableA!.chassisId) ??
       TABLE_A_CHASSIS[dailyState.chaosTableA.roll - 1]
@@ -194,17 +207,23 @@ function ChaosFormFeatures({
 
         {primary && (
           <FeatureRow
+            id="primary"
             name={primary.name}
             source={`Table B · ${primary.className}`}
             description={primary.description}
+            expanded={isExpanded("primary")}
+            onToggle={toggle}
           />
         )}
 
         {defensive && (
           <FeatureRow
+            id="defensive"
             name={defensive.name}
             source="Table C"
             description={defensive.description}
+            expanded={isExpanded("defensive")}
+            onToggle={toggle}
           />
         )}
       </Card>
@@ -217,8 +236,11 @@ function ChaosFormFeatures({
               feat && (
                 <FeatureRow
                   key={feat.id}
+                  id={`feat-${feat.id}`}
                   name={feat.name}
                   description={`${feat.description}${feat.notes ? ` ${feat.notes}` : ""}`}
+                  expanded={isExpanded(`feat-${feat.id}`)}
+                  onToggle={toggle}
                 />
               )
           )}
@@ -250,11 +272,15 @@ function StabilizedFormFeatures({
   dailyState,
   character,
   proficiencyBonus,
+  characterId,
 }: {
   dailyState: DailyState;
   character: Character;
   proficiencyBonus: number;
+  characterId: string;
 }) {
+  const { isExpanded, toggle } = useExpandedState(`${characterId}:stabilized-features`);
+
   const form = dailyState.stabilizedFormId
     ? STABILIZED_FORMS.find((f) => f.id === dailyState.stabilizedFormId)
     : null;
@@ -297,8 +323,11 @@ function StabilizedFormFeatures({
           {form.baseFeatures.map((bf) => (
             <FeatureRow
               key={bf.name}
+              id={`base-${bf.name}`}
               name={bf.name}
               description={bf.description}
+              expanded={isExpanded(`base-${bf.name}`)}
+              onToggle={toggle}
             />
           ))}
         </div>
@@ -310,22 +339,31 @@ function StabilizedFormFeatures({
               Subclass Features
             </p>
             <FeatureRow
+              id="level9"
               name={subclass.level9Feature.name}
               source="Level 9"
               description={subclass.level9Feature.description}
+              expanded={isExpanded("level9")}
+              onToggle={toggle}
             />
             {character.level >= 13 && (
               <FeatureRow
+                id="level13"
                 name={subclass.level13Feature.name}
                 source="Level 13"
                 description={subclass.level13Feature.description}
+                expanded={isExpanded("level13")}
+                onToggle={toggle}
               />
             )}
             {character.level >= 17 && (
               <FeatureRow
+                id="level17"
                 name={subclass.level17Feature.name}
                 source="Level 17"
                 description={subclass.level17Feature.description}
+                expanded={isExpanded("level17")}
+                onToggle={toggle}
               />
             )}
           </div>
